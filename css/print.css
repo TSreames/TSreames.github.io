@@ -1,0 +1,97 @@
+/**
+ * Print stylesheet
+*/
+
+/* style sheet for "A4" printing */
+@media print and (width: 21cm) and (height: 29.7cm) {
+    @page {
+       margin: 3cm;
+    }
+ }
+ /* style sheet for "letter" printing */
+ @media print and (width: 8.5in) and (height: 11in) {
+    @page {
+        margin: 1in;
+    }
+ }
+
+@media print {
+    body {-webkit-print-color-adjust: exact;}    
+    body {
+        background: #fff !important;
+        color: #000;
+        padding:0px;
+        margin:0px;
+    }
+
+    .esri-ui-bottom-right {
+        visibility:hidden;
+    }
+
+    .esri-popup {
+        visibility:hidden;
+
+    }
+
+    .esri-ui-top-left {
+        visibility:hidden;
+    }
+
+    ul {
+        background: #fff;
+    }
+    li {
+        background: #fff;
+    }
+
+    .esri-feature__main-container {
+        background: #fff;
+    }
+    .mdc-drawer-scrim {
+        visibility:hidden;
+    }
+    .mdc-drawer {
+        visibility:hidden;
+    }
+    #app-bar {
+        visibility:hidden;
+    }
+    .form_panel {
+        visibility:hidden;
+    }
+    #devcase_form_panel {
+        visibility:hidden;
+    }
+    #zoning_form_panel {
+        visibility:hidden;
+    }   
+    #insp_form_panel {
+        visibility:hidden;
+    }   
+    #storm_form_panel {
+        visibility:hidden;
+    }
+    #utilities_form_panel {
+        visibility:hidden;
+    }
+    .esri-popup {
+        background: #fff;
+        position:absolute;
+        top:0;
+        left:0;
+    }
+    .esri-search {
+        visibility:hidden;
+    }
+    .esri-popup__footer {
+        visibility:hidden;
+    }
+    
+    .mdc-top-app-bar__row {
+        visibility:hidden;
+    }
+    .esri-component {
+        background: #fff;
+    }
+
+ }

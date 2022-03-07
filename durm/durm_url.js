@@ -1,0 +1,115 @@
+/*
+Matt Reames, 2020
+This module handles the URL-webmap interactions.
+*/
+define([], function() {
+  return {
+    // The way this thing works, we are NOT directly-directing the mapview from this module.
+    // We are setting global variables under the durm namespace, which the mapview reacts to elsewhere. 
+    // Also esri has a urlToObject in its urlutils that could be used here instead. 
+      init: function(){
+        try {
+        // This function takes whatever is in the URL, and converts it to a JS value. Useful for the initialized version of the map.
+        durm.all_initial_view_parameters_passed = false;
+        durm.PID_passed = false;
+        durm.lyrstate_passed = false;
+        durm.appstate_passed = false;
+        durm.basemap_passed = false;
+
+        durm.yparam = urlParam('y'); // longitude
+        durm.xparam = urlParam('x'); // latitude
+        durm.zparam = urlParam('z'); // scale
+        durm.rparam = urlParam('r'); // rotation
+        durm.bparam = urlParam('b'); // basemap
+        durm.pidparam = urlParam('pid'); //Parcel ID 
+
+        const isValidPID = /^\d{6}$/gm.test(durm.pidparam);
+        if(isValidPID) {
+          durm.pidparam = urlParam('pid');
+          durm.PID_passed = true;
+        } else {
+          durm.pidparam = "NA";
+          durm.PID_passed = false;
+        }
+        durm.sparam = urlParam('s'); // app state string
+        durm.lparam = urlParam('l'); // layer state string
+        lyrIDlist = "";
+
+
+        // load app state string on init
+        if (durm.sparam) { 
+          durm.appstate_passed = true; 
+          durm.app_state_string = durm.sparam;
+        } else { 
+          //No state was specified
+          durm.app_state_string = "default";
+        }
+
+        // load layer state string on init
+        if (durm.lparam){
+          durm.lyrstate_passed = true; 
+          durm.layer_state_string = durm.lparam;
+        } else {
+          //No layers were specified to be on by default
+          durm.layer_state_string = "";
+        }
+
+        // load basemap id on init
+        if (durm.bparam) {   
+          durm.basemap_passed = true;
+        }
+
+        // zoom on init
+        if (durm.yparam && durm.xparam && durm.zparam && durm.rparam) { durm.all_initial_view_parameters_passed = true; }
+        } catch (e) { console.log(e); }
+
+      },
+      zoom_to_pid: function() {
+        let query = durm.parcelboundaryLayer.createQuery();
+        query.where = "PARCEL_ID = '"+durm.pidparam+"'";
+        query.returnGeometry = true;
+        query.outSpatialReference = { wkid: 102100 };
+        query.outFields = [ "*" ];
+
+        durm.parcelboundaryLayer.queryFeatures(query)
+          .then(function(response){
+            if(response.features.length > 0){
+
+              durm.mapView.popup.open({
+                features: [response.features[0]]
+              });
+
+              //This bit helps "Center" the zoom on the right half of the page.
+              //There is definitely a more precise way to do this
+              let dx = durm.mapView.width*-0.03//default
+              var cloneExt = response.features[0].geometry.extent.clone();       
+
+              extentcoeff = (response.features[0].geometry.extent.xmax-response.features[0].geometry.extent.xmin)*(-0.2)
+              console.log(extentcoeff)
+              widthcoeff = durm.mapView.width*(-0.005)
+              console.log(widthcoeff)
+
+              dx = extentcoeff + widthcoeff
+
+              //dx = 0 //Use no offset until we can figure out something more precise
+              var cloneExt = response.features[0].geometry.extent.clone();
+              console.log(dx)
+              durm.mapView.goTo({
+                target: response.features[0],
+                extent: cloneExt.expand(1.75).offset(dx,0,0)
+              }, { 
+                duration: 500  // Duration of animation will be 5 seconds
+              });
+
+            } else {
+              //the server didn't return a valid result, so nothing
+              console.log("URL Parameter passed in invalid Parcel ID")
+            }
+          });
+
+
+
+
+      }
+  };
+});

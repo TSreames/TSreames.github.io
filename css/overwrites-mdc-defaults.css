@@ -1,0 +1,110 @@
+/* Google MDC overwrites below */
+
+/* TOP LEFT NAVBAR SECTION */
+
+/* This ensures the top left navigation bar is blue, and draws in front of the map */
+.mdc-top-app-bar {
+	z-index: 51;
+	background-color: #284f8d;
+}
+
+/* Sets color of buttons in Parcel Popup */
+:root {
+	--mdc-theme-primary:#284f8d;
+	--mdc-theme-on-primary: #ffffff;
+}
+	
+/* Sets text color in left-hand menu of items that are "Activated" */
+.mdc-drawer .mdc-list-item--activated {
+	color:#284f8d;
+}
+/* Sets icon color in left-hand menu of items that are "Activated" */
+.mdc-drawer .mdc-list-item--activated .mdc-list-item__graphic {
+	color:#284f8d;
+}
+
+ /* Shrinks the hamburger button */
+ .mdc-top-app-bar--short .mdc-top-app-bar__section {
+padding:5px;
+  }
+/* This aligns the hamburger bar section horizontally (by default its off center within its parent? idk, idgi) */
+.mdc-top-app-bar__section--align-start {
+		justify-content:center;
+	}
+/* This aligns the top left search bar section horizontally (by default its off center within its parent? idk, idgi) */
+.mdc-top-app-bar__section--align-end {
+	justify-content:flex-start;
+}
+
+/* This draws the city county logo */
+.mdc-drawer__title {
+	background-image: url('/img/new_logo.png');
+	height:120px;
+	width:200px;
+	background-repeat: no-repeat;
+	background-position:center;
+	border-bottom:1px solid #ccc;
+}
+
+/* This prevents the left navbar logo from being overrun by the menu beneath it.   */
+.mdc-drawer__content {
+	margin-top:15px;
+}
+
+/* MDC BUTTON SECTION */
+/* Determines the size of the buttons in the parcel popup */
+.mdc-button--dense {
+  height: 32px;
+  font-size: .7125rem;
+	padding-left:6px;
+  padding-right:6px;
+  margin-left:2px;
+  margin-right:2px;
+  letter-spacing:-0.025em;
+}
+/* Determines the color of the buttons in the parcel popup */
+button.mdc-button.mdc-button--dense.mdc-button--raised.mdc-ripple-upgraded.btn-primary {
+	background:#284F8D;
+}	
+/* Determines the color of the buttons in the parcel popup */
+button.mdc-button.mdc-button--dense.mdc-button--raised.mdc-ripple-upgraded.btn-success {
+	background:#63a145;
+}
+
+/* MDC button class used primarily in Development case preset */
+.greenbutton {
+	margin-left:4px;
+	margin-top:4px;
+	color:white;
+	background-color:#72b352;
+}
+
+/* OTHER?? SECTION */
+.mdc-drawer-app-content {
+	flex: auto;
+	overflow: auto;
+	position: relative;
+}
+a.mdc-list-item {
+	color:rgba(97,97,97);
+}
+.mdc-list {
+	padding:0;
+}
+.mdc-list-item {
+	padding-bottom:12px;
+	padding-top:12px;
+	padding-left:24px;
+	padding-right:48px;
+	align-items:center;
+}
+.mdc-list-item__graphic {
+	padding-left:8px;
+	padding-right:8px;
+}
+
+.mdc-drawer .mdc-list-item {
+	color:rgba(97,97,97);
+	font-size:0.75rem;
+	line-height:1.25rem;
+}

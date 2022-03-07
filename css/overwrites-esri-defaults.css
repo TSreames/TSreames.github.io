@@ -1,0 +1,91 @@
+
+.esri-ui-top-left {
+	margin-top:50px;
+}
+/*
+.esri-search__suggestions-menu {
+	max-height:400px;
+	width:900px;
+}*/
+
+.esri-feature__content-element {
+	padding:0;
+}
+
+
+.esri-scale-bar__line {
+	background-color:rgba(255,255,255,1);
+}
+.esri-attribution__powered-by {
+	width:2px;
+}
+.scale_div {
+	z-index:4;
+	position:absolute;
+	bottom:0;
+	right:0;
+	overflow:hidden;
+	
+}
+
+.esri-legend, .esri-legend__service, .esri-legend__group-layer {
+	z-index:0;
+}
+
+.esri-scale-bar__line--bottom {
+	top:0;
+}
+
+/* this one controls all z-indices of anything that pops out of the esri "Expand" widget.  Right now that's just the basemap gallery (i think) */
+.esri-expand__content {
+	z-index:51;
+}
+
+/* Pursuant to above problem, we need to make the popup's z-index higher */
+.esri-ui .esri-popup {
+	z-index:52;
+}
+
+/* hides a superfluous label in the legend */
+div.esri-legend__service-label {
+	visibility:hidden;
+	display:none;
+}
+
+.esri-menu .esri-header { 
+	background-color:#63a145; color:white; 
+}
+
+.esri-popup__position-container {
+	margin-left:200px;
+}
+
+.esri-table .shrink_to_content {
+	width:30%;
+}
+
+.esri-table .eighty_percent {
+	width:70%;
+}
+
+/* some of these overwrite bootstrap defaults instead of ESRI defaults -- which are listed below */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, main {
+	display: block;
+}
+/*body {
+	line-height: 1;
+}*/
+
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}

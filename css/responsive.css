@@ -1,0 +1,44 @@
+@media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
+	/* For landscape layouts only */
+	body {
+		font-size:1.1em;
+	}
+	.esri-legend {
+		margin-left:0px;
+	}
+	#independent_case_popup {
+		width:70%;
+	}
+}
+
+@media only screen and (min-width:481px) and (min-height: 481px){
+	/* SMALL BROWSER - styles for browsers larger than 960px; */
+	body {
+		font-size:1.1em;
+	}
+	#independent_case_popup {
+		width:70%;
+	}
+}
+
+@media only screen and (min-width:960px){
+	/* MEDIUM BROWSER - styles for browsers larger than 960px; */
+	body {
+		font-size:1.2em;
+	}
+	#independent_case_popup {
+		width:60%;
+	}
+}
+@media only screen and (min-width:1440px){
+	/* LARGE BROSWER styles for browsers larger than 1440px; */
+	#independent_case_popup {
+		width:50%;
+	}	
+}
+@media only screen and (min-width:2000px){
+	/* MEGA BROWSER - for ridiculously large sizes, macs, sumo sized screens, space ships -  */
+	#independent_case_popup {
+		width:35%;
+	}	
+}

@@ -1,0 +1,584 @@
+html,
+body {
+	font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+  vertical-align: baseline;
+  background-color:#EDE9DA;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+button {
+	font-family:"Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+body {
+	display: flex;
+	height: 100vh;
+	font-size:1.0em;
+}
+
+table {
+	width:100%;
+}
+h1 { font-size:20px; margin-left:15px; /*font-family:"Avenir Next W01","Avenir Next W00","Avenir Next","Avenir","Helvetica Neue",sans-serif;*/}
+h2 { font-weight:400; font-style:bold; font-size:1.25rem; padding-left:0.25em; padding-top:0.65em; padding-bottom:0.3em; text-rendering: optimizeLegibility;
+	/*font-family:"Avenir Next W01","Avenir Next W00","Avenir Next","Avenir","Helvetica Neue",sans-serif;*/}
+
+
+h4 { color:#111; 
+	font-weight:400; 
+	font-style:bold; 
+	/*font-size:0.7rem; */
+	padding-left:0.35em; 
+	padding-top:0.05em; 
+	padding-bottom:0.05em; 
+	text-rendering: optimizeLegibility; 
+	margin-top:1px;
+	margin-bottom:1px;
+	padding:0px;
+	/*font-family:"Avenir Next W01","Avenir Next W00","Avenir Next","Avenir","Helvetica Neue",sans-serif;	*/
+}
+
+#bodycontainer { position: absolute; top:0; bottom:0; right:0; left:0; z-index:4; overflow:hidden; }
+
+#mapViewDiv a {
+		color:#63a145;
+	}
+
+#bodycontainer #nomap { position: absolute; top:0px; bottom:0px; right:0px; left:0px; z-index:48; background:#fff; padding-left:10%; padding-right:10%; overflow-y:scroll; overflow-x:hidden;}/* standard container for non-map pages */
+
+#bodycontainer #mapViewDiv { position: absolute; top:0px; bottom:0px; right:0px; left:0px; z-index:48; overflow:hidden; }/* container for ESRI JSAPI 4 maps */
+
+.mdc-menu {
+	z-index:99;
+}
+
+.centered-spinner {
+	display: block;
+  margin-left: auto;
+  margin-right: auto;
+	width:20%;
+	height:20%;
+}
+
+/* especially for the items in the drill */
+.esri-popup__content h4 {
+	font-weight:700;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding-top:1px;
+	padding-bottom:0px;
+	text-align:left;
+	border-bottom:1px solid #999999;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+.drillListItem  {
+	background:#fff;
+	border:1px solid #fff;
+	width:100%;
+	margin-bottom:1.0em;
+	margin-top:0;
+	padding:0;
+}
+
+.drilltablerecord td {
+	padding:2px 10px;
+}
+
+.drilltableitem {
+padding-left:2px;
+padding-right:2px;
+padding-top:0px;
+padding-bottom:0px;
+margin:0;
+}
+
+#permits_list > table {
+		font-size:14px;
+}
+
+.r1 {
+	border:0;
+}
+.r2 {
+	border:0;
+}
+
+#default_search_container {
+	margin-right:12px;
+	width:100%;
+}
+
+.esri-popup--is-docked-top-left {
+	margin-left:0;
+	margin-top:6px;
+	margin-bottom:8px;
+	max-height:100%;
+}
+
+.esri-popup--is-docked-top-left .esri-popup__main-container {
+	max-height:100%;
+}
+
+.esri-popup__main-container {
+	position:absolute;
+	top:50px;
+	left:0px;
+	bottom:10px;
+}
+
+.esri-popup__content {
+	margin-left:0;
+	margin-top:5px;
+	margin-bottom:5px;
+	margin-right:1px;
+}
+
+
+.bigtab {
+	margin:0;
+	padding:0;
+}
+.bigcontent {
+	margin:0;
+	padding:0;
+}
+
+/*applies to the drill container itself and children*/
+.bigcontent ul {
+	margin:1em;
+	padding:0;
+}
+/*applies to some of the detailed sub-items in the drill*/
+.bigcontent ul td ul{
+	margin:0.2em;
+	padding:0;
+}
+
+.permitListItem tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+.ownersection {
+	margin:0;
+	padding:0;
+}
+table.popup_response { width:100%; }
+table.popup_response tr td { width:auto; }
+table.popup_response tr th { width:auto; }
+
+#ul_layers {
+	margin-bottom:20px;
+	padding-bottom:20px;
+	padding-left:15px;
+}
+
+/* nav_bar styling  */
+.layer-table-list-item {
+ border-bottom: 1px solid #ccc;
+}
+
+.mdc-top-app-bar__section--align-start {
+	max-width:70px;
+}
+
+.layer-table-list-item > span {
+	vertical-align:45%;
+	padding-left:0.5em;
+}
+
+.btn.focus, .btn:focus, .btn:hover {
+	color:white;
+}
+
+ 
+/* address results styling */
+.grid {
+	height:auto;
+	min-height:90%;
+	max-height:100%;
+}
+/*
+#tool_results_table #owner-results-close {
+	width:30px;
+	position:absolute;
+	height:30px;
+	font-size:24px;
+	margin:8px;
+	top:0;
+	right:0;	
+}*/
+
+#results-close {
+	width:30px;
+	position:absolute;
+	height:30px;
+	font-size:24px;
+	margin:8px;
+	top:0;
+	right:0;	
+}
+
+
+/*#tool_results_table #owner-results-header {
+	width:70%;
+	position:absolute;
+	font-size:16px;
+	font-weight:bold;
+	margin:0%;
+	padding:1%;
+	top:50px;
+	left:0;
+}*/
+
+.resultsheader {
+	width:70%;
+	position:absolute;
+	font-size:16px;
+	font-weight:bold;
+	margin:0%;
+	padding:1%;
+	top:50px;
+	left:0;
+}
+
+.resultstablecontent {
+	position:absolute;
+	top:90px;
+	left:3%;
+	right:3%;
+	bottom:0;
+}
+
+/*#tool_results_table #owner_results_table_content {
+	position:absolute;
+	top:90px;
+	left:3%;
+	right:3%;
+	bottom:0;
+}*/
+#tool_results_table {
+	position:absolute;
+	/*margin:auto;*/
+	top:60px;
+	bottom:10px;
+	left:0;
+	right:0;
+	height:auto;
+	max-height:90%;
+	min-height:30%;	
+	overflow-x:auto;
+	overflow-y:auto;
+	width:70%;
+	min-width:15%;
+	max-width:80%;
+	resize:both;
+}
+/* Style the tab */
+.address_tab {
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.address_tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+	font-weight:500;
+}
+
+/* Change background color of buttons on hover */
+.address_tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.address_tab button.active {
+  background-color:#284f8d;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
+
+/* independent popup styling */
+#independent_case_popup #independent-popup-close {
+width:30px;
+position:absolute;
+height:30px;
+font-size:24px;
+margin:8px;
+top:0;
+right:0;
+}
+
+#independent_case_popup #independent-popup-header {
+width:70%;
+position:absolute;
+font-size:16px;
+font-weight:bold;
+margin:0%;
+padding:1%;
+top:0;
+left:0;
+}
+
+#independent_case_popup #independent_case_popup_content {
+position:absolute;
+top:40px;
+left:3%;
+right:3%;
+bottom:0;
+}
+
+
+/* independent popup styling */
+#independent_case_popup {
+	position:absolute;
+	margin:auto;
+	top:60px;
+	bottom:0;
+	left:0;
+	right:0;
+	height:auto;
+	min-height:30%;	
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+
+.active {
+background: #0079c1;
+color: #e4e4e4;
+}
+
+div.cd-panel-content {
+	font-size:0.8em;
+}
+
+#layerpanel > header > h1 {
+	line-height:1.0em;
+}
+
+.ul_category {
+	padding-inline-start:0px;
+}
+
+.ulbuttonholder {
+	margin-left:12px;
+	padding:0;
+}
+
+.layer-table-list-item {
+	margin:0;
+	padding:0;
+}
+
+.onoffswitch {
+	margin:0;
+	padding:0;
+}
+
+.flagicon {
+	vertical-align:20%;
+	margin-left:5px;
+	border:1px solid #333;
+}
+
+
+.lyrlist-header {
+	color: #333;
+	margin-top:0.5em;
+	margin-bottom:0.25em;
+	margin-left:3px;
+	font-size:1.1em;
+	font-weight:600;
+}
+/*
+#buttonBoxes {
+	width:100%;
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	margin-bottom:5px;
+	margin-left:3px;
+	margin-right:3px;
+}*/
+
+
+#parcelresultsbutton, #parcelclearbutton, #parcelselectbutton, #parceldeselectbutton, #reset_button{
+	color:white;
+	background-color:#72b352;
+}
+
+#draw_button {
+	padding:0;
+	width:96%;
+	margin:2%;
+	color:white;
+	background-color:#72b352;
+}
+
+#reset_button {
+	margin-left:22px;
+	margin-top:16px;
+	margin-bottom:1%;
+	color:white;
+	width:25%;
+}
+
+.export_tocsvbutton {
+	color:#72b352;
+	font-weight:700;
+	display:block;
+}
+/*
+#export_resident_tocsvbutton {
+	color:#72b352;
+	font-weight:700;
+	display:block;
+}
+#export_address_tocsvbutton {
+	color:#72b352;
+	font-weight:700;
+	display:block;
+}
+
+#export_owners_tocsvbutton {
+	color:#72b352;
+	font-weight:700;
+	display:block;
+}
+#export_parcels_tocsvbutton {
+	color:#72b352;
+	font-weight:700;
+	display:block;
+}*/
+
+#bufferinputbox {
+	margin-top:5px;
+
+}
+
+
+#devcase_type {
+  overflow:visible;
+	padding:0;
+	width:96%;
+	margin:2%;
+}
+#devcase_status {
+  overflow:visible;
+	padding:0;
+	width:96%;
+	margin:2%;
+}
+
+
+/* Formtool's positioning will be determined by mostly by durm_ui , wrt shrinking and growing */
+#parceltool_form_panel {
+	background:white;	
+	z-index:50;
+}
+
+#GAL_header {
+	font-size:0.9em;
+}
+
+#GAL_subtext {
+	font-size:0.8em;
+}
+.form_panel {
+	display:block;
+	background:white;
+	right:65px;
+	bottom:25px;
+	z-index:50;
+}
+
+.ui_panel {
+	padding:1%;
+	background:white;
+	right:65px;
+	bottom:25px;
+	z-index:50;
+}
+
+input[type="date"]::-webkit-clear-button {
+	display: none;
+}
+/* Removes the spin button */
+input[type="date"]::-webkit-inner-spin-button { 
+	display: none;
+}
+/* Always display the drop down caret */
+input[type="date"]::-webkit-calendar-picker-indicator {
+	color: #2c3e50;
+}
+input[type="date"] {
+	width:98%;
+	max-width:98%;
+	appearance: none;
+	-webkit-appearance: none;
+	color: #95a5a6;
+	font-family: "Helvetica", arial, sans-serif;
+	border:1px solid #ecf0f1;
+	background:#ecf0f1;
+}
+input[type="date"], focus {
+	color: #95a5a6;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+}
+
+.datediv {
+	display:inherit;
+
+}
+
+#development_search_container {
+	z-index:50;
+	width:100%;
+	padding:0;
+	width:96%;
+	margin:2%;
+	border: 0.3px solid #ccc;
+}
+
+.devsearchlabel {
+	width:44px;
+}
+
+#default-Search-suggest-menu {
+	z-index:55;
+}
+
+.main-content {
+	overflow: auto;
+	height: 100%;
+}
+
+#devcase_status > li {
+margin:0;
+height:40px;
+}
+
+#devcase_status > li > span
+ {
+	margin-right:8px;
+	width:8px;
+}

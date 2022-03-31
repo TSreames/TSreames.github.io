@@ -79,6 +79,8 @@ const FUTURE_LAND_USE_URL = "https://webgis.durhamnc.gov/server/rest/services/Ca
 const TRANSITIONAL_OFFICE_OVERLAY_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/18";
 const TRANSITIONAL_OFFICE_OVERLAY_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/18";
 
+const EDSOP_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer"
+
 //historic
 const NATL_HIST_DISTRICTS_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/11";
 const LHD_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/10";
@@ -149,7 +151,7 @@ const NWI_URL = "https://webgis.durhamnc.gov/server/rest/services/OpenData/Natio
 const NWI_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/OpenData/National_Wetland_Inventory/MapServer/0"
 const WATERSHEDS_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/9"
 const WATERSHEDS_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/9"
-const SOILS1983_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicWorksServices/DurhamSoils/MapServer/"
+const SOILS1983_URL = "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho1983/MapServer"
 
 //POLIT
 const CENSUSBLOCK2010_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/services/OpenData/Census_2010/MapServer/2"

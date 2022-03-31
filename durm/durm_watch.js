@@ -34,11 +34,19 @@ define([
             //When the Popup cycles thru its active selections, push that to the PID
             //Remember that some of these are not always Parcel popups, they could be any layer that has a popup
             durm.mapView.popup.when(() => {
-                watchUtils.watch(durm.mapView.popup, "selectedFeature", function(v) {
-                  if(v===null) {
-                    durm.pidparam = "NA"
+              watchUtils.watch(durm.mapView.popup, "selectedFeature", function(v) {
+                //console.log(v)
+                if(v==null) {
+                  //console.log("v was null")
+                  durm.pidparam = "NA"
+                }
+                else {
+                  if(v.layer==null){
+                    //console.log("v.layer is null")
                   }
                   else {
+                    //console.log("ok")
+                    //console.log(v.layer.id)
                     if(v.layer.id == "parcels") {
                       durm.pidparam = v.attributes.PARCEL_ID
                     }
@@ -46,8 +54,9 @@ define([
                       durm.pidparam = "NA"
                     }
                   }
-                  push_new_url()
-                });
+                }
+                push_new_url()
+              });
             });
 
             //when the popup closes, make sure the PID in the URL switches back to NA

@@ -654,6 +654,55 @@ define([
 			});
 			durm.map.add(durm.airportoverlay);	
 
+			durm.easterndurhamopenspaceplan
+
+			durm.EDOSPgroup = new GroupLayer({
+				id: "EDOSP",
+				title: "Eastern Durham Open Space Plan",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false
+			});
+			durm.map.add(durm.EDOSPgroup);
+							
+			durm.EDOSPB = new MapImageLayer({
+				id: "EDOSPB",
+				title: "Eastern Durham Open Space Plan Buffers",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:6,
+				url: EDSOP_URL,
+				sublayers:[{
+					id: 23
+				}],
+				visible: true
+			});
+			durm.EDOSPgroup.add(durm.EDOSPB);
+
+			durm.EDOSPWC = new MapImageLayer({
+				id: "EDOSPWC",
+				title: "Eastern Durham Open Space Plan Wildlife Corridors",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:6,
+				url: EDSOP_URL,
+				sublayers:[{
+					id: 22				
+				}],
+				visible: true
+			});
+			durm.EDOSPgroup.add(durm.EDOSPWC);
+
+
+
+
+
+
 		},
 		add_permits: async function(){
 			durm.bldgpermitLayer = new FeatureLayer({
@@ -1566,6 +1615,19 @@ define([
 				visible: false
 			});				
 			durm.map.add(durm.soils1983);
+
+			durm.aerials2021 = new MapImageLayer({
+				id: "aerials2021",
+				title: "2021 Aerial Photos",
+				listMode: "show",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2021/MapServer",
+				icon: "DUR",
+				visible: false
+			});				
+			durm.map.add(durm.aerials2021);
 
 			durm.aerials2019 = new MapImageLayer({
 				id: "aerials2019",

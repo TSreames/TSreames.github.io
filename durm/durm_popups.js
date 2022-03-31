@@ -3,12 +3,15 @@ Matt Reames, 2019
 This module controls the default ESRI popup situation
 */
 define([
+	"esri/rest/query",
   "esri/tasks/QueryTask",
-  "esri/tasks/support/Query",
+  //"esri/tasks/support/Query",
+	"esri/rest/support/Query",
+	"esri/rest/support/RelationshipQuery",
 	"esri/geometry/geometryEngine",
   "../durm/durm_pdf.js",
 	"../durm/durm_drill.js"
-], function(QueryTask, Query, geometryEngine, durm_pdf, durm_drill
+], function(query, QueryTask, Query, RelationshipQuery, geometryEngine, durm_pdf, durm_drill
 	) {
 		return {
 			pre_init: function(){
@@ -21,7 +24,7 @@ define([
 						title: "Mailing List Tool",
 						id: "open-buffer-tool",
 						className: "esri-icon-duplicate"
-					};	
+					};
 					durm_drill.init();	
 				} catch (e) { console.log(e); }
 			},

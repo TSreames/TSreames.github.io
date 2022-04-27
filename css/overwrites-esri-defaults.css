@@ -38,12 +38,12 @@
 
 /* this one controls all z-indices of anything that pops out of the esri "Expand" widget.  Right now that's just the basemap gallery (i think) */
 .esri-expand__content {
-	z-index:51;
+	z-index:56;
 }
 
 /* Pursuant to above problem, we need to make the popup's z-index higher */
 .esri-ui .esri-popup {
-	z-index:52;
+	z-index:57;
 }
 
 /* hides a superfluous label in the legend */

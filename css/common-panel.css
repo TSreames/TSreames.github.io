@@ -220,7 +220,7 @@ html, body {
   padding: 4em 0;
 }
 .cd-main-content .cd-btn {
-  z-index: 51;
+  z-index: 56;
   position: absolute;
   top:0;
   right:0;
@@ -248,7 +248,7 @@ html, body {
 }*/
 
 .cd-panel {
-  z-index:55;
+  z-index:60;
   position: fixed;
   top: 0;
   left: 0;
@@ -365,7 +365,7 @@ html, body {
   /*height: 30px;
   line-height: 30px;*/
   background: rgba(255, 255, 255, 0.96);
-  z-index: 52;
+  z-index: 57;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
   -webkit-transition: top 0.3s 0s;
   -moz-transition: top 0.3s 0s;
@@ -478,7 +478,7 @@ html, body {
   top: 0;
   /*background: #dbe2e9;*/
   background: #e1e1e1;
-  z-index: 51;
+  z-index: 56;
   -webkit-transition-property: -webkit-transform;
   -moz-transition-property: -moz-transform;
   transition-property: transform;
@@ -496,7 +496,7 @@ html, body {
   height: 100%;
   top: 0;
   background: #222;
-  z-index: 51;
+  z-index: 56;
   background-color: #222;
   background-image: url("../img/close.png");
   background-repeat: no-repeat;
@@ -509,7 +509,7 @@ html, body {
   height: 100%;
   top: 0;
   background: #222;
-  z-index: 51;
+  z-index: 56;
   background-color: #222;
   background-image: url("../img/close.png");
   background-repeat: no-repeat;

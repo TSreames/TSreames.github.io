@@ -5,11 +5,11 @@ This module is to manage the user interface
 define([
 	"esri/core/watchUtils",
 	"../durm/durm_url.js","../durm/durm_gallery.js",
-	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",
+	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",//"esri/widgets/Slider",
 	"esri/layers/GraphicsLayer"
 	], function(watchUtils,
 		durm_url,durm_gallery,
-		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch,
+		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch, //Slider,
 		GraphicsLayer
     ) {
   	return {
@@ -127,7 +127,7 @@ define([
 		draw_initial_widgets: function() {
 			try {
 				durm.mapView.popup.collapseEnabled = false;
-				
+
 				//compass
 				durm.compassWidget = new Compass({
 					view: durm.mapView
@@ -167,23 +167,24 @@ define([
 				durm.mapView.ui.add([ durm.compassWidget,durm.bgExpand, durm.printExpand ], "top-right");
 
 				//scalebar
-				//let sd = document.createElement("div");
-				//document.body.appendChild(sd);
-				//sd.classList.add("scale_div") 
-				//durm.scaleWidget = new ScaleBar({
-				//	view: durm.mapView,
-				//	unit:"non-metric"
-				//});
-				//durm.scaleWidget.container = sd;
+				let sd = document.createElement("div");
+				document.body.appendChild(sd);
+				sd.classList.add("scale_div") 
+				durm.scaleWidget = new ScaleBar({
+					view: durm.mapView,
+					unit:"non-metric"
+				});
+				durm.scaleWidget.container = sd;
 
 				// Bindings for "Aerial" and "Map" buttons in mdc menu. 
 				durm.toggle_simple_basemap = document.getElementById("toggle_simple_basemap");
 				durm.toggle_simple_basemap.addEventListener("click", () => {
 					durm.map.basemap = durm_gallery.toggle_simple_basemap();
 				});
-				durm.toggle_simple_aerials = document.getElementById("toggle_simple_aerials");
+				durm.toggle_simple_aerials = document.getElementById("aerials_button");
 				durm.toggle_simple_aerials.addEventListener("click",() => {
-					durm.map.basemap = durm_gallery.toggle_simple_aerials();
+					//durm.map.basemap = durm_gallery.toggle_simple_aerials();
+					toggle_aerials_mode();
 				});
 
 				//Bindings for "Print" button in mdc menu
@@ -289,7 +290,10 @@ define([
 				durm.toggle_utilities_preset.addEventListener("click", () => {
 					this.load_utilities_preset()
 					this.set_app_state("utilities",durm.layer_state_string)
-				} );	
+				} );
+				//end preset
+				
+
 
 				
 			} catch (e) { console.log(e); }	

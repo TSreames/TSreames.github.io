@@ -4,7 +4,7 @@
 
 /* This ensures the top left navigation bar is blue, and draws in front of the map */
 .mdc-top-app-bar {
-	z-index: 51;
+	z-index: 56;
 	background-color: #284f8d;
 }
 

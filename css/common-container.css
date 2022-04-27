@@ -5,7 +5,7 @@ body {
   margin: 0;
   border: 0;
   width: 100%;
-  height:100%;
+	height:100%;
   vertical-align: baseline;
   background-color:#EDE9DA;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -41,7 +41,7 @@ h4 { color:#111;
 	/*font-family:"Avenir Next W01","Avenir Next W00","Avenir Next","Avenir","Helvetica Neue",sans-serif;	*/
 }
 
-#bodycontainer { position: absolute; top:0; bottom:0; right:0; left:0; z-index:4; overflow:hidden; border:1px solid red; }
+#bodycontainer { position: absolute; top:0; bottom:0; right:0; left:0; z-index:4; overflow:hidden; }
 
 #mapViewDiv a {
 		color:#63a145;
@@ -492,7 +492,7 @@ div.cd-panel-content {
 /* Formtool's positioning will be determined by mostly by durm_ui , wrt shrinking and growing */
 #parceltool_form_panel {
 	background:white;	
-	z-index:50;
+	z-index:55;
 }
 
 #GAL_header {
@@ -507,7 +507,7 @@ div.cd-panel-content {
 	background:white;
 	right:65px;
 	bottom:25px;
-	z-index:50;
+	z-index:55;
 }
 
 .ui_panel {
@@ -515,7 +515,7 @@ div.cd-panel-content {
 	background:white;
 	right:65px;
 	bottom:25px;
-	z-index:50;
+	z-index:55;
 }
 
 input[type="date"]::-webkit-clear-button {
@@ -552,7 +552,7 @@ input[type="date"], focus {
 }
 
 #development_search_container {
-	z-index:50;
+	z-index:55;
 	width:100%;
 	padding:0;
 	width:96%;
@@ -565,7 +565,7 @@ input[type="date"], focus {
 }
 
 #default-Search-suggest-menu {
-	z-index:55;
+	z-index:60;
 }
 
 .main-content {
@@ -582,4 +582,104 @@ height:40px;
  {
 	margin-right:8px;
 	width:8px;
+}
+
+.sliderholder {
+	background:#fff;
+	width:50%;
+	height:100px;
+	position:absolute;
+	bottom:2%;
+	right:2%;
+	z-index:52;
+}
+
+input[type=range] {
+  height: 26px;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #50555C;
+  background: #50555C;
+  border-radius: 14px;
+  border: 0px solid #000000;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 0px solid #000000;
+  height: 20px;
+  width: 40px;
+  border-radius: 12px;
+  background: #529DE1;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -3px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #50555C;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #50555C;
+  background: #50555C;
+  border-radius: 14px;
+  border: 0px solid #000000;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 0px solid #000000;
+  height: 20px;
+  width: 40px;
+  border-radius: 12px;
+  background: #529DE1;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #50555C;
+  border: 0px solid #000000;
+  border-radius: 28px;
+  box-shadow: 1px 1px 1px #50555C;
+}
+input[type=range]::-ms-fill-upper {
+  background: #50555C;
+  border: 0px solid #000000;
+  border-radius: 28px;
+  box-shadow: 1px 1px 1px #50555C;
+}
+input[type=range]::-ms-thumb {
+  margin-top: 1px;
+  box-shadow: 0px 0px 0px #000000;
+  border: 0px solid #000000;
+  height: 20px;
+  width: 40px;
+  border-radius: 12px;
+  background: #529DE1;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #50555C;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #50555C;
 }

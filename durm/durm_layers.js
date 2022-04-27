@@ -1654,6 +1654,7 @@ define([
 			});				
 			durm.map.add(durm.aerials2008);
 
+
 			durm.aerials2005 = new MapImageLayer({
 				id: "aerials2005",
 				title: "2005 Aerial Photos",
@@ -2038,6 +2039,8 @@ define([
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2014-10-01 20:10:05' AND TIMESTAMP '2014-11-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2014);
+
+			this.init_aerial_slider();
 		},
 		add_nconemap: async function(){
 			// Hazards				
@@ -2581,6 +2584,81 @@ define([
 				  opacity: 0.95
 				});
 			  pplt.add_to_map(durm.parkslayer);
+		},
+
+		init_aerial_slider: function(){
+			//Slider
+			const aeriallist = [
+				{ year:"1940", lyr:durm.aerials1940 },
+				{ year:"1983", lyr:durm.soils1983 },
+				{ year:"1988", lyr:durm.aerials1988 },
+				{ year:"1994", lyr:durm.aerials1994 },
+				{ year:"1999", lyr:durm.aerials1999 },
+				{ year:"2002", lyr:durm.aerials2002 },
+				{ year:"2005", lyr:durm.aerials2005 },
+				{ year:"2008", lyr:durm.satellite2008 },
+				{ year:"2008", lyr:durm.aerials2008 },
+				{ year:"2010", lyr:durm.aerials2010 },
+				{ year:"2013", lyr:durm.aerials2013 },
+				{ year:"2014", lyr:durm.nearmap2014 },
+				{ year:"2015", lyr:durm.nearmap2015_spring },
+				{ year:"2015", lyr:durm.nearmap2015_fall },
+				{ year:"2016", lyr:durm.nearmap2016_spring },
+				{ year:"2016", lyr:durm.nearmap2016_fall },
+				{ year:"2017", lyr:durm.aerials2017 },
+				{ year:"2017", lyr:durm.nearmap2017_spring1 },
+				{ year:"2017", lyr:durm.nearmap2017_spring2 },
+				{ year:"2017", lyr:durm.nearmap2017_fall },
+				{ year:"2018", lyr:durm.nearmap2018_spring },
+				{ year:"2018", lyr:durm.nearmap2018_fall },
+				{ year:"2019", lyr:durm.aerials2019 },
+				{ year:"2019", lyr:durm.nearmap2019_spring1 },				
+				{ year:"2019", lyr:durm.nearmap2019_spring2 },
+				{ year:"2019", lyr:durm.nearmap2019_fall },
+				{ year:"2020", lyr:durm.nearmap2020_spring1 },
+				{ year:"2020", lyr:durm.nearmap2020_spring2 },
+				{ year:"2020", lyr:durm.nearmap2020_fall },
+				{ year:"2021", lyr:durm.nearmap2021_spring1 },
+				{ year:"2021", lyr:durm.aerials2021 }
+				]					
+				
+			let sliderholder = document.createElement('div')
+			sliderholder.id = "sliderDiv"
+			sliderholder.className = "sliderholder"
+			document.getElementById("bodycontainer").appendChild(sliderholder);
+
+			//let values = []				
+			for (i = 0; i < aeriallist.length; i++) {
+				console.log(aeriallist[i])
+				console.log(aeriallist[i].year)
+			}
+			//end slider
+
+			let sliderinput = document.createElement("input") //note :input elements for sliders styled globally.
+			sliderinput.id = "rangeinput"
+			sliderinput.type = "range"
+			sliderinput.min = 0;
+			sliderinput.value = 0;
+			sliderinput.max = aeriallist.length-1; //last item[]
+			sliderholder.appendChild(sliderinput)
+
+			let sliderlabel = document.createElement('div')
+			sliderlabel.id = "outputlabel"
+			sliderholder.appendChild(sliderlabel)
+
+			var input = document.getElementById('rangeinput'), output = document.getElementById('outputlabel');
+			input.oninput = function(){
+					output.innerHTML = aeriallist[this.value].lyr.title;
+					for (i = 0; i < aeriallist.length; i++) {
+						if(i == this.value) {
+							aeriallist[i].lyr.visible = true;
+						}
+						else { 
+							aeriallist[i].lyr.visible = false;
+						}
+					}
+			};
+			input.oninput();
 		},
 		handle_layer_loading_failure: async function(l0){
 			console.log("Caught: Layer Failed to Load")

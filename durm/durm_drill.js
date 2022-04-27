@@ -3,7 +3,9 @@ Matt Reames, 2019-2020
 This module handles the logic of the advanced parcel popup
 */
  define([
-	  "esri/tasks/QueryTask","esri/tasks/support/Query",
+	  "esri/tasks/QueryTask",
+		"esri/tasks/support/Query",
+		//"esri/rest/support/Query",
 	  "../durm/durm_pdf.js",
 	  "esri/geometry/geometryEngine"
     ], function(QueryTask, Query,
@@ -506,7 +508,7 @@ This module handles the logic of the advanced parcel popup
 					.execute(advquery.PARCEL_INTERSECT_QUERY_WGEOMETRY)
 					.then(function(results) {
 						try {
-							drillscope.print_pct_results(results,"Parks and Recreation Facility Impact Fee Zone","IMPACT_FEE_ZONE");
+							drillscope.print_pct_results(results,"Parks and Recreation Facility Impact Fee Zone","ZONENAME");
 						} catch (e) { console.log(e); }
 						});
 					IMPACT_OPENSPACE_QT

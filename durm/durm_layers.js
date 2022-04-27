@@ -15,7 +15,7 @@ define([
 		// This is super important
     populate: async function(){
 			try {//	
-				dlscope = this;
+				pplt = this;
 				durm_popups.pre_init();
 
 				durm.cityportal = new Portal({
@@ -168,54 +168,6 @@ define([
 			});
 			durm.map.add(durm.parcellabels);
 
-			/*
-
-			durm.PIDlabels = new MapImageLayer({
-				id: "PIDlabels",
-				spatialReference: { wkid: 102100 },
-				title: "Parcel ID Labels",
-				listMode: "show",
-				listcategory: "Cartographic",
-				layer_order:0,
-				lyr_zindex:7,
-				url: PROPERTYINFO,
-				icon: "DUR",
-				minScale: 2260,
-				maxScale: 0,
-				layerId: 4,
-				visible: false,
-				sublayers:[
-					{
-						id: 4,
-						visible: true
-					}
-				],
-			});
-			durm.map.add(durm.PIDlabels);*/
-
-			/*const parcelidlabelClass = { // autocasts as new LabelClass()
-				symbol: {
-					type: "text", // autocasts as new TextSymbol()
-					color: "black",
-					haloColor: "white",
-					haloSize: "0.8px",
-					yoffset: "5pt",
-					xoffset: 0,
-					font: { // autocast as new Font()
-						family: "sans-serif",
-						size: 9,
-						weight: "bold",
-						decoration: "none",
-						style: "normal"
-					}
-				},
-					labelPlacement: "always-horizontal", // This changes between polygon/point/line
-					minScale: 3000,
-					labelExpressionInfo: {
-						expression: "$feature.PARCEL_ID"
-					}
-				};
-			parcelidlabelClass.deconflictionStrategy = "none";*/
 
 			durm.parcelboundaryLayer = new FeatureLayer({
 				id: "parcels",
@@ -654,7 +606,6 @@ define([
 			});
 			durm.map.add(durm.airportoverlay);	
 
-			durm.easterndurhamopenspaceplan
 
 			durm.EDOSPgroup = new GroupLayer({
 				id: "EDOSP",
@@ -698,10 +649,18 @@ define([
 			});
 			durm.EDOSPgroup.add(durm.EDOSPWC);
 
-
-
-
-
+			durm.urbangrowthboundary = new FeatureLayer({
+				id: "urbangrowthboundary",
+				title: "Proposed Urban Growth Boundary",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:4,
+				url: UGB_URL,
+				icon: "DUR",
+				visible: false
+			});
+			durm.map.add(durm.urbangrowthboundary);
 
 		},
 		add_permits: async function(){
@@ -853,7 +812,7 @@ define([
 			durm.map.add(durm.TCHI);	
 		},
 		add_environmental: async function(){
-			durm.elevation_2010 = new TileLayer({
+			durm.elevation_2010 = new MapImageLayer({
 				id: "elevation_2010",
 				title: "Elevation 2010",
 				listMode: "show",
@@ -865,6 +824,7 @@ define([
 				visible: false
 			});
 			durm.map.add(durm.elevation_2010);
+
 
 			durm.soilslayer = new TileLayer({
 				id: "soilslayer",
@@ -880,7 +840,7 @@ define([
 			});				
 			durm.map.add(durm.soilslayer);
 
-			durm.NWIlayer = new TileLayer({
+			durm.NWIlayer = new MapImageLayer({
 					id: "NWIlayer",
 					title: "National Wetland Inventory",
 					listMode: "show",
@@ -2092,7 +2052,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.brownfields);	
+			pplt.add_to_map(durm.brownfields);	
 		
 			durm.drycleaning = new FeatureLayer({
 				id: "drycleaning",
@@ -2105,7 +2065,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.drycleaning);	
+			pplt.add_to_map(durm.drycleaning);	
 
 			durm.hazwaste = new FeatureLayer({
 				id: "hazwaste",
@@ -2118,7 +2078,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.hazwaste);
+			pplt.add_to_map(durm.hazwaste);
 
 			durm.inactivehazsites = new FeatureLayer({
 				id: "inactivehazsites",
@@ -2131,7 +2091,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.inactivehazsites);
+			pplt.add_to_map(durm.inactivehazsites);
 
 			durm.active_permitted_landfills = new FeatureLayer({
 				id: "active_permitted_landfills",
@@ -2144,7 +2104,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.active_permitted_landfills);
+			pplt.add_to_map(durm.active_permitted_landfills);
 
 			durm.state_hydrography = new FeatureLayer({
 				id: "state_hydrography",
@@ -2157,7 +2117,7 @@ define([
 				icon: "NC",
 				visible: false
 			});
-			durm.map.add(durm.state_hydrography); 
+			pplt.add_to_map(durm.state_hydrography); 
 
 			const statelandlabelClass = { // autocasts as new LabelClass()
 				symbol: {
@@ -2194,41 +2154,7 @@ define([
 				visible: false,
 				labelingInfo: [statelandlabelClass],
 			});
-			durm.map.add(durm.state_owned_land);
-			durm.state_owned_land.when(function(){})
-			.catch(function(error){
-				dlscope.handle_layer_loading_failure(error);
-			});
-
-				/*
-				durm.state_geology = new FeatureLayer({
-				  id: "state_geology",
-				  title: "Geological Regions of NC",
-					listMode: "show",
-					listcategory: "Environmental",
-					layer_order:0,
-					lyr_zindex:2,
-					url: GEOLOGY_URL,
-					icon: "NC",
-					opacity:0.55,
-				  visible: false
-				});
-				durm.map.add(durm.state_geology); 
-
-				durm.NPDES_sites = new FeatureLayer({
-				  id: "NPDES_sites",
-				  title: "NPDES Sites (National Pollutant Discharge Elimination System)",
-					listMode: "show",
-					listcategory: "Environmental",
-					layer_order:0,
-					lyr_zindex:8,
-					url: NPDES_URL,
-					icon: "USA",
-					opacity:1,
-				  visible: false
-				});
-				durm.map.add(durm.NPDES_sites); 
-				*/
+			pplt.add_to_map(durm.state_owned_land)
 		},
 		add_transportation: async function(){
 			  durm.STREETMAINT = new FeatureLayer({
@@ -2242,7 +2168,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-			  durm.map.add(durm.STREETMAINT);
+			  pplt.add_to_map(durm.STREETMAINT);
 			  
 			  durm.major_transportation_corridor = new FeatureLayer({
 				  id: "major_transportation_corridor",
@@ -2255,7 +2181,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.major_transportation_corridor); 
+				pplt.add_to_map(durm.major_transportation_corridor); 
 
 				
 				durm.speedhumps = new FeatureLayer({
@@ -2269,7 +2195,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.speedhumps);  
+				pplt.add_to_map(durm.speedhumps);  
 				
 			  durm.sidewalkslayer = new FeatureLayer({
 				  id: "sidewalkslayer",
@@ -2282,7 +2208,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.sidewalkslayer);  
+				pplt.add_to_map(durm.sidewalkslayer);  
 
 				durm.poles = new FeatureLayer({
 				  id: "poles",
@@ -2295,7 +2221,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.poles); 
+				pplt.add_to_map(durm.poles); 
 
 				durm.signals = new FeatureLayer({
 				  id: "signals",
@@ -2308,7 +2234,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.signals); 
+				pplt.add_to_map(durm.signals); 
 			  
 				durm.DATA_Bus_Group = new GroupLayer({
 				  id: "DATA_Bus_Group",
@@ -2320,7 +2246,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.DATA_Bus_Group);
+				pplt.add_to_map(durm.DATA_Bus_Group);
 
 				durm.busstops = new FeatureLayer({
 				  id: "busstops",
@@ -2358,7 +2284,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-				durm.map.add(durm.DOLRTgroup);
+				pplt.add_to_map(durm.DOLRTgroup);
 			  			  
 			  durm.DOLRTlines = new MapImageLayer({
 				  id: "DOLRTlines",
@@ -2447,7 +2373,7 @@ define([
 					icon: "DUR",
 				  visible: false
 				});
-			  durm.map.add(durm.BIKEFACILITIES);  
+			  pplt.add_to_map(durm.BIKEFACILITIES);  
 			  
 			  durm.DCHCMPO = new FeatureLayer({
 				  id: "DCHCMPO",
@@ -2458,26 +2384,13 @@ define([
 					lyr_zindex:2,
 					url: DCHCMPO_URL,
 					icon: "NC",
-				  visible: false
+				  visible: false,
+					popupEnabled:false
 				});
-				durm.map.add(durm.DCHCMPO); 
+				pplt.add_to_map(durm.DCHCMPO); 
 		},
 		add_utilities: async function(){				
 				//utilities				
-			  /*durm.solidwastedayslayer = new FeatureLayer({
-				  id: "solidwastedayslayer",
-				  title: "Solid Waste Days",
-					listMode: "show",
-					listcategory: "Utilities",
-					layer_order:0,
-					lyr_zindex:2,
-					url: SOLID_WASTE_URL,
-					icon: "DUR",
-				  visible: false,
-				  opacity: 0.9
-				});
-				durm.map.add(durm.solidwastedayslayer);	*/
-
 				durm.watershedslayer = new FeatureLayer({
 					id: "watershedslayer",
 					title: "Stormwater Regulatory Basins (Watersheds)",
@@ -2490,7 +2403,7 @@ define([
 					visible: false,
 					opacity: 0.55
 				});				
-				durm.map.add(durm.watershedslayer);	
+				pplt.add_to_map(durm.watershedslayer);	
 				
 				//sw
 				durm.stormwatergroup = new MapImageLayer({
@@ -2507,7 +2420,7 @@ define([
 							portal:durm.cityportal
 						}
 					});
-				durm.map.add(durm.stormwatergroup);
+				pplt.add_to_map(durm.stormwatergroup);
 
 				durm.waterlayer = new MapImageLayer({
 					id: "waterlayer",
@@ -2549,7 +2462,7 @@ define([
 				  visible: false,
 				  opacity: 0.7
 				});
-				durm.map.add(durm.sewershedslayer);	
+				pplt.add_to_map(durm.sewershedslayer);	
 
 				durm.stormsewersheds = new FeatureLayer({
 				  id: "stormsewersheds",
@@ -2563,7 +2476,7 @@ define([
 				  visible: false,
 				  opacity: 0.7
 				});
-				durm.map.add(durm.stormsewersheds);
+				pplt.add_to_map(durm.stormsewersheds);
 
 				durm.citysewerdrainingtocounty = new FeatureLayer({
 				  id: "citysewerdrainingtocounty",
@@ -2577,7 +2490,7 @@ define([
 				  visible: false,
 				  opacity: 0.7
 				});
-				durm.map.add(durm.citysewerdrainingtocounty);
+				pplt.add_to_map(durm.citysewerdrainingtocounty);
 		},
 		add_other: async function(){
 				//safety
@@ -2592,7 +2505,7 @@ define([
 				  url: EM_MITIGATION_FACILITIES,
 				  visible: false
 				});
-				durm.map.add(durm.emmitigationlayer);
+				pplt.add_to_map(durm.emmitigationlayer);
 
 				//recreation
 				durm.trailslayer = new MapImageLayer({
@@ -2626,7 +2539,7 @@ define([
 						}]
 					}]
 				});
-				durm.map.add(durm.trailslayer);
+				pplt.add_to_map(durm.trailslayer);
 
 
 			  durm.recandaqua = new FeatureLayer({
@@ -2641,7 +2554,7 @@ define([
 				  visible: false,
 				  opacity: 0.95
 				});
-			  durm.map.add(durm.recandaqua);
+			  pplt.add_to_map(durm.recandaqua);
 
 			  durm.parkslayer = new FeatureLayer({
 				  id: "parkslayer",
@@ -2667,11 +2580,18 @@ define([
 					},
 				  opacity: 0.95
 				});
-			  durm.map.add(durm.parkslayer);
+			  pplt.add_to_map(durm.parkslayer);
 		},
 		handle_layer_loading_failure: async function(l0){
-			console.log("Layer Failed to Load")
+			console.log("Caught: Layer Failed to Load")
 			console.log(l0)
+		},
+		add_to_map: async function(l0){
+			durm.map.add(l0)
+			l0.when(function(){})
+			.catch(function(error){
+				pplt.handle_layer_loading_failure(error);
+			});
 		}
 		
 };

@@ -3,15 +3,13 @@ Matt Reames, 2019
 This module controls the default ESRI popup situation
 */
 define([
-	"esri/rest/query",
   "esri/tasks/QueryTask",
-  //"esri/tasks/support/Query",
-	"esri/rest/support/Query",
-	"esri/rest/support/RelationshipQuery",
+  "esri/tasks/support/Query",
+	//"esri/rest/support/Query",
 	"esri/geometry/geometryEngine",
   "../durm/durm_pdf.js",
 	"../durm/durm_drill.js"
-], function(query, QueryTask, Query, RelationshipQuery, geometryEngine, durm_pdf, durm_drill
+], function(QueryTask, Query, geometryEngine, durm_pdf, durm_drill
 	) {
 		return {
 			pre_init: function(){

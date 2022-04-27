@@ -26,7 +26,6 @@ define([
         durm.all_planner_button = document.getElementById("all_planner_button");
         durm.planner_checkboxes = document.getElementById("planner-checkboxes");
 
-
         //independent popup control
         durm.fire_devcase_popup = function(caseid){	durm_popups.load_case_popup(caseid)	}
         durm.fire_allpermit_popup = function(permitid){	durm_popups.load_permit_popup(permitid)	}
@@ -35,7 +34,6 @@ define([
         durm.fire_mechpermit_popup = function(permitid){	durm_popups.load_mechpermit_popup(permitid)	}
         durm.fire_elecpermit_popup = function(permitid){	durm_popups.load_elecpermit_popup(permitid)	}
         durm.fire_plumpermit_popup = function(permitid){	durm_popups.load_plumpermit_popup(permitid)	}
-        durm.fire_parcel_popup = function(parcelid){ durm_popups.load_parcel_popup(target_parcel)	}
 
         d = new Date();
 				yearnum = d.getFullYear();
@@ -71,7 +69,6 @@ define([
             fillOpacity: 0.25
           }
         });
-
         
         esriConfig.geometryService = new GeometryService(geometryservice_url);
 

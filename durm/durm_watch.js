@@ -35,18 +35,14 @@ define([
             //Remember that some of these are not always Parcel popups, they could be any layer that has a popup
             durm.mapView.popup.when(() => {
               watchUtils.watch(durm.mapView.popup, "selectedFeature", function(v) {
-                //console.log(v)
                 if(v==null) {
-                  //console.log("v was null")
                   durm.pidparam = "NA"
                 }
                 else {
                   if(v.layer==null){
-                    //console.log("v.layer is null")
+                    durm.pidparam = "NA"
                   }
                   else {
-                    //console.log("ok")
-                    //console.log(v.layer.id)
                     if(v.layer.id == "parcels") {
                       durm.pidparam = v.attributes.PARCEL_ID
                     }
@@ -174,8 +170,6 @@ define([
             cb1.addEventListener("click", function(){
               document.getElementById("layerpanel").classList.remove("is-visible")
             });
-
-            durm.state_owned_land
 
           } catch (e) { console.log(e); }
         }

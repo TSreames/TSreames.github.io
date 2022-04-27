@@ -124,8 +124,6 @@ define([
 			});
 		},
 
-		//  This function is a huge ridiculous mess that needs to be cleaned up
-		//  Mainly because of all the code needed for the draw tools
 		draw_initial_widgets: function() {
 			try {
 				durm.mapView.popup.collapseEnabled = false;
@@ -169,14 +167,14 @@ define([
 				durm.mapView.ui.add([ durm.compassWidget,durm.bgExpand, durm.printExpand ], "top-right");
 
 				//scalebar
-				let sd = document.createElement("div");
-				document.body.appendChild(sd);
-				sd.classList.add("scale_div") 
-				durm.scaleWidget = new ScaleBar({
-					view: durm.mapView,
-					unit:"non-metric"
-				});
-				durm.scaleWidget.container = sd;
+				//let sd = document.createElement("div");
+				//document.body.appendChild(sd);
+				//sd.classList.add("scale_div") 
+				//durm.scaleWidget = new ScaleBar({
+				//	view: durm.mapView,
+				//	unit:"non-metric"
+				//});
+				//durm.scaleWidget.container = sd;
 
 				// Bindings for "Aerial" and "Map" buttons in mdc menu. 
 				durm.toggle_simple_basemap = document.getElementById("toggle_simple_basemap");
@@ -682,7 +680,6 @@ define([
 								if(r.visible) { 
 									r.visible = false
 									lyrctrlscope.ensure_not_in_url(r);
-									console.log("inp.addEventListener fired ensure_not_in_url")
 								} else { 
 									r.visible = true 
 									lyrctrlscope.add_to_url(r);
@@ -751,7 +748,6 @@ define([
 							watchUtils.whenFalse(r, "visible", function() {
 								inp.checked = false;							
 								lyrctrlscope.ensure_not_in_url(r);
-								//console.log("watchUtils.whenFalse fired ensure_not_in_url")
 							});
 						}
 					});

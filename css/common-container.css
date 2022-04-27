@@ -5,6 +5,7 @@ body {
   margin: 0;
   border: 0;
   width: 100%;
+  height:100%;
   vertical-align: baseline;
   background-color:#EDE9DA;
   -webkit-font-smoothing: subpixel-antialiased;
@@ -14,7 +15,7 @@ button {
 }
 body {
 	display: flex;
-	height: 100vh;
+	height: 100%;
 	font-size:1.0em;
 }
 
@@ -40,7 +41,7 @@ h4 { color:#111;
 	/*font-family:"Avenir Next W01","Avenir Next W00","Avenir Next","Avenir","Helvetica Neue",sans-serif;	*/
 }
 
-#bodycontainer { position: absolute; top:0; bottom:0; right:0; left:0; z-index:4; overflow:hidden; }
+#bodycontainer { position: absolute; top:0; bottom:0; right:0; left:0; z-index:4; overflow:hidden; border:1px solid red; }
 
 #mapViewDiv a {
 		color:#63a145;

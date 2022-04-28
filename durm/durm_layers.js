@@ -1733,6 +1733,42 @@ define([
 			});				
 			durm.map.add(durm.aerials1940);
 
+			durm.nearmap2022_spring1 = new ImageryLayer({
+				id: "nearmap2022_spring1",
+				title: "2022 Nearmap Aerials, Feb",
+				listMode: "show",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:0,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-02-01 20:10:05' AND TIMESTAMP '2022-02-07 20:20:20'"
+			});				
+			durm.map.add(durm.nearmap2022_spring1);
+
+			durm.nearmap2021_fall = new ImageryLayer({
+				id: "nearmap2021_fall",
+				title: "2021 Nearmap Aerials, Nov",
+				listMode: "show",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:0,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-11-01 20:10:05' AND TIMESTAMP '2021-12-01 20:20:20'"
+			});				
+			durm.map.add(durm.nearmap2021_fall);
+
 
 			durm.nearmap2021_spring2 = new ImageryLayer({
 				id: "nearmap2021_spring2",
@@ -1747,6 +1783,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-05-01 20:10:05' AND TIMESTAMP '2021-06-05 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2021_spring2);
@@ -1764,6 +1801,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-01-01 20:10:05' AND TIMESTAMP '2021-02-05 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2021_spring1);
@@ -1781,6 +1819,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-09-01 20:10:05' AND TIMESTAMP '2020-10-02 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2020_fall);	
@@ -1798,6 +1837,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-05-01 20:10:05' AND TIMESTAMP '2020-07-02 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2020_spring2);	
@@ -1815,6 +1855,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-01-01 20:10:05' AND TIMESTAMP '2020-02-02 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2020_spring1);	
@@ -1832,6 +1873,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-10-01 20:10:05' AND TIMESTAMP '2019-12-01 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2019_fall);	
@@ -1849,6 +1891,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-05-01 20:10:05' AND TIMESTAMP '2019-06-01 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2019_spring2);	
@@ -1866,6 +1909,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-01-01 20:10:05' AND TIMESTAMP '2019-02-01 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2019_spring1);	
@@ -1883,6 +1927,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-09-01 20:10:05' AND TIMESTAMP '2018-11-01 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2018_fall);	
@@ -1900,6 +1945,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-01-01 20:10:05' AND TIMESTAMP '2018-02-26 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2018_spring);	
@@ -1917,6 +1963,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-09-01 20:10:05' AND TIMESTAMP '2017-11-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2017_fall);	
@@ -1934,6 +1981,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-05-01 20:10:05' AND TIMESTAMP '2017-05-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2017_spring2);			
@@ -1951,6 +1999,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-01-01 20:10:05' AND TIMESTAMP '2017-03-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2017_spring1);					
@@ -1968,6 +2017,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-09-01 20:10:05' AND TIMESTAMP '2016-09-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2016_fall);							
@@ -1985,6 +2035,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-02-01 20:10:05' AND TIMESTAMP '2016-03-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2016_spring);				
@@ -2002,6 +2053,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-11-01 20:10:05' AND TIMESTAMP '2015-11-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2015_fall);
@@ -2019,6 +2071,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-03-01 20:10:05' AND TIMESTAMP '2015-03-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2015_spring);
@@ -2036,6 +2089,7 @@ define([
 				opacity:1,
 				minScale:0,
 				maxScale:0,
+				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2014-10-01 20:10:05' AND TIMESTAMP '2014-11-29 20:20:20'"
 			});				
 			durm.map.add(durm.nearmap2014);
@@ -2588,73 +2642,85 @@ define([
 
 		init_aerial_slider: function(){
 			//Slider
-			const aeriallist = [
-				{ year:"1940", lyr:durm.aerials1940 },
-				{ year:"1983", lyr:durm.soils1983 },
-				{ year:"1988", lyr:durm.aerials1988 },
-				{ year:"1994", lyr:durm.aerials1994 },
-				{ year:"1999", lyr:durm.aerials1999 },
-				{ year:"2002", lyr:durm.aerials2002 },
-				{ year:"2005", lyr:durm.aerials2005 },
-				{ year:"2008", lyr:durm.satellite2008 },
-				{ year:"2008", lyr:durm.aerials2008 },
-				{ year:"2010", lyr:durm.aerials2010 },
-				{ year:"2013", lyr:durm.aerials2013 },
-				{ year:"2014", lyr:durm.nearmap2014 },
-				{ year:"2015", lyr:durm.nearmap2015_spring },
-				{ year:"2015", lyr:durm.nearmap2015_fall },
-				{ year:"2016", lyr:durm.nearmap2016_spring },
-				{ year:"2016", lyr:durm.nearmap2016_fall },
-				{ year:"2017", lyr:durm.aerials2017 },
-				{ year:"2017", lyr:durm.nearmap2017_spring1 },
-				{ year:"2017", lyr:durm.nearmap2017_spring2 },
-				{ year:"2017", lyr:durm.nearmap2017_fall },
-				{ year:"2018", lyr:durm.nearmap2018_spring },
-				{ year:"2018", lyr:durm.nearmap2018_fall },
-				{ year:"2019", lyr:durm.aerials2019 },
-				{ year:"2019", lyr:durm.nearmap2019_spring1 },				
-				{ year:"2019", lyr:durm.nearmap2019_spring2 },
-				{ year:"2019", lyr:durm.nearmap2019_fall },
-				{ year:"2020", lyr:durm.nearmap2020_spring1 },
-				{ year:"2020", lyr:durm.nearmap2020_spring2 },
-				{ year:"2020", lyr:durm.nearmap2020_fall },
-				{ year:"2021", lyr:durm.nearmap2021_spring1 },
-				{ year:"2021", lyr:durm.aerials2021 }
-				]					
+			durm.aeriallist = [
+				durm.aerials1940,
+				durm.soils1983,
+				durm.aerials1988,
+				durm.aerials1994,
+				durm.aerials1999,
+				durm.aerials2002,
+				durm.aerials2005,
+				durm.satellite2008,
+				durm.aerials2008,
+				durm.aerials2010,
+				durm.aerials2013,
+				durm.nearmap2014,
+				durm.nearmap2015_spring,
+				durm.nearmap2015_fall,
+				durm.nearmap2016_spring,
+				durm.nearmap2016_fall,
+				durm.aerials2017,
+				durm.nearmap2017_spring1,
+				durm.nearmap2017_spring2,
+				durm.nearmap2017_fall,
+				durm.nearmap2018_spring,
+				durm.nearmap2018_fall,
+				durm.aerials2019,
+				durm.nearmap2019_spring1,				
+				durm.nearmap2019_spring2,
+				durm.nearmap2019_fall,
+				durm.nearmap2020_spring1,
+				durm.nearmap2020_spring2,
+				durm.nearmap2020_fall,
+				durm.nearmap2021_spring1,
+				durm.aerials2021,
+				durm.nearmap2021_fall,
+				durm.nearmap2022_spring1
+			];
+			durm.aeriallist_ids = []
+			durm.aeriallist.forEach(function(r) {
+				durm.aeriallist_ids.push(r.id)
+			});
+			console.log(durm.aeriallist_ids)
+
 				
 			let sliderholder = document.createElement('div')
 			sliderholder.id = "sliderDiv"
 			sliderholder.className = "sliderholder"
+			sliderholder.style.visibility = "hidden";
 			document.getElementById("bodycontainer").appendChild(sliderholder);
-
-			//let values = []				
-			for (i = 0; i < aeriallist.length; i++) {
-				console.log(aeriallist[i])
-				console.log(aeriallist[i].year)
-			}
-			//end slider
 
 			let sliderinput = document.createElement("input") //note :input elements for sliders styled globally.
 			sliderinput.id = "rangeinput"
 			sliderinput.type = "range"
-			sliderinput.min = 0;
-			sliderinput.value = 0;
-			sliderinput.max = aeriallist.length-1; //last item[]
-			sliderholder.appendChild(sliderinput)
 
+			sliderinput.min = 0;
+			sliderinput.value = durm.aeriallist.length-1;
+			sliderinput.max = durm.aeriallist.length-1; //last item[]
+			sliderholder.appendChild(sliderinput)
+/*
+			let dl = document.createElement("datalist")
+			dl.id="tickmarks"
+			for (i = 0; i < durm.aeriallist.length; i++) {
+				let o = document.createElement("option")
+				//	durm.aeriallist[i]
+				dl.append(po)
+			}
+			sliderholder.appendChild(dl)
+*/
 			let sliderlabel = document.createElement('div')
 			sliderlabel.id = "outputlabel"
 			sliderholder.appendChild(sliderlabel)
 
 			var input = document.getElementById('rangeinput'), output = document.getElementById('outputlabel');
 			input.oninput = function(){
-					output.innerHTML = aeriallist[this.value].lyr.title;
-					for (i = 0; i < aeriallist.length; i++) {
+					output.innerHTML = durm.aeriallist[this.value].title;
+					for (i = 0; i < durm.aeriallist.length; i++) {
 						if(i == this.value) {
-							aeriallist[i].lyr.visible = true;
+							durm.aeriallist[i].visible = true;
 						}
 						else { 
-							aeriallist[i].lyr.visible = false;
+							durm.aeriallist[i].visible = false;
 						}
 					}
 			};

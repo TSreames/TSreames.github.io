@@ -119,12 +119,6 @@ define([
 			getDefaultBasemap: function(){
 				return durm.basemaparray[11];
 			},
-			toggle_simple_basemap: function() {
-				return durm.basemaparray[11];
-			},
-			toggle_simple_aerials: function() {
-				return durm.basemaparray[1];
-			},
 			setBasemapID: function(bparam) {
 				durm.map.basemap = durm.basemaparray[bparam];
 			},

@@ -4,12 +4,10 @@ This module is to manage the user interface
 */
 define([
 	"esri/core/watchUtils",
-	"../durm/durm_url.js","../durm/durm_gallery.js",
-	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",//"esri/widgets/Slider",
+	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",
 	"esri/layers/GraphicsLayer"
 	], function(watchUtils,
-		durm_url,durm_gallery,
-		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch, //Slider,
+		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch, 
 		GraphicsLayer
     ) {
   	return {
@@ -42,6 +40,7 @@ define([
 
 				document.getElementById('logobutton').addEventListener('click', (event) => {
 					this.set_app_state("default") 
+					this.disable_aerials_mode();
 				});
 
 				// Google Stuff after this. 
@@ -177,14 +176,14 @@ define([
 				durm.scaleWidget.container = sd;
 
 				// Bindings for "Aerial" and "Map" buttons in mdc menu. 
-				durm.toggle_simple_basemap = document.getElementById("toggle_simple_basemap");
-				durm.toggle_simple_basemap.addEventListener("click", () => {
-					durm.map.basemap = durm_gallery.toggle_simple_basemap();
+				durm.load_simple_basemap = document.getElementById("load_simple_basemap");
+				durm.load_simple_basemap.addEventListener("click", () => {
+					this.disable_aerials_mode();
+					durm.map.basemap = this.load_simple_basemap();
 				});
-				durm.toggle_simple_aerials = document.getElementById("aerials_button");
-				durm.toggle_simple_aerials.addEventListener("click",() => {
-					//durm.map.basemap = durm_gallery.toggle_simple_aerials();
-					toggle_aerials_mode();
+				durm.enable_aerials_mode = document.getElementById("enable_aerials_mode");
+				durm.enable_aerials_mode.addEventListener("click",() => {
+					this.enable_aerials_mode();
 				});
 
 				//Bindings for "Print" button in mdc menu
@@ -428,6 +427,7 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
+					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -779,6 +779,30 @@ define([
 				push_new_url();
 			} catch (e) { console.log(e); }
 		},
+		enable_aerials_mode: function() {
+			try {
+				let sd00 = document.getElementById("sliderDiv")
+				sd00.style.visibility = "visible";
+				let m = durm.aeriallist.length-1;
+				durm.aeriallist[m].visible = true;
+			} catch (e) { console.log(e); }
+		},
+		disable_aerials_mode: function() {
+			try {
+				this.ensure_all_aerials_nonvisible();
+				let sd00 = document.getElementById("sliderDiv")
+				sd00.style.visibility = "hidden";				
+			} catch (e) { console.log(e); }
+		},
+		ensure_all_aerials_nonvisible: function() {
+			for (i = 0; i < durm.aeriallist.length; i++) {
+				durm.aeriallist[i].visible = false;
+			}
+		},
+		load_simple_basemap: function() {
+			return durm.basemaparray[11];
+		},
+
 
 		// This is critical to layer ordering, what layers draw on top of one another, which all must be pre-set at the very beginning, ONCE and never changes.
 		// This is very slow and very inefficient (blame ESRI on that) and is therefore only run at the beginning.

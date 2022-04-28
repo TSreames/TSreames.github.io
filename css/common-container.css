@@ -587,11 +587,16 @@ height:40px;
 .sliderholder {
 	background:#fff;
 	width:50%;
-	height:100px;
+	height:80px;
 	position:absolute;
 	bottom:2%;
 	right:2%;
 	z-index:52;
+}
+
+#outputlabel {
+	margin-left:1.4%;
+	font-weight:600;
 }
 
 input[type=range] {
@@ -619,7 +624,7 @@ input[type=range]::-webkit-slider-thumb {
   height: 20px;
   width: 40px;
   border-radius: 12px;
-  background: #529DE1;
+  background: #72b352;
   cursor: pointer;
   -webkit-appearance: none;
   margin-top: -3px;
@@ -643,7 +648,7 @@ input[type=range]::-moz-range-thumb {
   height: 20px;
   width: 40px;
   border-radius: 12px;
-  background: #529DE1;
+  background: #72b352;
   cursor: pointer;
 }
 input[type=range]::-ms-track {
@@ -674,7 +679,7 @@ input[type=range]::-ms-thumb {
   height: 20px;
   width: 40px;
   border-radius: 12px;
-  background: #529DE1;
+  background: #72b352;
   cursor: pointer;
 }
 input[type=range]:focus::-ms-fill-lower {

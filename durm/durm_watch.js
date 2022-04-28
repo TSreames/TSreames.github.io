@@ -164,6 +164,7 @@ define([
 
             durm.reset_button.addEventListener("click", function(){
               durm_ui.set_app_state("default");
+              durm_ui.disable_aerials_mode();
             });
 
             let cb1 = document.getElementById("closebar1")

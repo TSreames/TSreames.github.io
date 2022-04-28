@@ -2693,10 +2693,6 @@ define([
 				durm.nearmap2021_fall,
 				durm.nearmap2022_spring1
 			];
-			durm.aeriallist_ids = []
-			durm.aeriallist.forEach(function(r) {
-				durm.aeriallist_ids.push(r.id)
-			});
 				
 			let sliderholder = document.createElement('div')
 			sliderholder.id = "sliderDiv"

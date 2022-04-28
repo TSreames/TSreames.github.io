@@ -394,7 +394,7 @@ define([
 			// in the sense that 'default' will forcefully reset ALL the layers, including the ones that were added manually. 
 			// Other app_states will preserve any layers that the user had previously turned on manually.
 			try {
-				durm.map.layers.items.forEach(function(r) {
+				durm.map.layers.items.forEach(function(r) {				
 					// Turn on parcels, address points, and the county mask.
 					if (r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") { r.visible = true }
 
@@ -403,9 +403,7 @@ define([
 
 					// Ignore water and sewer layers, until we can upgrade this functionality.
 					else if(r.id==="sewerlayer" || r.id==="waterlayer") { /*do nothing to these*/ }
-
-					else if (durm.aeriallist_ids.includes(r.id)) {/*do nothing to these*/} 
-					
+									
 					// Ignore graphics.
 					else if(r.type ==="graphics") { /*do nothing to these*/  }
 
@@ -429,7 +427,6 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
-					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -463,7 +460,6 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
-					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -497,7 +493,6 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
-					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -526,7 +521,6 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
-					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -560,7 +554,6 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
-					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -812,6 +805,7 @@ define([
 		},
 
 		load_simple_basemap: function() {
+			console.log("loaded simple mbasemap")
 			return durm.basemaparray[11];
 		},
 

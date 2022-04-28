@@ -16,7 +16,7 @@ define([
 					lyr_zindex:9,
 					listMode: "hide",
 					layer_order:0
-				});
+				});				
 
 				durm.basemaparray = [];
 

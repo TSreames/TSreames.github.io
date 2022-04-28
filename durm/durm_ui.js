@@ -291,14 +291,14 @@ define([
 					this.set_app_state("utilities",durm.layer_state_string)
 				} );
 				//end preset
-				
-
-
-				
 			} catch (e) { console.log(e); }	
 		},
-		// first argument is mandatory, second argument is optional.
+		
+		// Note:  app_state was a poorly-thought out idea, in hindsight. its basically a preset.
+		// Right now it means : zoning, devcases, drainage.  It currently includes Utilities (water sewer) too, but that needs to change at some point.  
+		// We also have a 'mode' which ought (from the users perspective) to act independently of state, switching between 'Map Mode' (Graybase) and 'Aerial Mode' (Aerial switcher)
 		set_app_state: function(state,layerparams){
+			// first argument is mandatory, second argument is optional.
 			durm.app_state_string = state;
 			//history.pushState(null, null, "/?x=" + durm.mapView.center.latitude + "&y=" + durm.mapView.center.longitude + "&z=" + durm.mapView.scale + "&r=" + durm.mapView.rotation + "&b=" + durm.map.basemap.param + "&s=" + durm.app_state_string + "&l=" + durm.layer_state_string);
 			switch(state) {
@@ -403,6 +403,8 @@ define([
 
 					// Ignore water and sewer layers, until we can upgrade this functionality.
 					else if(r.id==="sewerlayer" || r.id==="waterlayer") { /*do nothing to these*/ }
+
+					else if (durm.aeriallist_ids.includes(r.id)) {/*do nothing to these*/} 
 					
 					// Ignore graphics.
 					else if(r.type ==="graphics") { /*do nothing to these*/  }
@@ -461,6 +463,7 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
+					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -494,6 +497,7 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
+					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -522,6 +526,7 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
+					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -555,6 +560,7 @@ define([
 					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
 					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
 					else if(r.id === "graphics") {}
+					else if (durm.aeriallist_ids.includes(r.id)) {} 
 					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
 					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
 					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
@@ -779,26 +785,32 @@ define([
 				push_new_url();
 			} catch (e) { console.log(e); }
 		},
+
+		//This should work for both (A) totally new its state		(B) resetting a previously used state
 		enable_aerials_mode: function() {
 			try {
 				let sd00 = document.getElementById("sliderDiv")
 				sd00.style.visibility = "visible";
-				let m = durm.aeriallist.length-1;
-				durm.aeriallist[m].visible = true;
+				durm.aeriallist[durm.defaultaerialid].visible = true;
+				durm.aeriallabelsVT.visible = true;
+				durm.map.basemap = durm.basemaparray[4];
+				durm.sliderinput.value = durm.defaultaerialid;
+				durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer
 			} catch (e) { console.log(e); }
-		},
+		},		
 		disable_aerials_mode: function() {
 			try {
-				this.ensure_all_aerials_nonvisible();
 				let sd00 = document.getElementById("sliderDiv")
-				sd00.style.visibility = "hidden";				
+				sd00.style.visibility = "hidden";	
+				durm.aeriallabelsVT.visible = false;
+				for (i = 0; i < durm.aeriallist.length; i++) {
+					durm.aeriallist[i].visible = false;
+				}
+				durm.map.basemap = durm.basemaparray[11];
+				durm.parcelboundaryLayer.renderer = parcelboundaryRenderer
 			} catch (e) { console.log(e); }
 		},
-		ensure_all_aerials_nonvisible: function() {
-			for (i = 0; i < durm.aeriallist.length; i++) {
-				durm.aeriallist[i].visible = false;
-			}
-		},
+
 		load_simple_basemap: function() {
 			return durm.basemaparray[11];
 		},

@@ -3,10 +3,12 @@ Matt Reames, 2019-21
 This controls almost all the operational layers
 */
 define([
+	"esri/portal/PortalItem",
 	  "esri/layers/FeatureLayer","esri/layers/TileLayer","esri/layers/MapImageLayer","esri/layers/GroupLayer","esri/layers/VectorTileLayer","esri/layers/ImageryLayer",
 	  "esri/tasks/QueryTask","esri/portal/Portal",
 		"../durm/durm_popups.js", "../durm/durm_devcases.js", "../durm/durm_search.js"
 		], function(
+			PortalItem,
 			FeatureLayer, TileLayer, MapImageLayer, GroupLayer, VectorTileLayer,ImageryLayer,
 			QueryTask,  Portal,
 			durm_popups, durm_devcases, durm_search
@@ -1536,6 +1538,20 @@ define([
 			durm.map.add(durm.councilwardslayer);	
 		},
 		add_aerials: async function(){
+			/* This is used for labeling during Aerial Mode.  It is not turned on/off via layerlist. */
+			durm.aeriallabels_item = new PortalItem({ id: "eb214cb984ac42ad9156977c52c1bdb7" });	  
+			durm.aeriallabelsVT = new VectorTileLayer({ 
+				id: "aeriallabels",
+				title: "Road Labels for Aerial Photos",
+				listcategory: "Cartographic",
+				portalItem:durm.aeriallabels_item,
+				layer_order:0,
+				lyr_zindex:9,
+				listMode: "hide",
+				icon: "DUR",
+				visible: false
+			});
+			durm.map.add(durm.aeriallabelsVT);
 
 			durm.satellite2008_ir = new MapImageLayer({
 				id: "satellite2008_ir",
@@ -2681,8 +2697,6 @@ define([
 			durm.aeriallist.forEach(function(r) {
 				durm.aeriallist_ids.push(r.id)
 			});
-			console.log(durm.aeriallist_ids)
-
 				
 			let sliderholder = document.createElement('div')
 			sliderholder.id = "sliderDiv"
@@ -2690,24 +2704,17 @@ define([
 			sliderholder.style.visibility = "hidden";
 			document.getElementById("bodycontainer").appendChild(sliderholder);
 
-			let sliderinput = document.createElement("input") //note :input elements for sliders styled globally.
-			sliderinput.id = "rangeinput"
-			sliderinput.type = "range"
+			durm.sliderinput = document.createElement("input") //note :input elements for sliders styled globally.
+			durm.sliderinput.id = "rangeinput"
+			durm.sliderinput.type = "range"
 
-			sliderinput.min = 0;
-			sliderinput.value = durm.aeriallist.length-1;
-			sliderinput.max = durm.aeriallist.length-1; //last item[]
-			sliderholder.appendChild(sliderinput)
-/*
-			let dl = document.createElement("datalist")
-			dl.id="tickmarks"
-			for (i = 0; i < durm.aeriallist.length; i++) {
-				let o = document.createElement("option")
-				//	durm.aeriallist[i]
-				dl.append(po)
-			}
-			sliderholder.appendChild(dl)
-*/
+			durm.defaultaerialid = 30; //Note: This is used to specify which aerial is the default, as defined by its place in aeriallist[]
+
+			durm.sliderinput.min = 0;
+			durm.sliderinput.value = durm.defaultaerialid;
+			durm.sliderinput.max = durm.aeriallist.length-1;
+			sliderholder.appendChild(durm.sliderinput)
+
 			let sliderlabel = document.createElement('div')
 			sliderlabel.id = "outputlabel"
 			sliderholder.appendChild(sliderlabel)

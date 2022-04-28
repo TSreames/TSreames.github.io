@@ -592,9 +592,11 @@ height:40px;
 	bottom:2%;
 	right:2%;
 	z-index:52;
+	opacity: 0.9;
 }
 
 #outputlabel {
+	opacity: 1;
 	margin-left:1.4%;
 	font-weight:600;
 }
@@ -628,6 +630,7 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
   -webkit-appearance: none;
   margin-top: -3px;
+	opacity: 1;
 }
 input[type=range]:focus::-webkit-slider-runnable-track {
   background: #50555C;
@@ -650,6 +653,7 @@ input[type=range]::-moz-range-thumb {
   border-radius: 12px;
   background: #72b352;
   cursor: pointer;
+	opacity: 1;
 }
 input[type=range]::-ms-track {
   width: 100%;
@@ -681,6 +685,7 @@ input[type=range]::-ms-thumb {
   border-radius: 12px;
   background: #72b352;
   cursor: pointer;
+	opacity: 1;
 }
 input[type=range]:focus::-ms-fill-lower {
   background: #50555C;

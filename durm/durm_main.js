@@ -69,6 +69,7 @@ define([
             fillOpacity: 0.25
           }
         });
+
         
         esriConfig.geometryService = new GeometryService(geometryservice_url);
 

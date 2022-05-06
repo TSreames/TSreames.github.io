@@ -95,7 +95,7 @@ define([
 				visible: true
 			});
 			durm.active_address_points.minScale = 3000;
-			durm.map.add(durm.active_address_points);
+			pplt.add_to_map(durm.active_address_points);
 			durm.active_address_points.on('error', function(error){
 				console.info(error);
 			});
@@ -168,7 +168,7 @@ define([
 					}
 				],
 			});
-			durm.map.add(durm.parcellabels);
+			pplt.add_to_map(durm.parcellabels);
 
 
 			durm.parcelboundaryLayer = new FeatureLayer({
@@ -191,7 +191,7 @@ define([
 				}
 			});
 			durm.parcelboundaryLayer.minScale = 18000;
-			durm.map.add(durm.parcelboundaryLayer);
+			pplt.add_to_map(durm.parcelboundaryLayer);
 			durm.parcelrecordquerytask = new QueryTask({ url: PARCELS_AGOL });
 
 			durm.countymask = new VectorTileLayer({
@@ -206,7 +206,7 @@ define([
 				visible: true,
 				opacity:0.85
 			});				
-			durm.map.add(durm.countymask);
+			pplt.add_to_map(durm.countymask);
 		},
 		add_administrative: async function(){
 			durm.cityboundaryLayer = new FeatureLayer({
@@ -221,7 +221,7 @@ define([
 				popupEnabled: false,
 				visible: false
 			});				
-			durm.map.add(durm.cityboundaryLayer);
+			pplt.add_to_map(durm.cityboundaryLayer);
 
 			
 			durm.countyboundarylayer = new FeatureLayer({
@@ -236,7 +236,7 @@ define([
 				popupEnabled: false,
 				visible: false
 			});				
-			durm.map.add(durm.countyboundarylayer);
+			pplt.add_to_map(durm.countyboundarylayer);
 
 			durm.citymask = new VectorTileLayer({
 				id: "citymask",
@@ -250,7 +250,7 @@ define([
 				visible: false,
 				opacity:0.85
 			});				
-			durm.map.add(durm.citymask);	
+			pplt.add_to_map(durm.citymask);	
 
 			durm.parcellabels = new MapImageLayer({
 				id: "parcellabels",
@@ -271,7 +271,7 @@ define([
 				],
 				visible: false
 			});
-			durm.map.add(durm.parcellabels);	
+			pplt.add_to_map(durm.parcellabels);	
 
 			durm.orangepars = new FeatureLayer({
 				id:"orangepars",
@@ -284,7 +284,7 @@ define([
 				url: ORANGE_URL,
 				definitionExpression: "Zoning_Admin = 'Durham'"	
 			});
-			durm.map.add(durm.orangepars);
+			pplt.add_to_map(durm.orangepars);
 			durm.parcelrecordquerytask_o = new QueryTask({ url: ORANGE_URL });
 
 			
@@ -299,7 +299,7 @@ define([
 				url: WAKE_URL,
 				definitionExpression: "CITY = 'DUR'"
 			});
-			durm.map.add(durm.wakepars);
+			pplt.add_to_map(durm.wakepars);
 			durm.parcelrecordquerytask_w = new QueryTask({ url: WAKE_URL });
 
 			durm.RTPboundarylayer = new FeatureLayer({
@@ -313,7 +313,7 @@ define([
 				url: RTP_BOUNDARY_URL,
 				visible: false
 			});
-			durm.map.add(durm.RTPboundarylayer);	
+			pplt.add_to_map(durm.RTPboundarylayer);	
 
 			durm.taxdistrictslayer = new FeatureLayer({
 				id: "taxdistricts",
@@ -328,7 +328,7 @@ define([
 				visible: false,
 				opacity:0.85
 			});
-			durm.map.add(durm.taxdistrictslayer);
+			pplt.add_to_map(durm.taxdistrictslayer);
 
 			durm.code_officer_areas = new FeatureLayer({
 				id: "code_officer_areas",
@@ -342,7 +342,7 @@ define([
 				opacity: 0.95,
 				visible: false
 			});
-			durm.map.add(durm.code_officer_areas);
+			pplt.add_to_map(durm.code_officer_areas);
 		},
 		add_planning: async function(){
 			durm.caseLayer = new FeatureLayer({
@@ -359,7 +359,7 @@ define([
 				renderer: renderer_cases,
 				popupTemplate: caseLayer_popup
 			});
-			durm.map.add(durm.caseLayer);
+			pplt.add_to_map(durm.caseLayer);
 
 			durm.transitionalofficeoverlay = new FeatureLayer({
 				id: "transitionalofficeoverlay",
@@ -372,7 +372,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.transitionalofficeoverlay);
+			pplt.add_to_map(durm.transitionalofficeoverlay);
 			
 			durm.watershedprotectionoverlay = new FeatureLayer({
 				id: "watershednotification",
@@ -385,7 +385,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.watershedprotectionoverlay);
+			pplt.add_to_map(durm.watershedprotectionoverlay);
 			const npolabelClass = { // autocasts as new LabelClass()
 				symbol: {
 					type: "text", // autocasts as new TextSymbol()
@@ -438,7 +438,7 @@ define([
 				visible: false,
 				opacity: 0.9
 			});
-			durm.map.add(durm.NPOlayer);
+			pplt.add_to_map(durm.NPOlayer);
 			
 			
 			//Natl Historic Districts
@@ -476,7 +476,7 @@ define([
 				visible: false,
 				opacity: 0.9
 			});
-			durm.map.add(durm.NHDlayer);
+			pplt.add_to_map(durm.NHDlayer);
 
 
 			durm.LocHistLandmarks = new FeatureLayer({
@@ -491,7 +491,7 @@ define([
 				visible: false,
 				opacity: 0.9
 			});
-			durm.map.add(durm.LocHistLandmarks);
+			pplt.add_to_map(durm.LocHistLandmarks);
 
 
 			durm.LocHistDist = new FeatureLayer({
@@ -506,7 +506,7 @@ define([
 				visible: false,
 				opacity: 0.9
 			});
-			durm.map.add(durm.LocHistDist);
+			pplt.add_to_map(durm.LocHistDist);
 
 			durm.zoninglayer = new TileLayer({
 				id: "zoning",
@@ -520,7 +520,7 @@ define([
 				visible: false,
 				opacity: 1
 			});
-			durm.map.add(durm.zoninglayer);
+			pplt.add_to_map(durm.zoninglayer);
 			
 			durm.FLUlayer = new TileLayer({
 				id: "FLU",
@@ -534,7 +534,7 @@ define([
 				visible: false,
 				opacity: 1
 			});
-			durm.map.add(durm.FLUlayer);
+			pplt.add_to_map(durm.FLUlayer);
 
 			durm.STREETSIMPACTFEEZONE = new FeatureLayer({
 				id: "STREETSIMPACTFEEZONE",
@@ -548,7 +548,7 @@ define([
 				visible: false,
 				opacity: 0.95
 			});
-			durm.map.add(durm.STREETSIMPACTFEEZONE);
+			pplt.add_to_map(durm.STREETSIMPACTFEEZONE);
 			
 			durm.OPENSPACEIMPACTFEEZONE = new FeatureLayer({
 				id: "OPENSPACEIMPACTFEEZONE",
@@ -562,7 +562,7 @@ define([
 				visible: false,
 				opacity: 0.95
 			});
-			durm.map.add(durm.OPENSPACEIMPACTFEEZONE);
+			pplt.add_to_map(durm.OPENSPACEIMPACTFEEZONE);
 
 			durm.PARKSIMPACTFEEZONES = new FeatureLayer({
 				id: "PARKSIMPACTFEEZONES",
@@ -576,7 +576,7 @@ define([
 				visible: false,
 				opacity: 0.95
 			});
-			durm.map.add(durm.PARKSIMPACTFEEZONES);	
+			pplt.add_to_map(durm.PARKSIMPACTFEEZONES);	
 			
 			/* Note for future reference --  Development Tiers should use server-side rendering because the 'urban' tier has a big donut hole that causes problems in client-side labeling. */	
 			durm.developmenttiers = new MapImageLayer({
@@ -593,7 +593,7 @@ define([
 				icon: "DUR",
 				visible: false,  
 			});
-			durm.map.add(durm.developmenttiers);
+			pplt.add_to_map(durm.developmenttiers);
 
 			durm.airportoverlay = new FeatureLayer({
 				id: "airportoverlay",
@@ -606,7 +606,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.airportoverlay);	
+			pplt.add_to_map(durm.airportoverlay);	
 
 
 			durm.EDOSPgroup = new GroupLayer({
@@ -619,7 +619,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.EDOSPgroup);
+			pplt.add_to_map(durm.EDOSPgroup);
 							
 			durm.EDOSPB = new MapImageLayer({
 				id: "EDOSPB",
@@ -662,7 +662,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.urbangrowthboundary);
+			pplt.add_to_map(durm.urbangrowthboundary);
 
 		},
 		add_permits: async function(){
@@ -678,7 +678,7 @@ define([
 				outFields: ["*"],	  
 				visible: false
 			});
-			durm.map.add(durm.bldgpermitLayer);
+			pplt.add_to_map(durm.bldgpermitLayer);
 
 			durm.activebldgpermitLayer = new FeatureLayer({
 				id: "active_building_permits",
@@ -692,7 +692,7 @@ define([
 				outFields: ["*"],	  
 				visible: false
 			});
-			durm.map.add(durm.activebldgpermitLayer);
+			pplt.add_to_map(durm.activebldgpermitLayer);
 
 			durm.activeplumbpermitLayer = new FeatureLayer({
 				id: "active_plumbing_permits",
@@ -706,7 +706,7 @@ define([
 				outFields: ["*"],	  
 				visible: false
 			});
-			durm.map.add(durm.activeplumbpermitLayer);
+			pplt.add_to_map(durm.activeplumbpermitLayer);
 
 			durm.activeelecpermitLayer = new FeatureLayer({
 				id: "active_elec_permits",
@@ -720,7 +720,7 @@ define([
 				outFields: ["*"],	  
 				visible: false
 			});
-			durm.map.add(durm.activeelecpermitLayer);
+			pplt.add_to_map(durm.activeelecpermitLayer);
 
 			durm.activemechpermitLayer = new FeatureLayer({
 				id: "active_mech_permits",
@@ -734,7 +734,7 @@ define([
 				outFields: ["*"],	  
 				visible: false
 			});
-			durm.map.add(durm.activemechpermitLayer);
+			pplt.add_to_map(durm.activemechpermitLayer);
 
 			durm.certificates_of_occupancy = new FeatureLayer({
 				id: "certificates_of_occupancy",
@@ -761,7 +761,7 @@ define([
 					}
 				}
 			});
-			durm.map.add(durm.certificates_of_occupancy);	
+			pplt.add_to_map(durm.certificates_of_occupancy);	
 
 		},
 		add_economic: async function(){
@@ -784,7 +784,7 @@ define([
 					}]
 				}
 			});				
-			durm.map.add(durm.oppzones);	
+			pplt.add_to_map(durm.oppzones);	
 
 			durm.LTHG = new FeatureLayer({
 				id: "LTHG",
@@ -798,7 +798,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.LTHG);	
+			pplt.add_to_map(durm.LTHG);	
 
 			durm.TCHI = new FeatureLayer({
 				id: "TCHI",
@@ -811,7 +811,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.TCHI);	
+			pplt.add_to_map(durm.TCHI);	
 		},
 		add_environmental: async function(){
 			durm.elevation_2010 = new MapImageLayer({
@@ -825,7 +825,7 @@ define([
 				icon: "NC",
 				visible: false
 			});
-			durm.map.add(durm.elevation_2010);
+			pplt.add_to_map(durm.elevation_2010);
 
 
 			durm.soilslayer = new TileLayer({
@@ -840,7 +840,7 @@ define([
 				visible: false,
 				opacity:0.65
 			});				
-			durm.map.add(durm.soilslayer);
+			pplt.add_to_map(durm.soilslayer);
 
 			durm.NWIlayer = new MapImageLayer({
 					id: "NWIlayer",
@@ -854,7 +854,7 @@ define([
 					visible: false,
 					opacity:0.65
 				});				
-			durm.map.add(durm.NWIlayer);
+				pplt.add_to_map(durm.NWIlayer);
 			
 			durm.impervious = new TileLayer({
 					id: "impervious",
@@ -868,7 +868,7 @@ define([
 					visible: false,
 					opacity:0.95
 				});				
-			durm.map.add(durm.impervious);
+				pplt.add_to_map(durm.impervious);
 
 			durm.TOPO_2ft = new TileLayer({
 				id: "TOPO_2ft",
@@ -881,7 +881,7 @@ define([
 				url: TOPO_2ft,
 				visible: false
 			});
-			durm.map.add(durm.TOPO_2ft);
+			pplt.add_to_map(durm.TOPO_2ft);
 
 			durm.FEMA_risk_development = new MapImageLayer({
 				id: "FEMA_risk_development",
@@ -894,7 +894,7 @@ define([
 				icon: "USA",
 				visible: false
 			});
-			durm.map.add(durm.FEMA_risk_development);
+			pplt.add_to_map(durm.FEMA_risk_development);
 			
 			durm.FEMA_risk_insurance = new MapImageLayer({
 				id: "FEMA_risk_insurance",
@@ -907,7 +907,7 @@ define([
 				icon: "USA",		
 				visible: false
 			});
-			durm.map.add(durm.FEMA_risk_insurance);
+			pplt.add_to_map(durm.FEMA_risk_insurance);
 		},
 		add_education: async function(){
 			//We should probably figure out a less labor-intensive way to manage this
@@ -924,7 +924,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.elemschools21_22);
+			pplt.add_to_map(durm.elemschools21_22);
 
 			durm.elem21_22_6 = new FeatureLayer({
 				id: "elem21_22_6",
@@ -1027,7 +1027,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.middleschools21_22);
+			pplt.add_to_map(durm.middleschools21_22);
 
 			durm.middle21_22_3 = new FeatureLayer({
 				id: "middle21_22_3",
@@ -1092,7 +1092,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.highschools21_22);
+			pplt.add_to_map(durm.highschools21_22);
 
 			durm.high21_22_3 = new FeatureLayer({
 				id: "high21_22_3",
@@ -1157,7 +1157,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.elemschools22_23);
+			pplt.add_to_map(durm.elemschools22_23);
 
 			durm.elem22_23_6 = new FeatureLayer({
 				id: "elem22_23_6",
@@ -1268,7 +1268,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.middleschools22_23);
+			pplt.add_to_map(durm.middleschools22_23);
 
 			durm.middle22_23_3 = new FeatureLayer({
 				id: "middle22_23_3",
@@ -1347,7 +1347,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.highschools22_23);
+			pplt.add_to_map(durm.highschools22_23);
 
 			durm.high22_23_3 = new FeatureLayer({
 				id: "high22_23_3",
@@ -1420,18 +1420,17 @@ define([
 				title: "Voter Precincts",
 				listMode: "show",
 				listcategory: "Electoral",
-				visible:false,
 				layer_order:0,
 				lyr_zindex:6,
 				url: VOTERPRECINCT_URL,
 				icon: "DUR",
 				sublayers:[{
 					id: 2,
-					visible: false
+					visible: true
 				}],
-				visible: true
+				visible: false				
 			});
-			durm.map.add(durm.voter_precincts);
+			pplt.add_to_map(durm.voter_precincts);
 
 			durm.schoolboard_dist = new FeatureLayer({
 				id: "schoolboard_dist",
@@ -1445,7 +1444,7 @@ define([
 				opacity: 0.95,
 				visible: false
 			});
-			durm.map.add(durm.schoolboard_dist);	
+			pplt.add_to_map(durm.schoolboard_dist);	
 
 
 			durm.PAClayer = new FeatureLayer({
@@ -1460,7 +1459,7 @@ define([
 				opacity: 1,
 				visible: false
 			});
-			durm.map.add(durm.PAClayer);	
+			pplt.add_to_map(durm.PAClayer);	
 
 			const USHOUSElabelClass = { // autocasts as new LabelClass()
 				symbol: {
@@ -1494,7 +1493,7 @@ define([
 				labelingInfo: [USHOUSElabelClass],
 				visible: false
 			});
-			durm.map.add(durm.USHOUSE);
+			pplt.add_to_map(durm.USHOUSE);
 			
 			durm.NCSENATE = new FeatureLayer({
 				id: "NCSENATE",
@@ -1507,7 +1506,7 @@ define([
 				icon: "NC",
 				visible: false
 			});
-			durm.map.add(durm.NCSENATE);
+			pplt.add_to_map(durm.NCSENATE);
 
 			durm.NCHOUSE = new FeatureLayer({
 				id: "NCHOUSE",
@@ -1521,7 +1520,7 @@ define([
 				opacity: 0.7,
 				visible: false
 			});
-			durm.map.add(durm.NCHOUSE);
+			pplt.add_to_map(durm.NCHOUSE);
 			
 			durm.councilwardslayer = new FeatureLayer({
 				id: "councilwards",
@@ -1535,7 +1534,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.councilwardslayer);	
+			pplt.add_to_map(durm.councilwardslayer);	
 		},
 		add_aerials: async function(){
 			/* This is used for labeling during Aerial Mode.  It is not turned on/off via layerlist. */
@@ -1551,7 +1550,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			durm.map.add(durm.aeriallabelsVT);
+			pplt.add_to_map(durm.aeriallabelsVT);
 
 			durm.satellite2008_ir = new MapImageLayer({
 				id: "satellite2008_ir",
@@ -1564,7 +1563,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.satellite2008_ir);
+			pplt.add_to_map(durm.satellite2008_ir);
 			
 			durm.satellite2008 = new MapImageLayer({
 				id: "satellite2008",
@@ -1577,7 +1576,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.satellite2008);
+			pplt.add_to_map(durm.satellite2008);
 
 			durm.soils1983 = new MapImageLayer({
 				id: "soils1983",
@@ -1590,7 +1589,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.soils1983);
+			pplt.add_to_map(durm.soils1983);
 
 			durm.aerials2021 = new MapImageLayer({
 				id: "aerials2021",
@@ -1603,7 +1602,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2021);
+			pplt.add_to_map(durm.aerials2021);
 
 			durm.aerials2019 = new MapImageLayer({
 				id: "aerials2019",
@@ -1616,7 +1615,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2019);
+			pplt.add_to_map(durm.aerials2019);
 
 			durm.aerials2017 = new MapImageLayer({
 				id: "aerials2017",
@@ -1629,7 +1628,7 @@ define([
 				icon: "DUR",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2017);	
+			pplt.add_to_map(durm.aerials2017);	
 
 			durm.aerials2013 = new MapImageLayer({
 				id: "aerials2013",
@@ -1642,7 +1641,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2013);	
+			pplt.add_to_map(durm.aerials2013);	
 
 			durm.aerials2010 = new MapImageLayer({
 				id: "aerials2010",
@@ -1655,7 +1654,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2010);	
+			pplt.add_to_map(durm.aerials2010);	
 
 			durm.aerials2008 = new MapImageLayer({
 				id: "aerials2008",
@@ -1668,7 +1667,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2008);
+			pplt.add_to_map(durm.aerials2008);
 
 
 			durm.aerials2005 = new MapImageLayer({
@@ -1682,7 +1681,7 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2005);
+			pplt.add_to_map(durm.aerials2005);
 
 			durm.aerials2002 = new MapImageLayer({
 				id: "aerials2002",
@@ -1695,7 +1694,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials2002);
+			pplt.add_to_map(durm.aerials2002);
 
 			durm.aerials1999 = new MapImageLayer({
 				id: "aerials1999",
@@ -1708,7 +1707,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials1999);
+			pplt.add_to_map(durm.aerials1999);
 
 			durm.aerials1994 = new MapImageLayer({
 				id: "aerials1994",
@@ -1721,7 +1720,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials1994);
+			pplt.add_to_map(durm.aerials1994);
 
 			durm.aerials1988 = new MapImageLayer({
 				id: "aerials1988",
@@ -1734,7 +1733,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials1988);
+			pplt.add_to_map(durm.aerials1988);
 
 			durm.aerials1940 = new MapImageLayer({
 				id: "aerials1940",
@@ -1747,7 +1746,7 @@ define([
 				icon: "USA",
 				visible: false
 			});				
-			durm.map.add(durm.aerials1940);
+			pplt.add_to_map(durm.aerials1940);
 
 			durm.nearmap2022_spring1 = new ImageryLayer({
 				id: "nearmap2022_spring1",
@@ -1765,7 +1764,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-02-01 20:10:05' AND TIMESTAMP '2022-02-07 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2022_spring1);
+			pplt.add_to_map(durm.nearmap2022_spring1);
 
 			durm.nearmap2021_fall = new ImageryLayer({
 				id: "nearmap2021_fall",
@@ -1783,7 +1782,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-11-01 20:10:05' AND TIMESTAMP '2021-12-01 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2021_fall);
+			pplt.add_to_map(durm.nearmap2021_fall);
 
 
 			durm.nearmap2021_spring2 = new ImageryLayer({
@@ -1802,7 +1801,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-05-01 20:10:05' AND TIMESTAMP '2021-06-05 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2021_spring2);
+			pplt.add_to_map(durm.nearmap2021_spring2);
 
 			durm.nearmap2021_spring1 = new ImageryLayer({
 				id: "nearmap2021_spring1",
@@ -1820,7 +1819,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-01-01 20:10:05' AND TIMESTAMP '2021-02-05 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2021_spring1);
+			pplt.add_to_map(durm.nearmap2021_spring1);
 			
 			durm.nearmap2020_fall = new ImageryLayer({
 				id: "nearmap2020_fall",
@@ -1838,7 +1837,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-09-01 20:10:05' AND TIMESTAMP '2020-10-02 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2020_fall);	
+			pplt.add_to_map(durm.nearmap2020_fall);	
 
 			durm.nearmap2020_spring2 = new ImageryLayer({
 				id: "nearmap2020_spring2",
@@ -1856,7 +1855,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-05-01 20:10:05' AND TIMESTAMP '2020-07-02 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2020_spring2);	
+			pplt.add_to_map(durm.nearmap2020_spring2);	
 
 			durm.nearmap2020_spring1 = new ImageryLayer({
 				id: "nearmap2020_spring1",
@@ -1874,7 +1873,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-01-01 20:10:05' AND TIMESTAMP '2020-02-02 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2020_spring1);	
+			pplt.add_to_map(durm.nearmap2020_spring1);	
 
 			durm.nearmap2019_fall = new ImageryLayer({
 				id: "nearmap2019_fall",
@@ -1892,7 +1891,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-10-01 20:10:05' AND TIMESTAMP '2019-12-01 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2019_fall);	
+			pplt.add_to_map(durm.nearmap2019_fall);	
 
 			durm.nearmap2019_spring2 = new ImageryLayer({
 				id: "nearmap2019_spring2",
@@ -1910,7 +1909,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-05-01 20:10:05' AND TIMESTAMP '2019-06-01 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2019_spring2);	
+			pplt.add_to_map(durm.nearmap2019_spring2);	
 
 			durm.nearmap2019_spring1 = new ImageryLayer({
 				id: "nearmap2019_spring1",
@@ -1928,7 +1927,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-01-01 20:10:05' AND TIMESTAMP '2019-02-01 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2019_spring1);	
+			pplt.add_to_map(durm.nearmap2019_spring1);	
 
 			durm.nearmap2018_fall = new ImageryLayer({
 				id: "nearmap2018_fall",
@@ -1946,7 +1945,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-09-01 20:10:05' AND TIMESTAMP '2018-11-01 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2018_fall);	
+			pplt.add_to_map(durm.nearmap2018_fall);	
 
 			durm.nearmap2018_spring = new ImageryLayer({
 				id: "nearmap2018_spring",
@@ -1964,7 +1963,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-01-01 20:10:05' AND TIMESTAMP '2018-02-26 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2018_spring);	
+			pplt.add_to_map(durm.nearmap2018_spring);	
 
 			durm.nearmap2017_fall = new ImageryLayer({
 				id: "nearmap2017_fall",
@@ -1982,7 +1981,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-09-01 20:10:05' AND TIMESTAMP '2017-11-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2017_fall);	
+			pplt.add_to_map(durm.nearmap2017_fall);	
 
 			durm.nearmap2017_spring2 = new ImageryLayer({
 				id: "nearmap2017_spring2",
@@ -2000,7 +1999,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-05-01 20:10:05' AND TIMESTAMP '2017-05-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2017_spring2);			
+			pplt.add_to_map(durm.nearmap2017_spring2);			
 
 			durm.nearmap2017_spring1 = new ImageryLayer({
 				id: "nearmap2017_spring1",
@@ -2018,7 +2017,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-01-01 20:10:05' AND TIMESTAMP '2017-03-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2017_spring1);					
+			pplt.add_to_map(durm.nearmap2017_spring1);					
 
 			durm.nearmap2016_fall = new ImageryLayer({
 				id: "nearmap2016_fall",
@@ -2036,7 +2035,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-09-01 20:10:05' AND TIMESTAMP '2016-09-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2016_fall);							
+			pplt.add_to_map(durm.nearmap2016_fall);							
 
 			durm.nearmap2016_spring = new ImageryLayer({
 				id: "nearmap2016_spring",
@@ -2054,7 +2053,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-02-01 20:10:05' AND TIMESTAMP '2016-03-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2016_spring);				
+			pplt.add_to_map(durm.nearmap2016_spring);				
 
 			durm.nearmap2015_fall = new ImageryLayer({
 				id: "nearmap2015_fall",
@@ -2072,7 +2071,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-11-01 20:10:05' AND TIMESTAMP '2015-11-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2015_fall);
+			pplt.add_to_map(durm.nearmap2015_fall);
 
 			durm.nearmap2015_spring = new ImageryLayer({
 				id: "nearmap2015_spring",
@@ -2090,7 +2089,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-03-01 20:10:05' AND TIMESTAMP '2015-03-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2015_spring);
+			pplt.add_to_map(durm.nearmap2015_spring);
 
 			durm.nearmap2014 = new ImageryLayer({
 				id: "nearmap2014",
@@ -2108,7 +2107,7 @@ define([
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2014-10-01 20:10:05' AND TIMESTAMP '2014-11-29 20:20:20'"
 			});				
-			durm.map.add(durm.nearmap2014);
+			pplt.add_to_map(durm.nearmap2014);
 
 			this.init_aerial_slider();
 		},
@@ -2692,8 +2691,14 @@ define([
 				durm.aerials2021,
 				durm.nearmap2021_fall,
 				durm.nearmap2022_spring1
-			];
-				
+			];	
+
+			durm.aeriallist_ids = []
+			for (i = 0; i < durm.aeriallist.length; i++) {
+				durm.aeriallist_ids.push(durm.aeriallist[i].id)
+			}
+			console.log(durm.aeriallist_ids)
+
 			let sliderholder = document.createElement('div')
 			sliderholder.id = "sliderDiv"
 			sliderholder.className = "sliderholder"
@@ -2715,9 +2720,10 @@ define([
 			sliderlabel.id = "outputlabel"
 			sliderholder.appendChild(sliderlabel)
 
-			var input = document.getElementById('rangeinput'), output = document.getElementById('outputlabel');
-			input.oninput = function(){
-					output.innerHTML = durm.aeriallist[this.value].title;
+			durm.input = document.getElementById('rangeinput');
+			durm.output = document.getElementById('outputlabel');
+			durm.input.oninput = function(){
+				durm.output.innerHTML = durm.aeriallist[this.value].title;
 					for (i = 0; i < durm.aeriallist.length; i++) {
 						if(i == this.value) {
 							durm.aeriallist[i].visible = true;
@@ -2727,11 +2733,18 @@ define([
 						}
 					}
 			};
-			input.oninput();
+			durm.input.oninput();
 		},
 		handle_layer_loading_failure: async function(l0){
 			console.log("Caught: Layer Failed to Load")
 			console.log(l0)
+			if(l0.details.ssl===false) {
+				console.log("Caught SSL error")
+			}
+			else if(l0.details.ssl===true) {
+				console.log("Error was not SSL")
+			}
+			else { console.log("Other") }
 		},
 		add_to_map: async function(l0){
 			durm.map.add(l0)

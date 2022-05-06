@@ -14,6 +14,8 @@ define([
 		/*  init runs at the very beginning, before there is a 'mapview' and before there are layers.  */
 		init: function(){
 			try {
+				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels", "graphics","waterlayer","sewerlayer"]
+
 				document.getElementById("bodycontainer").style.cursor = "progress";				
 				//js pointers to HTML Buttons in the 'development case' form.
 				durm.caseStatusSelect = document.getElementById("case-status");
@@ -76,18 +78,17 @@ define([
 					document.getElementById("layerpanel").classList.remove("is-visible") 
 				});
 
-				//Ensure single-role lists.  Unsure if this is necessary..
+				//MDC configuration related to 'roles',  i.e.,  how MDC decides how the button highlighting works in the nav.
 				const nav_mdclist1 = new mdc.list.MDCList(document.getElementById('nav_mdclist1'));
 				nav_mdclist1.singleSelection = true;
 				const nav_mdclist2 = new mdc.list.MDCList(document.getElementById('nav_mdclist2'));
 				nav_mdclist2.singleSelection = true;
+				const nav_mdclist2b = new mdc.list.MDCList(document.getElementById('nav_mdclist2b'));
+				nav_mdclist2b.singleSelection = true;				
 				const nav_mdclist3 = new mdc.list.MDCList(document.getElementById('nav_mdclist3'));
 				nav_mdclist3.singleSelection = false;		
 				const nav_mdclist4 = new mdc.list.MDCList(document.getElementById('nav_mdclist4'));
 				nav_mdclist4.singleSelection = false;
-
-
-				
 
 			} catch (e) { console.log(e); }	
 		},
@@ -268,27 +269,23 @@ define([
 				});
 
 				//Toggle preset buttons
-				durm.toggle_development_preset = document.getElementById("toggle_development_preset");
-				durm.toggle_zoning_preset = document.getElementById("toggle_zoning_preset");
-				durm.toggle_wetland_preset = document.getElementById("toggle_wetland_preset");  
-				durm.toggle_utilities_preset = document.getElementById("toggle_utilities_preset");
-				durm.toggle_inspections_preset = document.getElementById("toggle_inspections_preset");
+				durm.development_preset = document.getElementById("development_preset");
+				durm.zoning_preset = document.getElementById("zoning_preset");
+				durm.drainage_preset = document.getElementById("drainage_preset");  
+				durm.toggle_utilities = document.getElementById("toggle_utilities");
 
-				durm.toggle_zoning_preset.addEventListener("click", () => {	
-					this.load_zoning_preset() 
+				durm.zoning_preset.addEventListener("click", () => {	
 					this.set_app_state("zoning",durm.layer_state_string)
 				});	
-				durm.toggle_development_preset.addEventListener("click", () => { 
-					this.load_dev_preset()	
+				durm.development_preset.addEventListener("click", () => { 
 					this.set_app_state("devcases",durm.layer_state_string)
 				});					
-				durm.toggle_wetland_preset.addEventListener("click",() => {	
-					this.load_storm_preset()
+				durm.drainage_preset.addEventListener("click",() => {	
 					this.set_app_state("stormwater",durm.layer_state_string) 
 				});
-				durm.toggle_utilities_preset.addEventListener("click", () => {
+				durm.toggle_utilities.addEventListener("click", () => {
+					//Note: This does not change the appstate.  Utilities is no longer used as an app state.
 					this.load_utilities_preset()
-					this.set_app_state("utilities",durm.layer_state_string)
 				} );
 				//end preset
 			} catch (e) { console.log(e); }	
@@ -300,7 +297,6 @@ define([
 		set_app_state: function(state,layerparams){
 			// first argument is mandatory, second argument is optional.
 			durm.app_state_string = state;
-			//history.pushState(null, null, "/?x=" + durm.mapView.center.latitude + "&y=" + durm.mapView.center.longitude + "&z=" + durm.mapView.scale + "&r=" + durm.mapView.rotation + "&b=" + durm.map.basemap.param + "&s=" + durm.app_state_string + "&l=" + durm.layer_state_string);
 			switch(state) {
 				case "zoning":
 					this.load_zoning_preset(layerparams);
@@ -312,18 +308,8 @@ define([
 					push_new_url();
 					this.trigger_panel_situation(state);
 					break;
-				case "inspections":
-					this.load_insp_preset(layerparams);
-					push_new_url();
-					this.trigger_panel_situation(state);
-					break;
 				case "stormwater":
 					this.load_storm_preset(layerparams);
-					push_new_url();
-					this.trigger_panel_situation(state);
-					break;
-				case "utilities":
-					this.load_utilities_preset(layerparams);
 					push_new_url();
 					this.trigger_panel_situation(state);
 					break;
@@ -394,20 +380,8 @@ define([
 			// in the sense that 'default' will forcefully reset ALL the layers, including the ones that were added manually. 
 			// Other app_states will preserve any layers that the user had previously turned on manually.
 			try {
-				durm.map.layers.items.forEach(function(r) {				
-					// Turn on parcels, address points, and the county mask.
-					if (r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") { r.visible = true }
-
-					// Ignore these special basemap layers, let their visibility be controlled somewhere else.
-					else if(r.id==="graymap_roads" || r.id==="graymap_labels") {/*do nothing to these*/}
-
-					// Ignore water and sewer layers, until we can upgrade this functionality.
-					else if(r.id==="sewerlayer" || r.id==="waterlayer") { /*do nothing to these*/ }
-									
-					// Ignore graphics.
-					else if(r.type ==="graphics") { /*do nothing to these*/  }
-
-					// Turn everything else off.
+				durm.map.layers.items.forEach(function(r) {
+					if(durm.preset_ignore_list.includes(r.id)) {}
 					else { r.visible = false; }
 				}); 
 			} catch (e) { console.log(e); }	
@@ -422,15 +396,22 @@ define([
 		{
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
 			else {}
+
+			console.log(durm.aeriallist_ids)
+			console.log(durm.preset_ignore_list)
+			
 			durm.map.layers.items.forEach(function(r) {
-					//Preset button should ignore certain layers
-					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-					else if(r.id === "graphics") {}
-					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
-					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
-					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
+
+				if(r.visible===true){
+					console.log(r.id)
+					
+					if(durm.aeriallist_ids.includes(r.id)) { console.log(r.id) }
+					else if(durm.preset_ignore_list.includes(r.id)) { console.log(r.id) }
+					  //This doesn't work?
 					else { r.visible = false; }
+				}
+
+
 			}); 	  
 			let zoning_layers = [durm.zoninglayer,durm.transitionalofficeoverlay,durm.NPOlayer,durm.NHDlayer,durm.LocHistLandmarks,durm.airportoverlay,durm.cityboundaryLayer,durm.active_address_points,durm.RTPboundarylayer,durm.countymask];
 			let allvisible = true;
@@ -456,15 +437,10 @@ define([
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
 			else {}
 			durm.map.layers.items.forEach(function(r) {
-					//Preset button should ignore certain layers
-					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-					else if(r.id === "graphics") {}
-					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
-					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
-					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
-					else { r.visible = false; }
-				}); 	
+				if(durm.preset_ignore_list.includes(r.id)) {}
+				else if(durm.aeriallist_ids.includes(r.id)) {}
+				else { r.visible = false; }
+			}); 
 			let development_layers = [durm.developmenttiers,durm.active_address_points,durm.citymask];
 			let allvisible = true;
 			development_layers.forEach(function(r) {
@@ -483,49 +459,15 @@ define([
 			}
 			} catch (e) { console.log(e); }	
 		},
-		load_insp_preset: function(layerparams)
-		{
-			try{
-				if(layerparams) { lyrIDlist = layerparams.split(',') }
-				else {}
-				durm.map.layers.items.forEach(function(r) {
-					//Preset button should ignore certain layers
-					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-					else if(r.id === "graphics") {}
-					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
-					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
-					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
-					else { r.visible = false; }
-				}); 	
-				var inspection_layers =[durm.countymask]
-				var allvisible = true;
-				inspection_layers.forEach(function(r) {
-					if(r.visible) {}
-					else { allvisible = false; }
-				});	
-				if(allvisible) {//turn em off
-					inspection_layers.forEach(function(r) { r.visible = false; });
-				}
-				else { //turn em on
-					inspection_layers.forEach(function(r) { r.visible = true; });
-				}
-			} catch (e) { console.log(e); }			
-		},
 		load_storm_preset: function(layerparams) {
 			try {
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
 			else {}
 			durm.map.layers.items.forEach(function(r) {
-					//Preset button should ignore certain layers
-					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-					else if(r.id === "graphics") {}
-					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
-					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
-					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
+					if(durm.preset_ignore_list.includes(r.id)) {}
+					else if(durm.aeriallist_ids.includes(r.id)) {}
 					else { r.visible = false; }
-				}); 		  
+			}); 		  
 			const wetland_layers = [durm.stormwatergroup,durm.impervious,durm.NWIlayer,durm.FEMA_risk_development,durm.TOPO_2ft,durm.countymask];
 			let allvisible = true;
 			wetland_layers.forEach(function(r) {
@@ -544,7 +486,52 @@ define([
 			}
 			} catch (e) { console.log(e); }	
 		},
-		load_utilities_preset: function(layerparams)
+		load_utilities_preset: function()
+		{		
+			try{
+				are_utilities_on = "idk"
+				durm.map.layers.items.forEach(function(r) {
+					if(r.id === "waterlayer" || r.id === "sewerlayer") {
+						are_utilities_on = "yeah"	
+					}
+					else { 						
+						are_utilities_on = "nah"
+					}				
+				}); 
+				switch(are_utilities_on) {
+					case "yeah":
+						console.log("Utilities are on, turn them off")
+						durm.map.remove(durm.waterlayer);
+						durm.waterlayer.visible = false;
+						durm.map.remove(durm.sewerlayer);	
+			  		durm.sewerlayer.visible = false;	
+						break;
+					case "nah":
+						console.log("Utilities are off, turn them on")
+						durm.map.add(durm.waterlayer);
+						durm.waterlayer.visible = true;
+						durm.map.add(durm.sewerlayer);	
+			  		durm.sewerlayer.visible = true;	
+						break;
+					case "idk":
+						console.log("Utilities idk off?")
+						durm.map.remove(durm.waterlayer);
+						durm.waterlayer.visible = false;
+						durm.map.remove(durm.sewerlayer);	
+			  		durm.sewerlayer.visible = false;	
+						break;
+					default: 
+					durm.map.remove(durm.waterlayer);
+					durm.waterlayer.visible = false;
+					durm.map.remove(durm.sewerlayer);	
+					durm.sewerlayer.visible = false;	
+						break;
+				}
+
+
+			} catch (e) { console.log(e); }		
+		},
+		load_utilities_preset_OLD: function(layerparams)
 		{		
 			try{
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
@@ -589,11 +576,6 @@ define([
 			durm.mapView.ui.remove([durm.legend]);
 			let fps = document.getElementById("devcase_form_panel")
 			fps.style.display = "inline-block";		
-			
-			/*let fps = document.getElementsByClassName("ui_panel")
-			for (let i = 0; i < fps.length; i++) {
-				fps[i].style.display = "inline-block";
-			}*/
 		},
 
 		shrink_to_landscape_phone: function(){
@@ -616,10 +598,6 @@ define([
 					let fps = document.getElementById("devcase_form_panel")
 					fps.style.display = "inline-block";
 				}
-				/*let fps = document.getElementsByClassName("ui_panel")
-				for (let i = 0; i < fps.length; i++) {
-					fps[i].style.display = "inline-block";
-				}*/
 		},
 		init_layer_control: function(){
 			try {
@@ -691,8 +669,6 @@ define([
 								// But we learned the hard way :  People want to be able to click a user preset, then turn a layer on, and keep the preset,  so don't do this for Devcases/Zoning/Drainage/Util, only do it for default
 								if(durm.app_state_string=="default"){lyrctrlscope.set_app_state("custom",durm.layer_state_string)}
 								else{}
-								//console.log(durm.app_state_string)
-								//if(durm.app_state_string="default") { console.log("We detected default.")}
 							});
 
 							let lab = document.createElement('label')
@@ -782,25 +758,47 @@ define([
 		//This should work for both (A) totally new its state		(B) resetting a previously used state
 		enable_aerials_mode: function() {
 			try {
+				console.log("enable aerials mode")
+				durm.sliderinput.value = durm.defaultaerialid;// Set slider back to original position
+
+				//durm.slidertext = durm.defaultaerialid.title
+				durm.output.innerHTML = durm.aeriallist[durm.defaultaerialid].title;
+
+				durm.aeriallist[durm.defaultaerialid].visible = true; //Make default aerial visible (2021)
+
+				durm.aeriallabelsVT.visible = true; // Make labels visible
+
+				durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap
+				
+				durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer //Show green parcels
+
 				let sd00 = document.getElementById("sliderDiv")
-				sd00.style.visibility = "visible";
-				durm.aeriallist[durm.defaultaerialid].visible = true;
-				durm.aeriallabelsVT.visible = true;
-				durm.map.basemap = durm.basemaparray[4];
-				durm.sliderinput.value = durm.defaultaerialid;
-				durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer
+				sd00.style.visibility = "visible"; //toggle panel visibility
+
 			} catch (e) { console.log(e); }
 		},		
 		disable_aerials_mode: function() {
 			try {
-				let sd00 = document.getElementById("sliderDiv")
-				sd00.style.visibility = "hidden";	
-				durm.aeriallabelsVT.visible = false;
+				console.log("disable aerials mode")
+				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
+
+				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
+
+				durm.aeriallabelsVT.visible = false; // Make labels nonvisible
+
 				for (i = 0; i < durm.aeriallist.length; i++) {
-					durm.aeriallist[i].visible = false;
+					durm.aeriallist[i].visible = false;  //Make all aerials nonvisible
 				}
-				durm.map.basemap = durm.basemaparray[11];
-				durm.parcelboundaryLayer.renderer = parcelboundaryRenderer
+				
+				durm.parcelboundaryLayer.renderer = parcelboundaryRenderer //Switch back to original parcel
+
+				let sd00 = document.getElementById("sliderDiv")
+				sd00.style.visibility = "hidden";	//toggle panel visibility
+
+				let b00 = document.getElementById("enable_aerials_mode")
+
+				b00.classList.remove("mdc-list-item--activated") 
+
 			} catch (e) { console.log(e); }
 		},
 

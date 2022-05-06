@@ -1555,7 +1555,7 @@ define([
 			durm.satellite2008_ir = new MapImageLayer({
 				id: "satellite2008_ir",
 				title: "2008 Color-infrared Satellite Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1568,7 +1568,7 @@ define([
 			durm.satellite2008 = new MapImageLayer({
 				id: "satellite2008",
 				title: "2008 Satellite Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1581,7 +1581,7 @@ define([
 			durm.soils1983 = new MapImageLayer({
 				id: "soils1983",
 				title: "1983 Aerial Photos, with stream delination and soils",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1594,7 +1594,7 @@ define([
 			durm.aerials2021 = new MapImageLayer({
 				id: "aerials2021",
 				title: "2021 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1607,7 +1607,7 @@ define([
 			durm.aerials2019 = new MapImageLayer({
 				id: "aerials2019",
 				title: "2019 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1620,7 +1620,7 @@ define([
 			durm.aerials2017 = new MapImageLayer({
 				id: "aerials2017",
 				title: "2017 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1633,7 +1633,7 @@ define([
 			durm.aerials2013 = new MapImageLayer({
 				id: "aerials2013",
 				title: "2013 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1646,7 +1646,7 @@ define([
 			durm.aerials2010 = new MapImageLayer({
 				id: "aerials2010",
 				title: "2010 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1659,7 +1659,7 @@ define([
 			durm.aerials2008 = new MapImageLayer({
 				id: "aerials2008",
 				title: "2008 Aerial Photos (NAIP)",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1673,7 +1673,7 @@ define([
 			durm.aerials2005 = new MapImageLayer({
 				id: "aerials2005",
 				title: "2005 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1686,7 +1686,7 @@ define([
 			durm.aerials2002 = new MapImageLayer({
 				id: "aerials2002",
 				title: "2002 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1699,7 +1699,7 @@ define([
 			durm.aerials1999 = new MapImageLayer({
 				id: "aerials1999",
 				title: "1999 Aerial Photos",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1712,7 +1712,7 @@ define([
 			durm.aerials1994 = new MapImageLayer({
 				id: "aerials1994",
 				title: "1994 Aerial Photos (City Only)",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1725,7 +1725,7 @@ define([
 			durm.aerials1988 = new MapImageLayer({
 				id: "aerials1988",
 				title: "1988 Aerial Photos (County Only)",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1738,7 +1738,7 @@ define([
 			durm.aerials1940 = new MapImageLayer({
 				id: "aerials1940",
 				title: "1940 Aerial Photos (City Only)",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
@@ -1751,7 +1751,7 @@ define([
 			durm.nearmap2022_spring1 = new ImageryLayer({
 				id: "nearmap2022_spring1",
 				title: "2022 Nearmap Aerials, Feb",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1769,7 +1769,7 @@ define([
 			durm.nearmap2021_fall = new ImageryLayer({
 				id: "nearmap2021_fall",
 				title: "2021 Nearmap Aerials, Nov",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1788,7 +1788,7 @@ define([
 			durm.nearmap2021_spring2 = new ImageryLayer({
 				id: "nearmap2021_spring2",
 				title: "2021 Nearmap Aerials, May",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1806,7 +1806,7 @@ define([
 			durm.nearmap2021_spring1 = new ImageryLayer({
 				id: "nearmap2021_spring1",
 				title: "2021 Nearmap Aerials, Jan",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1824,7 +1824,7 @@ define([
 			durm.nearmap2020_fall = new ImageryLayer({
 				id: "nearmap2020_fall",
 				title: "2020 Nearmap Aerials, Sep",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1842,7 +1842,7 @@ define([
 			durm.nearmap2020_spring2 = new ImageryLayer({
 				id: "nearmap2020_spring2",
 				title: "2020 Nearmap Aerials, May-Jun",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1860,7 +1860,7 @@ define([
 			durm.nearmap2020_spring1 = new ImageryLayer({
 				id: "nearmap2020_spring1",
 				title: "2020 Nearmap Aerials, Jan",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1878,7 +1878,7 @@ define([
 			durm.nearmap2019_fall = new ImageryLayer({
 				id: "nearmap2019_fall",
 				title: "2019 Nearmap Aerials, Oct-Nov",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1896,7 +1896,7 @@ define([
 			durm.nearmap2019_spring2 = new ImageryLayer({
 				id: "nearmap2019_spring2",
 				title: "2019 Nearmap Aerials, May",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1914,7 +1914,7 @@ define([
 			durm.nearmap2019_spring1 = new ImageryLayer({
 				id: "nearmap2019_spring1",
 				title: "2019 Nearmap Aerials, Jan",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1932,7 +1932,7 @@ define([
 			durm.nearmap2018_fall = new ImageryLayer({
 				id: "nearmap2018_fall",
 				title: "2018 Nearmap Aerials, Sep-Oct",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1950,7 +1950,7 @@ define([
 			durm.nearmap2018_spring = new ImageryLayer({
 				id: "nearmap2018_spring",
 				title: "2018 Nearmap Aerials, Jan-Feb",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1968,7 +1968,7 @@ define([
 			durm.nearmap2017_fall = new ImageryLayer({
 				id: "nearmap2017_fall",
 				title: "2017 Nearmap Aerials, Sep-Nov",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -1986,7 +1986,7 @@ define([
 			durm.nearmap2017_spring2 = new ImageryLayer({
 				id: "nearmap2017_spring2",
 				title: "2017 Nearmap Aerials, May",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2004,7 +2004,7 @@ define([
 			durm.nearmap2017_spring1 = new ImageryLayer({
 				id: "nearmap2017_spring1",
 				title: "2017 Nearmap Aerials, Jan-Feb",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2022,7 +2022,7 @@ define([
 			durm.nearmap2016_fall = new ImageryLayer({
 				id: "nearmap2016_fall",
 				title: "2016 Nearmap Aerials, Sep",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2040,7 +2040,7 @@ define([
 			durm.nearmap2016_spring = new ImageryLayer({
 				id: "nearmap2016_spring",
 				title: "2016 Nearmap Aerials, Feb-Mar",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2058,7 +2058,7 @@ define([
 			durm.nearmap2015_fall = new ImageryLayer({
 				id: "nearmap2015_fall",
 				title: "2015 Nearmap Aerials, Nov",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2076,7 +2076,7 @@ define([
 			durm.nearmap2015_spring = new ImageryLayer({
 				id: "nearmap2015_spring",
 				title: "2015 Nearmap Aerials, Mar",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2094,7 +2094,7 @@ define([
 			durm.nearmap2014 = new ImageryLayer({
 				id: "nearmap2014",
 				title: "2014 Nearmap Aerials, Oct-Nov",
-				listMode: "show",
+				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:1,
@@ -2697,7 +2697,6 @@ define([
 			for (i = 0; i < durm.aeriallist.length; i++) {
 				durm.aeriallist_ids.push(durm.aeriallist[i].id)
 			}
-			console.log(durm.aeriallist_ids)
 
 			let sliderholder = document.createElement('div')
 			sliderholder.id = "sliderDiv"

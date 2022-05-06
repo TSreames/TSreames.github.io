@@ -119,9 +119,8 @@ define([
           try {
             document.getElementById("mapViewDiv").style.cursor = "default";
             console.log(durm.mailingtool_list_of_events)
-            for (var stupid_item of durm.mailingtool_list_of_events) {
-              console.log(stupid_item)
-              stupid_item.remove()
+            for (var idk_item of durm.mailingtool_list_of_events) {
+              idk_item.remove()
             }
             durm.mailingtool_list_of_events = []
 
@@ -172,9 +171,8 @@ define([
 
 
             console.log(durm.mailingtool_list_of_events)
-            for (var stupid_item of durm.mailingtool_list_of_events) {
-              console.log(stupid_item)
-              stupid_item.remove()
+            for (var idk_item of durm.mailingtool_list_of_events) {
+              idk_item.remove()
             }
             durm.mailingtool_list_of_events = []
             

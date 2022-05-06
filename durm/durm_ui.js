@@ -46,25 +46,25 @@ define([
 				});
 
 				// Google Stuff after this. 
-				const drawer1 = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer--modal'));
+				durm.drawer1 = mdc.drawer.MDCDrawer.attachTo(document.querySelector('.mdc-drawer--modal'));
 				const topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(document.getElementById('app-bar'));
 				topAppBar.listen('MDCTopAppBar:nav', () => {
-					drawer1.open = !drawer1.open;
+					durm.drawer1.open = !durm.drawer1.open;
 				});
 
 				//click auto-closes
 				const mapdiv = document.getElementById('mapViewDiv');   
 				mapdiv.addEventListener('click', () => {
-						if(drawer1.open === true){
-							drawer1.open = false
+						if(durm.drawer1.open === true){
+							durm.drawer1.open = false
 						}
 				});
 
 				//click auto-closes
 				const clbr = document.getElementById('closebar1');   
 				clbr.addEventListener('click', () => {
-						if(drawer1.open === true){
-							drawer1.open = false
+						if(durm.drawer1.open === true){
+							durm.drawer1.open = false
 						}
 				});
 
@@ -72,8 +72,8 @@ define([
 
 				const scrim1 = document.getElementById('scrim1');
 				scrim1.addEventListener('click', () => {
-					if(drawer1.open === true){
-						drawer1.open = false
+					if(durm.drawer1.open === true){
+						durm.drawer1.open = false
 					}
 					document.getElementById("layerpanel").classList.remove("is-visible") 
 				});
@@ -231,8 +231,6 @@ define([
 				durm.address_ui = document.getElementById('parceltool_form_panel')
 				durm.address_ui.style.display == "none"
 				durm.mapView.ui.add(durm.address_ui, "top-right");
-
-
 			} catch (e) { console.log(e); }	
 
 			try {
@@ -257,7 +255,20 @@ define([
 				});
 
 				durm.load_layertable = document.getElementById("load_layertable");
-				durm.load_layertable.addEventListener("click", function(e) {
+				durm.load_layertable.addEventListener("click", function(e) {			
+					if( e.target.classList.contains(".cd-panel") || e.target.classList.contains(".cd-panel-close") ) { 
+						document.getElementById("layerpanel").classList.remove("is-visible") 
+						e.preventDefault();
+					}
+					else {		
+						e.preventDefault();
+						document.getElementById("layerpanel").classList.add("is-visible") 
+					}			
+				});
+
+				durm.buttonbar0 = document.getElementById("layerlistbutton1");
+				durm.buttonbar0.addEventListener("click", function(e) {
+					durm.drawer1.open = true
 					if( e.target.classList.contains(".cd-panel") || e.target.classList.contains(".cd-panel-close") ) { 
 						document.getElementById("layerpanel").classList.remove("is-visible") 
 						e.preventDefault();
@@ -627,7 +638,23 @@ define([
 						headerli = document.createElement('li')
 						headerli.classList.add("lyrlist-header")
 						headerli.innerHTML = r
-						newcategoryul.appendChild(headerli)			
+						newcategoryul.appendChild(headerli)	
+
+						//exception for Aerial Photos.
+						if(r === "Aerial Photos, Historical"){
+							let tag0 = document.createElement('li')
+							let a0 = document.createElement('a')
+							a0.innerHTML = "Aerials"
+							a0.href = "#"
+							a0.id = "aerials_tag"
+							tag0.appendChild(a0)
+							newcategoryul.appendChild(tag0)
+							a0.addEventListener("click", function(){
+								lyrctrlscope.enable_aerials_mode()
+								document.getElementById("layerpanel").classList.remove("is-visible")
+							});
+						}
+	
 					});
 
 					/* Sort the layers alphabetically before we begin */
@@ -779,7 +806,6 @@ define([
 		},		
 		disable_aerials_mode: function() {
 			try {
-				console.log("disable aerials mode")
 				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
 
 				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
@@ -803,7 +829,6 @@ define([
 		},
 
 		load_simple_basemap: function() {
-			console.log("loaded simple mbasemap")
 			return durm.basemaparray[11];
 		},
 

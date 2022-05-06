@@ -79,6 +79,22 @@ button.mdc-button.mdc-button--dense.mdc-button--raised.mdc-ripple-upgraded.btn-s
 	background-color:#72b352;
 }
 
+.buttonbar {
+width:50px;
+flex-shrink:1;
+flex-grow:0;
+}
+.buttonbar button {
+color:white;
+border:0px;
+padding:0px;
+}
+.buttonbar i {
+	background-color:#72b352;
+	border:0.1px solid white;
+	padding:4px;
+}
+
 /* OTHER?? SECTION */
 .mdc-drawer-app-content {
 	flex: auto;

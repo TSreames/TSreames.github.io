@@ -184,7 +184,7 @@ define([
 				});
 				durm.enable_aerials_mode = document.getElementById("enable_aerials_mode");
 				durm.enable_aerials_mode.addEventListener("click",() => {
-					this.enable_aerials_mode();
+					this.enable_aerials_mode(durm.defaultaerialid);
 				});
 
 				//Bindings for "Print" button in mdc menu
@@ -296,7 +296,7 @@ define([
 				});
 				durm.toggle_utilities.addEventListener("click", () => {
 					//Note: This does not change the appstate.  Utilities is no longer used as an app state.
-					this.load_utilities_preset()
+					this.toggle_utilities()
 				} );
 				//end preset
 			} catch (e) { console.log(e); }	
@@ -406,23 +406,13 @@ define([
 		load_zoning_preset: function(layerparams)
 		{
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
-			else {}
-
-			console.log(durm.aeriallist_ids)
-			console.log(durm.preset_ignore_list)
-			
+			else {}			
 			durm.map.layers.items.forEach(function(r) {
-
-				if(r.visible===true){
-					console.log(r.id)
-					
-					if(durm.aeriallist_ids.includes(r.id)) { console.log(r.id) }
-					else if(durm.preset_ignore_list.includes(r.id)) { console.log(r.id) }
-					  //This doesn't work?
+				if(r.visible===true){	
+					if(durm.aeriallist_ids.includes(r.id)) { }
+					else if(durm.preset_ignore_list.includes(r.id)) { }
 					else { r.visible = false; }
 				}
-
-
 			}); 	  
 			let zoning_layers = [durm.zoninglayer,durm.transitionalofficeoverlay,durm.NPOlayer,durm.NHDlayer,durm.LocHistLandmarks,durm.airportoverlay,durm.cityboundaryLayer,durm.active_address_points,durm.RTPboundarylayer,durm.countymask];
 			let allvisible = true;
@@ -497,10 +487,10 @@ define([
 			}
 			} catch (e) { console.log(e); }	
 		},
-		load_utilities_preset: function()
+		toggle_utilities: function()
 		{		
 			try{
-				are_utilities_on = "idk"
+				/*let are_utilities_on = "idk"
 				durm.map.layers.items.forEach(function(r) {
 					if(r.id === "waterlayer" || r.id === "sewerlayer") {
 						are_utilities_on = "yeah"	
@@ -508,39 +498,43 @@ define([
 					else { 						
 						are_utilities_on = "nah"
 					}				
-				}); 
-				switch(are_utilities_on) {
-					case "yeah":
-						console.log("Utilities are on, turn them off")
+				});*/ 
+				switch(durm.uparam) {
+					case 1:
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
 			  		durm.sewerlayer.visible = false;	
+						durm.uparam = 0
+						push_new_url()
 						break;
-					case "nah":
-						console.log("Utilities are off, turn them on")
+					case 0:
 						durm.map.add(durm.waterlayer);
 						durm.waterlayer.visible = true;
 						durm.map.add(durm.sewerlayer);	
 			  		durm.sewerlayer.visible = true;	
+						durm.uparam = 1
+						push_new_url()
 						break;
-					case "idk":
-						console.log("Utilities idk off?")
+					default: 
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
-			  		durm.sewerlayer.visible = false;	
-						break;
-					default: 
-					durm.map.remove(durm.waterlayer);
-					durm.waterlayer.visible = false;
-					durm.map.remove(durm.sewerlayer);	
-					durm.sewerlayer.visible = false;	
+						durm.sewerlayer.visible = false;	
+						durm.uparam = 0
+						push_new_url()
 						break;
 				}
-
-
 			} catch (e) { console.log(e); }		
+		},
+		load_utilities: function() {
+			durm.map.add(durm.waterlayer);
+			durm.waterlayer.visible = true;
+			durm.map.add(durm.sewerlayer);	
+			durm.sewerlayer.visible = true;
+			durm.uparam = 1
+			push_new_url()
+
 		},
 		load_utilities_preset_OLD: function(layerparams)
 		{		
@@ -650,7 +644,7 @@ define([
 							tag0.appendChild(a0)
 							newcategoryul.appendChild(tag0)
 							a0.addEventListener("click", function(){
-								lyrctrlscope.enable_aerials_mode()
+								lyrctrlscope.enable_aerials_mode(durm.defaultaerialid)
 								document.getElementById("layerpanel").classList.remove("is-visible")
 							});
 						}
@@ -782,48 +776,50 @@ define([
 			} catch (e) { console.log(e); }
 		},
 
-		//This should work for both (A) totally new its state		(B) resetting a previously used state
-		enable_aerials_mode: function() {
+		//This should work for  (A) totally new state		(B) resetting a previously used state
+		enable_aerials_mode: function(aerialid) {
 			try {
-				console.log("enable aerials mode")
-				durm.sliderinput.value = durm.defaultaerialid;// Set slider back to original position
+				if(aerialid == -1) {
+					this.disable_aerials_mode()
+				}
+				else {
+					durm.sliderinput.value = aerialid
+					durm.aoutput.innerHTML = durm.aeriallist[aerialid].title;
+					durm.aeriallist[aerialid].visible = true;					
+					durm.aparam = aerialid
+					durm.aeriallabelsVT.visible = true; // Make labels visible
+					durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap				
+					durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer //Show green parcels
+					let sd00 = document.getElementById("sliderDiv")
+					sd00.style.visibility = "visible"; //toggle panel visibility
+					push_new_url()
 
-				//durm.slidertext = durm.defaultaerialid.title
-				durm.output.innerHTML = durm.aeriallist[durm.defaultaerialid].title;
+					document.getElementById("load_simple_basemap").classList.remove("mdc-list-item--activated")
+					document.getElementById("enable_aerials_mode").classList.add("mdc-list-item--activated")
 
-				durm.aeriallist[durm.defaultaerialid].visible = true; //Make default aerial visible (2021)
-
-				durm.aeriallabelsVT.visible = true; // Make labels visible
-
-				durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap
-				
-				durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer //Show green parcels
-
-				let sd00 = document.getElementById("sliderDiv")
-				sd00.style.visibility = "visible"; //toggle panel visibility
+				}
 
 			} catch (e) { console.log(e); }
 		},		
 		disable_aerials_mode: function() {
 			try {
+				durm.aparam = "-1"
 				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
-
 				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
-
 				durm.aeriallabelsVT.visible = false; // Make labels nonvisible
-
 				for (i = 0; i < durm.aeriallist.length; i++) {
 					durm.aeriallist[i].visible = false;  //Make all aerials nonvisible
-				}
-				
+				}				
 				durm.parcelboundaryLayer.renderer = parcelboundaryRenderer //Switch back to original parcel
-
 				let sd00 = document.getElementById("sliderDiv")
 				sd00.style.visibility = "hidden";	//toggle panel visibility
-
 				let b00 = document.getElementById("enable_aerials_mode")
-
 				b00.classList.remove("mdc-list-item--activated") 
+
+				push_new_url()
+
+				document.getElementById("load_simple_basemap").classList.add("mdc-list-item--activated")
+				document.getElementById("enable_aerials_mode").classList.remove("mdc-list-item--activated")
 
 			} catch (e) { console.log(e); }
 		},

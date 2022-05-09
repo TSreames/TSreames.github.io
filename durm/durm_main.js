@@ -98,6 +98,8 @@ define([
             durm.parcellayerView = parcellayerView;
             document.getElementById("bodycontainer").style.cursor = "default";
 
+            /* This is the section where we IMPLEMENT whatever initial parameters were passed in through the URL */
+
             if(durm.PID_passed){
               durm_url.zoom_to_pid();
             } else if(durm.all_initial_view_parameters_passed) {              
@@ -134,6 +136,24 @@ define([
             } else {
               durm_ui.set_app_state("default");
             }
+
+            if (durm.aerials_passed) {
+              if(durm.aparam == -1) { durm_ui.disable_aerials_mode(); }
+              else { durm_ui.enable_aerials_mode(durm.aparam); }
+            } 
+            else { durm.aparam = -1 }
+
+            if (durm.utilities_passed) {
+              if(durm.uparam == 1) {
+                durm_ui.load_utilities()
+              }
+              else {
+                durm.uparam = 0
+              }
+            } else {
+              durm.uparam = 0
+            }
+
             durm_ui.init_layer_control();
             durm_ui.reorder_all_layers_to_default();
             durm_addresstool.init();            

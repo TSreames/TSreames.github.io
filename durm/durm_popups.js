@@ -476,7 +476,6 @@ define([
 
 			//This generates content for the Parcel Popup
 			queryParcelforPopup: async function(target) {
-				//durm.pidparam = target.graphic.attributes.PARCEL_ID
 				let d = document.createElement("div")
 				d.classList.add("div0")
 

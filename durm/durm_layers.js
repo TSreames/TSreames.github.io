@@ -2656,6 +2656,7 @@ define([
 		},
 
 		init_aerial_slider: function(){
+			// Critical that this runs AFTER aerials have been added to map.
 			//Slider
 			durm.aeriallist = [
 				durm.aerials1940,
@@ -2709,9 +2710,7 @@ define([
 			durm.sliderinput.type = "range"
 
 			durm.defaultaerialid = 30; //Note: This is used to specify which aerial is the default, as defined by its place in aeriallist[]
-
 			durm.sliderinput.min = 0;
-			durm.sliderinput.value = durm.defaultaerialid;
 			durm.sliderinput.max = durm.aeriallist.length-1;
 			sliderholder.appendChild(durm.sliderinput)
 
@@ -2719,20 +2718,19 @@ define([
 			sliderlabel.id = "outputlabel"
 			sliderholder.appendChild(sliderlabel)
 
-			durm.input = document.getElementById('rangeinput');
-			durm.output = document.getElementById('outputlabel');
-			durm.input.oninput = function(){
-				durm.output.innerHTML = durm.aeriallist[this.value].title;
-					for (i = 0; i < durm.aeriallist.length; i++) {
-						if(i == this.value) {
-							durm.aeriallist[i].visible = true;
-						}
-						else { 
-							durm.aeriallist[i].visible = false;
-						}
-					}
+			durm.ainput = document.getElementById('rangeinput');
+			durm.aoutput = document.getElementById('outputlabel');
+			durm.ainput.oninput = function(){
+				durm.aparam = this.value
+				push_new_url()	
+				durm.aoutput.innerHTML = durm.aeriallist[this.value].title;
+				//visibility control
+				for (i = 0; i < durm.aeriallist.length; i++) {
+					if(i == this.value) { durm.aeriallist[i].visible = true; }
+					else { durm.aeriallist[i].visible = false; }
+				}
 			};
-			durm.input.oninput();
+		//	durm.ainput.oninput();
 		},
 		handle_layer_loading_failure: async function(l0){
 			console.log("Caught: Layer Failed to Load")

@@ -55,7 +55,6 @@ else if (bowser.gecko) { }
 <script type="text/javascript" charset="utf-8" src="/js/services.js"></script>
 <script type="text/javascript" charset="utf-8" src="/js/markers.js"></script>
 <script type="text/javascript" charset="utf-8" src="/js/renderers.js"></script>
-<script type="text/javascript" charset="utf-8" src="/js/aerials.js"></script>
 <script type="text/javascript" charset="utf-8" src="/js/common-definitions.js"></script>
 
 <script>
@@ -65,14 +64,17 @@ try {
 		history.pushState(
 			null, 
 			null, 
-			"/?x=" + durm.mapView.center.latitude + 
-			"&y=" + durm.mapView.center.longitude + 
-			"&z=" + durm.mapView.scale + 
-			"&r=" + durm.mapView.rotation + 
-			"&b=" + durm.map.basemap.param + 
-			"&pid=" + durm.pidparam + 
-			"&s=" + durm.app_state_string + 
-			"&l=" + durm.layer_state_string
+			"/?x=" + durm.mapView.center.latitude + //auto update
+			"&y=" + durm.mapView.center.longitude + //auto update
+			"&z=" + durm.mapView.scale + //auto update
+			"&r=" + durm.mapView.rotation + //auto update
+			"&b=" + durm.map.basemap.param + //auto update
+			"&a=" + durm.aparam + //manual update
+			"&u=" + durm.uparam + //manual update
+			"&pid=" + durm.pidparam + //manual update
+			"&s=" + durm.app_state_string + //manual update
+			"&l=" + durm.layer_state_string + //manual update
+			"#"
 			);
     }
 	var urlParam = function(name, w) {
@@ -117,11 +119,9 @@ try {
 			console.log("Error in whenLoaded");
 			console.log(error); 
 		}
-
 	  currentyear = new Date().getFullYear()
 		document.getElementById("startdate").value = currentyear + "-01-01"
-		document.getElementById("enddate").value = currentyear + "-12-31"
-		
+		document.getElementById("enddate").value = currentyear + "-12-31"		
 	});
 	
 } catch (error) { 
@@ -281,14 +281,11 @@ try {
 				</span>	
 			</div>
 
-
 		</div>
 
 
 		<div id="mapViewDiv" class="mdc-top-app-bar--fixed-adjust">
-			<div id="sketch_button_container"></div>
-			
-		
+			<div id="sketch_button_container"></div>		
 			<div id="devcase_form_panel" class="ui_panel" style="display:none;visibility:hidden;">
 				<div id="devcase_search">
 					<label for="development_search_container" class="devsearchlabel">Search</label>

@@ -23,10 +23,6 @@ define([
 				let case_status_selection = "";
 				case_status_selection = document.getElementById('case-status').value;
 
-				console.log(date_range_selection)
-				console.log(case_type_selection)
-				console.log(case_status_selection)
-
 				durm.final_query_string = date_range_selection + case_type_selection + case_status_selection;
 				this.setCaseDefinitionExpression(durm, durm.final_query_string);	
 			},

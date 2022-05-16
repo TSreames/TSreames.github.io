@@ -118,7 +118,6 @@ define([
         close_addresstool_mode: function(){
           try {
             document.getElementById("mapViewDiv").style.cursor = "default";
-            console.log(durm.mailingtool_list_of_events)
             for (var idk_item of durm.mailingtool_list_of_events) {
               idk_item.remove()
             }
@@ -169,8 +168,6 @@ define([
             document.getElementById("addressnotification_recordcount").innerHTML = "";
             document.getElementById("residentgrid").innerHTML = "";
 
-
-            console.log(durm.mailingtool_list_of_events)
             for (var idk_item of durm.mailingtool_list_of_events) {
               idk_item.remove()
             }
@@ -239,22 +236,16 @@ define([
             document.getElementById("mapViewDiv").style.cursor = "crosshair";
             document.getElementById("parceltool_form_panel").style.cursor = "default";
             let deselect_clickhandler = durm.mapView.on("click", function (event) {
-              console.log("specialhittest2 deselect")
-              console.log(event)
-              console.log(durm.mapView)
               if(event.button === 2) {}
               else {
                 durm.mapView.hitTest(event).then(function (response) {
                   let graphic_in_question = response.results.filter(function(result) {
-                    console.log(result.graphic.layer.id)
                     if(result.graphic.layer.id === 'at_user'){
                       return result
                     }                    
                   })[0].graphic;
                   user_selected_graphics.remove(graphic_in_question);
                   for (var i = 0; i < user_features.length; i++) {
-                    console.log(user_features[i].attributes)
-                    console.log(graphic_in_question.attributes)
                     if (user_features[i].geometry.rings === graphic_in_question.geometry.rings) {
                       user_features.splice(i--, 1);
                     }
@@ -268,7 +259,6 @@ define([
           } catch (e) { console.log(e); }
         },
         make_loading: function(){
-          console.log("THIS RAN")
           return "<img class='centered-spinner' src='./img/loading_spinner.gif'></img>"
         },
         generate_list_button: function(){
@@ -345,10 +335,8 @@ define([
           try{
             let user_polys = []
             for (var i=0; i < user_features.length; i++) {
-              console.log(user_features[i])
               user_polys.push(user_features[i].geometry)
             }
-            console.log(user_polys)
             let union = geometryEngine.union(user_polys);
             let geom = union;
             let buffer = geometryEngine.geodesicBuffer(geom, feetft, "feet");
@@ -383,9 +371,7 @@ define([
                 }
                 return buffer_result_parcel_attributes;
             }).then(function(buffer_result_parcel_attributes){                 
-              console.log(buffer_result_parcel_geometry)
               let union0 = geometryEngine.union(buffer_result_parcel_geometry);
-              console.log(union0)
 
               let aq = durm.active_address_points.createQuery();
               aq.geometry = union0;

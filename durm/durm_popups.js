@@ -548,12 +548,10 @@ define([
 
 						let c=""
 						if(target.graphic.layer.id == "wakepars") { 
-							console.log("This is in Wake County")
 							durm.prt = durm.parcelrecordquerytask_w 
 							c = "Wake"
 						}
 						else if(target.graphic.layer.id == "orangepars") { 
-							console.log("This is in Orange County")
 							durm.prt = durm.parcelrecordquerytask_o
 							c = "Orange"
 						}
@@ -561,7 +559,6 @@ define([
 	
 						return durm.prt.execute(prquery).then(function(presult) {
 							result.parcel = presult
-							console.log(presult)
 							return addresses_within_parcel_QT.execute(points_within_parcel_Query)
 						})
 						.then(function(presult) {

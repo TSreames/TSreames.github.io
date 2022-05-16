@@ -779,8 +779,9 @@ define([
 		//This should work for  (A) totally new state		(B) resetting a previously used state
 		enable_aerials_mode: function(aerialid) {
 			try {
+				this.ensure_aerials_are_nonvisible() //Do this first to make sure any aerials that were previously set to "Visible" are now not visible.  Basically, we're resetting the widget to default state.
 				if(aerialid == -1) {
-					this.disable_aerials_mode()
+					this.disable_aerials_mode()  //Do this to ensure aerial mode stays off in situations where a value was passed via URL, but that value was -1
 				}
 				else {
 					durm.sliderinput.value = aerialid
@@ -788,7 +789,7 @@ define([
 					durm.aeriallist[aerialid].visible = true;					
 					durm.aparam = aerialid
 					durm.aeriallabelsVT.visible = true; // Make labels visible
-					durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap				
+					durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap		
 					durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer //Show green parcels
 					let sd00 = document.getElementById("sliderDiv")
 					sd00.style.visibility = "visible"; //toggle panel visibility
@@ -807,9 +808,7 @@ define([
 				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
 				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
 				durm.aeriallabelsVT.visible = false; // Make labels nonvisible
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					durm.aeriallist[i].visible = false;  //Make all aerials nonvisible
-				}				
+				this.ensure_aerials_are_nonvisible()
 				durm.parcelboundaryLayer.renderer = parcelboundaryRenderer //Switch back to original parcel
 				let sd00 = document.getElementById("sliderDiv")
 				sd00.style.visibility = "hidden";	//toggle panel visibility
@@ -821,6 +820,14 @@ define([
 				document.getElementById("load_simple_basemap").classList.add("mdc-list-item--activated")
 				document.getElementById("enable_aerials_mode").classList.remove("mdc-list-item--activated")
 
+			} catch (e) { console.log(e); }
+		},
+		ensure_aerials_are_nonvisible: function() {
+			// This is just a helper function that ensures aerials are all nonvisible, without affecting URL parameters, UI, etc.
+			try {
+				for (i = 0; i < durm.aeriallist.length; i++) {
+					durm.aeriallist[i].visible = false;  //Make all aerials nonvisible
+				}
 			} catch (e) { console.log(e); }
 		},
 

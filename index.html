@@ -85,20 +85,18 @@ try {
 	}
 	function openTab(evt, cityName) {
 		var i, tabcontent, addrtablinks;
-		// Get all elements with class="tabcontent" and hide them
 		tabcontent = document.getElementsByClassName("tabcontent");
 		for (i = 0; i < tabcontent.length; i++) {
 			tabcontent[i].style.display = "none";
 		}
-		// Get all elements with class="addrtablinks" and remove the class "active"
 		addrtablinks = document.getElementsByClassName("addrtablinks");
 		for (i = 0; i < addrtablinks.length; i++) {
 			addrtablinks[i].className = addrtablinks[i].className.replace(" active", "");
 		}
-		// Show the current tab, and add an "active" class to the button that opened the tab
 		document.getElementById(cityName).style.display = "block";
 		evt.currentTarget.className += " active";
 	}
+	
 	require([
 	"esri/layers/FeatureLayer",
 	"../durm/durm_main.js"
@@ -280,7 +278,6 @@ try {
 					<div id="residentgrid" class="grid"></div>
 				</span>	
 			</div>
-
 		</div>
 
 
@@ -320,7 +317,6 @@ try {
 					<button class="esri-button" id="draw_button">Load Development Cases</button>
 				</div>			  
 			</div>
-
 			<div id="parceltool_form_panel" class="ui_panel" style="display:none;">
 				<span id="parcelbufferpanelclosebutton" class="esri-icon-close" style="float:right;"></span>
 				<span id="GAL_header">Mailing List Tool</span>

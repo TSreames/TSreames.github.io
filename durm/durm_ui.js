@@ -14,6 +14,7 @@ define([
 		/*  init runs at the very beginning, before there is a 'mapview' and before there are layers.  */
 		init: function(){
 			try {
+				uiscope = this;
 				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels", "graphics","waterlayer","sewerlayer"]
 
 				document.getElementById("bodycontainer").style.cursor = "progress";				
@@ -77,6 +78,7 @@ define([
 					}
 					document.getElementById("layerpanel").classList.remove("is-visible") 
 				});
+
 
 				//MDC configuration related to 'roles',  i.e.,  how MDC decides how the button highlighting works in the nav.
 				const nav_mdclist1 = new mdc.list.MDCList(document.getElementById('nav_mdclist1'));
@@ -231,6 +233,24 @@ define([
 				durm.address_ui = document.getElementById('parceltool_form_panel')
 				durm.address_ui.style.display == "none"
 				durm.mapView.ui.add(durm.address_ui, "top-right");
+
+				durm.mtd = document.createElement("div");
+				durm.mts = document.createElement("span");
+				durm.mti = document.createElement("img");
+
+				durm.mtd.classList = "maptogglebutton"
+				durm.mtd.id = "maptoggle"
+				durm.mts.id = "maptogglebuttonphotocaption"
+				durm.mti.id = "maptogglebuttonphoto"
+
+				durm.mti.src = "./img/aerialmode.png"
+				durm.mts.innerHTML = "Aerials"
+				durm.mts.style.color = "#fff"
+
+				durm.mtd.appendChild(durm.mts)
+				durm.mtd.appendChild(durm.mti)
+				document.getElementById("mapViewDiv").appendChild(durm.mtd)
+
 			} catch (e) { console.log(e); }	
 
 			try {
@@ -776,12 +796,12 @@ define([
 			} catch (e) { console.log(e); }
 		},
 
-		//This should work for  (A) totally new state		(B) resetting a previously used state
 		enable_aerials_mode: function(aerialid) {
 			try {
-				this.ensure_aerials_are_nonvisible() //Do this first to make sure any aerials that were previously set to "Visible" are now not visible.  Basically, we're resetting the widget to default state.
+				console.log("Enable aerials mode")
+				this.ensure_aerials_are_nonvisible() // When this is run we want to ensure all aerials are off first to avoid problems.
 				if(aerialid == -1) {
-					this.disable_aerials_mode()  //Do this to ensure aerial mode stays off in situations where a value was passed via URL, but that value was -1
+					this.disable_aerials_mode()
 				}
 				else {
 					durm.sliderinput.value = aerialid
@@ -797,13 +817,16 @@ define([
 
 					document.getElementById("load_simple_basemap").classList.remove("mdc-list-item--activated")
 					document.getElementById("enable_aerials_mode").classList.add("mdc-list-item--activated")
-
+					durm.mti.src = "./img/map.png"
+					durm.mts.innerHTML = "Map"
+					durm.mts.style.color = "#111"
 				}
 
 			} catch (e) { console.log(e); }
 		},		
 		disable_aerials_mode: function() {
 			try {
+				console.log("Disable aerials mode")
 				durm.aparam = "-1"
 				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
 				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
@@ -819,6 +842,11 @@ define([
 
 				document.getElementById("load_simple_basemap").classList.add("mdc-list-item--activated")
 				document.getElementById("enable_aerials_mode").classList.remove("mdc-list-item--activated")
+				durm.mti.src = "./img/aerialmode.png"
+				durm.mts.innerHTML = "Aerials"
+				durm.mts.style.color = "#fff"			
+
+				
 
 			} catch (e) { console.log(e); }
 		},

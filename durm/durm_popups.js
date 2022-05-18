@@ -275,21 +275,21 @@ define([
 
 						let deedlink1 = document.createElement('a')
 						mil5.appendChild(deedlink1)
-						deedlink1.href = "http://rodweb.co.durham.nc.us/RealEstate/SearchEntry.aspx"
+						deedlink1.href = "https://rodweb.dconc.gov/web/search/DOCSEARCH5S1"
 						deedlink1.setAttribute('target', '_blank');
 						if(!result.features[0].attributes.DEED_BOOK) {deedlink1.innerHTML = "Deed Book: null (none)"}
 						else {deedlink1.innerHTML = "Deed Book: " + result.features[0].attributes.DEED_BOOK.toString().replace(/^0+/, '')}
 
 						let deedlink2 = document.createElement('a')
 						mil6.appendChild(deedlink2)
-						deedlink2.href = "http://rodweb.co.durham.nc.us/RealEstate/SearchEntry.aspx"
+						deedlink2.href = "https://rodweb.dconc.gov/web/search/DOCSEARCH5S1"
 						deedlink2.setAttribute('target', '_blank');
 						if(!result.features[0].attributes.DEED_PAGE) {deedlink2.innerHTML = "Deed Page: null (none)"}
 						else{ deedlink2.innerHTML = "Deed Page: " + result.features[0].attributes.DEED_PAGE.toString().replace(/^0+/, '')}
 
 						platlink1 = document.createElement('a')
 						mil7.appendChild(platlink1)
-						platlink1.href = "http://rodweb.co.durham.nc.us/RealEstate/Map/SearchEntry.aspx"
+						platlink1.href = "https://rodweb.dconc.gov/web/search/DOCSEARCH5S1"
 						platlink1.setAttribute('target', '_blank');
 						if(!result.features[0].attributes.PLAT_BOOK) { 
 							platlink1.innerHTML = "Plat Book: null (none)"
@@ -300,7 +300,7 @@ define([
 
 						platlink2 = document.createElement('a')
 						mil8.appendChild(platlink2)
-						platlink2.href = "http://rodweb.co.durham.nc.us/RealEstate/Map/SearchEntry.aspx"
+						platlink2.href = "https://rodweb.dconc.gov/web/search/DOCSEARCH5S1"
 						platlink2.setAttribute('target', '_blank');
 						if(!result.features[0].attributes.PLAT_PAGE) { 
 							platlink2.innerHTML = "Plat Page: null (none)"

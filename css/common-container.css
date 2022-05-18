@@ -223,6 +223,7 @@ table.popup_response tr th { width:auto; }
 	margin:8px;
 	top:0;
 	right:0;	
+	cursor:pointer;
 }
 
 
@@ -584,13 +585,39 @@ height:40px;
 	width:8px;
 }
 
+#layerlistbutton1 {
+	cursor: pointer;
+}
+
+.maptogglebutton {
+	cursor: pointer;
+	position:absolute;
+	right:20px;
+	bottom:20px; 
+	height:79px;
+	width:79px;
+	background:white;
+	border:1px solid #ccc;
+}
+
+#maptogglebuttonphoto {
+	height:79px;
+	width:79px;
+}
+
+#maptogglebuttonphotocaption {
+	position:fixed;
+	font-weight:500;
+	font-size:1em;
+}
+
 .sliderholder {
 	background:#fff;
 	width:50%;
 	height:80px;
 	position:absolute;
-	bottom:2%;
-	right:2%;
+	bottom:20px;
+	right:120px;
 	z-index:52;
 	opacity: 0.9;
 }

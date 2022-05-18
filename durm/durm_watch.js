@@ -172,6 +172,17 @@ define([
               document.getElementById("layerpanel").classList.remove("is-visible")
             });
 
+            console.log("Set Map Toggle event")
+
+            let t0gg = document.getElementById("maptoggle")
+            t0gg.addEventListener("click", () => {
+              if(durm.aparam==-1) {
+                durm_ui.enable_aerials_mode(30);
+              } else {
+                durm_ui.disable_aerials_mode();
+              }
+            });
+
           } catch (e) { console.log(e); }
         }
     };

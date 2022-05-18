@@ -141,7 +141,9 @@ define([
               if(durm.aparam == -1) { durm_ui.disable_aerials_mode(); }
               else { durm_ui.enable_aerials_mode(durm.aparam); }
             } 
-            else { durm.aparam = -1 }
+            else { 
+              durm_ui.disable_aerials_mode();
+            }
 
             if (durm.utilities_passed) {
               if(durm.uparam == 1) {

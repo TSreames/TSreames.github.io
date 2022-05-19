@@ -155,13 +155,6 @@ define([
                 else { document.getElementById("mapViewDiv").style.cursor = "default"; }
             });
 
-            /* change parcel color when basemap changes */
-            /*durm.map.watch("basemap", function(newValue, oldValue) {
-                if (newValue.parcelColor === "green") {	durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer;	} 
-                else if (newValue.parcelColor === "gray") {	durm.parcelboundaryLayer.renderer = parcelboundaryRenderer;	} 
-                else { durm.parcelboundaryLayer.renderer = parcelboundaryRenderer; }	
-            });*/
-
             durm.reset_button.addEventListener("click", function(){
               durm_ui.set_app_state("default");
               durm_ui.disable_aerials_mode();

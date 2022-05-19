@@ -245,7 +245,7 @@ define([
 
 				durm.mti.src = "./img/aerialmode.png"
 				durm.mts.innerHTML = "Aerials"
-				durm.mts.style.color = "#fff"
+				durm.mts.style.color = "#323232"
 
 				durm.mtd.appendChild(durm.mts)
 				durm.mtd.appendChild(durm.mti)
@@ -556,47 +556,6 @@ define([
 			push_new_url()
 
 		},
-		load_utilities_preset_OLD: function(layerparams)
-		{		
-			try{
-			if(layerparams) { lyrIDlist = layerparams.split(',') }
-			else {}
-			durm.map.layers.items.forEach(function(r) {
-					//Preset button should ignore certain layers
-					if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-					else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-					else if(r.id === "graphics") {}
-					// After much thought and experimentation, we want to ensure that the presets effectively 'reset' the layers and do not carry over previously selected layers.
-					// But we went to a lot of trouble to build it, so just uncomment out the below to reverse that.
-					//else if (lyrIDlist.includes(r.id)) { r.visible = true; }
-					else { r.visible = false; }
-			}); 	  
-			let utilities_layers = [durm.countymask,durm.countymask];
-			//if all the layers are visible, then turn them all off.   Otherwise, turn them on.
-			var allvisible = true;
-			utilities_layers.forEach(function(r) {
-				if(r.visible) {}
-				else { allvisible = false; }
-			});			  
-			if(allvisible) {
-				utilities_layers.forEach(function(r) {
-					r.visible = false;
-				});
-			}
-			else {
-				utilities_layers.forEach(function(r) {
-					r.visible = true;
-				});
-			}	
-			durm.map.add(durm.waterlayer);
-			durm.waterlayer.visible = true;
-
-			durm.map.add(durm.sewerlayer);	
-			durm.sewerlayer.visible = true;	
-
-			} catch (e) { console.log(e); }		
-		},
-
     shrink_to_portrait_phone: function(){
 			durm.mapView.ui.remove([durm.legend]);
 			let fps = document.getElementById("devcase_form_panel")
@@ -819,7 +778,7 @@ define([
 					document.getElementById("enable_aerials_mode").classList.add("mdc-list-item--activated")
 					durm.mti.src = "./img/map.png"
 					durm.mts.innerHTML = "Map"
-					durm.mts.style.color = "#111"
+					durm.mts.style.color = "#323232"
 				}
 
 			} catch (e) { console.log(e); }
@@ -844,7 +803,7 @@ define([
 				document.getElementById("enable_aerials_mode").classList.remove("mdc-list-item--activated")
 				durm.mti.src = "./img/aerialmode.png"
 				durm.mts.innerHTML = "Aerials"
-				durm.mts.style.color = "#fff"			
+				durm.mts.style.color = "#323232"			
 
 				
 
@@ -865,7 +824,7 @@ define([
 
 
 		// This is critical to layer ordering, what layers draw on top of one another, which all must be pre-set at the very beginning, ONCE and never changes.
-		// This is very slow and very inefficient (blame ESRI on that) and is therefore only run at the beginning.
+		// This is very slow and very inefficient and is therefore only run at the beginning.
 		// Don't try and get cute and re-work this to be a dynamic re-ordering situation unless you already understand the ramifications of calling the hellish reorder() function
 		reorder_all_layers_to_default: function() {
 			durm.map.layers.sort(function(a, b){

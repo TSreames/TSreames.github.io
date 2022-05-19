@@ -204,16 +204,6 @@ table.popup_response tr th { width:auto; }
 	min-height:90%;
 	max-height:100%;
 }
-/*
-#tool_results_table #owner-results-close {
-	width:30px;
-	position:absolute;
-	height:30px;
-	font-size:24px;
-	margin:8px;
-	top:0;
-	right:0;	
-}*/
 
 #results-close {
 	width:30px;
@@ -225,18 +215,6 @@ table.popup_response tr th { width:auto; }
 	right:0;	
 	cursor:pointer;
 }
-
-
-/*#tool_results_table #owner-results-header {
-	width:70%;
-	position:absolute;
-	font-size:16px;
-	font-weight:bold;
-	margin:0%;
-	padding:1%;
-	top:50px;
-	left:0;
-}*/
 
 .resultsheader {
 	width:70%;
@@ -257,13 +235,6 @@ table.popup_response tr th { width:auto; }
 	bottom:0;
 }
 
-/*#tool_results_table #owner_results_table_content {
-	position:absolute;
-	top:90px;
-	left:3%;
-	right:3%;
-	bottom:0;
-}*/
 #tool_results_table {
 	position:absolute;
 	/*margin:auto;*/
@@ -408,18 +379,6 @@ div.cd-panel-content {
 	font-size:1.1em;
 	font-weight:600;
 }
-/*
-#buttonBoxes {
-	width:100%;
-	position:absolute;
-	bottom:0px;
-	left:0px;
-	right:0px;
-	margin-bottom:5px;
-	margin-left:3px;
-	margin-right:3px;
-}*/
-
 
 #parcelresultsbutton, #parcelclearbutton, #parcelselectbutton, #parceldeselectbutton, #reset_button{
 	color:white;
@@ -447,34 +406,11 @@ div.cd-panel-content {
 	font-weight:700;
 	display:block;
 }
-/*
-#export_resident_tocsvbutton {
-	color:#72b352;
-	font-weight:700;
-	display:block;
-}
-#export_address_tocsvbutton {
-	color:#72b352;
-	font-weight:700;
-	display:block;
-}
-
-#export_owners_tocsvbutton {
-	color:#72b352;
-	font-weight:700;
-	display:block;
-}
-#export_parcels_tocsvbutton {
-	color:#72b352;
-	font-weight:700;
-	display:block;
-}*/
 
 #bufferinputbox {
 	margin-top:5px;
 
 }
-
 
 #devcase_type {
   overflow:visible;
@@ -593,22 +529,24 @@ height:40px;
 	cursor: pointer;
 	position:absolute;
 	right:20px;
-	bottom:20px; 
+	bottom:30px; 
 	height:79px;
 	width:79px;
 	background:white;
 	border:1px solid #ccc;
+	text-align:center;
+	overflow:hidden;
 }
 
 #maptogglebuttonphoto {
 	height:79px;
-	width:79px;
+	width:79px;	
 }
 
 #maptogglebuttonphotocaption {
-	position:fixed;
-	font-weight:500;
-	font-size:1em;
+	/*position:fixed;*/
+	font-weight:600;
+	font-size:14px;
 }
 
 .sliderholder {
@@ -616,7 +554,7 @@ height:40px;
 	width:50%;
 	height:80px;
 	position:absolute;
-	bottom:20px;
+	bottom:30px;
 	right:120px;
 	z-index:52;
 	opacity: 0.9;

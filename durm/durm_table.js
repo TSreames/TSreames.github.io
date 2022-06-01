@@ -9,12 +9,9 @@ define([
 return {
       init: function(){
         console.log("Table Init")
-        tblscope = this;
+        document.getElementById("defaultAdvOpen").click();
         let table_features = []
         try {
-          durm.advsearch_graphics = new GraphicsLayer({id:'advsearch_graphics_results'});
-          durm.map.add(durm.advsearch_graphics);
-
           let defaultemptyfeatures000 = [
             {
               geometry: {
@@ -23,8 +20,8 @@ return {
               },
               attributes: {
                 ObjectID: 0,
-                SITE_ADDRE: 'WORDS',
-                PARCEL_ID: 'MOREWORds'
+                SITE_ADDRE: '.',
+                PARCEL_ID: '.'
               }
             }
            ];
@@ -135,25 +132,19 @@ return {
       removeAllFeatures: function(layer2edit){
         console.log("removeAllFeatures")
         try {
-
           durm.advsearch_features.queryObjectIds().then(function (ids) {
             let all_current_feature_ids = []
             let deleteFeaturesList = [
-             // { objectId: 467 },
-             // { objectId: 500 }
+             // { objectId: 123 },
+             // { objectId: 445 }
             ];
             all_current_feature_ids.push(ids)
-            console.log(all_current_feature_ids)
             for(let k = 0; k < all_current_feature_ids[0].length; k++){
-              console.log(all_current_feature_ids.length)
-              console.log(all_current_feature_ids[0][k])
-              //console.log(all_current_feature_ids[k][0])
               let dff = { objectId : all_current_feature_ids[0][k] }
               deleteFeaturesList.push(dff);
             }
             return deleteFeaturesList       
           }).then(function(deleteFeaturesList){
-            console.log(deleteFeaturesList)
             edits = {
               deleteFeatures: deleteFeaturesList
             }
@@ -191,14 +182,11 @@ return {
                     "features have been removed"
                   );
                 }
-                // if features were added - call queryFeatures to return
-                //    newly added graphics
                 if (results.addFeatureResults.length > 0) {
                   var objectIds = [];
                   results.addFeatureResults.forEach((item) => {
                     objectIds.push(item.objectId);
-                  });
-                  // query the newly added features from the layer                  
+                  });                
                   layer2edit
                     .queryFeatures({
                       objectIds: objectIds
@@ -220,16 +208,15 @@ return {
           console.log(e)
         }
       },  
-      call_REST: function(streetstring,ownerstring) {
-        console.log("call_REST")
+      call_REST_streetname: function(streetstring) {
+        console.log("call_REST_streetname")
         try {
           advthis = this;
           durm.mapView.when(() => {
             durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){
               
               console.log(streetstring)
-              console.log(ownerstring)
-  
+ 
               let advaddrquery = durm.active_address_points.createQuery();
               let advparcelquery = durm.parcelboundaryLayer.createQuery();
     
@@ -240,6 +227,7 @@ return {
               advaddrquery.where = de
               return durm.active_address_points.queryFeatures(advaddrquery)
               .then(function(addrresponse) {
+                console.log(addrresponse.features.length)
                 let mp00 = new Multipoint()
                 for(var j = 0; j < addrresponse.features.length; j++){
                   mp00.addPoint(addrresponse.features[j].geometry);
@@ -260,16 +248,7 @@ return {
                           ObjectID: parcel_response.features[i].attributes.OBJECTID,
                           SITE_ADDRE: parcel_response.features[i].attributes.SITE_ADDRE,
                           PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID
-                        }/*,
-                        symbol: {
-                          type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                          color: [244, 66, 66, 1],
-                          outline: {
-                            width: 1.5,
-                            color: "red"
-                          },                                  
-                          style: "solid"
-                        }*/
+                        }
                   });
                   features2add.push(advsearchGraphic)              
                 }
@@ -277,26 +256,11 @@ return {
                 advthis.addFeatures(durm.advsearch_features,{
                   addFeatures: features2add
                 });
-                /*
-                durm.advsearch_features.applyEdits({
-                  addFeatures: [features2add]
-                }).then(function(results) {
-                  console.log(results)
-                  return durm.advsearch_features.queryFeatures()
-                }).then(function(results) {
-                  console.log(results)
-                  durm.featureTable.layer = durm.advsearch_features
-                });
-                */
-
-
-                //durm.featureTable.layer = durm.advsearch_features
-
 
                 document.getElementById("tableDiv").style.visibility = "visible";   
                 document.getElementById("searchpanel").classList.remove("is-visible") 
-
-                durm.mapView.goTo(durm.advsearch_features)
+                console.log(features2add)
+                durm.mapView.goTo(features2add)
               });    
             });
           });
@@ -304,301 +268,55 @@ return {
           console.log(e);
         }	
       },
-      call_REST_STILLNOTWORKIGN: function(streetstring,ownerstring) {
+      call_REST_ownername: function(ownerstring) {
+        console.log("call_REST_ownername")
         try {
-          restthis = this
+          advthis = this;
           durm.mapView.when(() => {
             durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){
               
-              console.log(streetstring)
               console.log(ownerstring)
-  
-              let advaddrquery = durm.active_address_points.createQuery();
+ 
               let advparcelquery = durm.parcelboundaryLayer.createQuery();
     
-              advaddrquery.returnGeometry = true;
-              advaddrquery.outSpatialReference = { wkid: 4326 };
-              advaddrquery.outFields = [ "STREETNAME" ];
-              let de = "STREETNAME = '"+ streetstring +"'"
-              advaddrquery.where = de
-              return durm.active_address_points.queryFeatures(advaddrquery)
-              .then(function(addrresponse) {
-                let mp00 = new Multipoint()
-                for(var j = 0; j < addrresponse.features.length; j++){
-                  mp00.addPoint(addrresponse.features[j].geometry);
-                }
-                advparcelquery.geometry = mp00;
-                advparcelquery.spatialRelationship = "intersects";
-                advparcelquery.returnGeometry = true;
-                advparcelquery.outSpatialReference = { wkid: 4326 };           
-                return durm.parcelboundaryLayer.queryFeatures(advparcelquery)
-              }).then(function(parcel_response){
-                console.log(parcel_response)                
-
-                document.getElementById("tableDiv").style.visibility = "visible";   
-                document.getElementById("searchpanel").classList.remove("is-visible")  
-   
-                durm.advsearch_graphics.removeAll();
+              advparcelquery.returnGeometry = true;
+              advparcelquery.outSpatialReference = { wkid: 4326 };
+              //advparcelquery.outFields = [ "STREETNAME" ];
+              let de = "OWNER_NAME = '"+ ownerstring +"'"
+              advparcelquery.where = de
+              return durm.parcelboundaryLayer.queryFeatures(advparcelquery)
+              .then(function(parcel_response){
+                advthis.removeAllFeatures(durm.advsearch_features);                
+                features2add = []
                 for (var i=0; i < parcel_response.features.length; i++) {
-                  console.log(parcel_response.features[i])
                   let advsearchGraphic = new Graphic({
+                    title:"idk",
                         geometry: parcel_response.features[i].geometry,
-                        symbol: {
-                          type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                          color: [244, 66, 66, 1],
-                          outline: {
-                            width: 1.5,
-                            color: "red"
-                          },                                  
-                          style: "solid"
+                        attributes: {
+                          ObjectID: parcel_response.features[i].attributes.OBJECTID,
+                          SITE_ADDRE: parcel_response.features[i].attributes.SITE_ADDRE,
+                          PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID
                         }
                   });
-                  durm.advsearch_graphics.add(advsearchGraphic);
-
-                  let advsearchPoly = new Polygon({
-                    geometry: parcel_response.features[i].geometry,
-                    attributes: parcel_response.features[i].attributes,
-                    symbol: {
-                      type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                      color: [244, 66, 66, 1],
-                      outline: {
-                        width: 1.5,
-                        color: "red"
-                      },                                  
-                      style: "solid"
-                    }
-                  });
-                  //restthis.addFeature(advsearchPoly.geometry)
-
-                  let attributes = {};
-                  attributes["SITE_ADDRE"] = parcel_response.features[i].attributes["SITE_ADDRE"];
-                  attributes["PARCEL_ID"] = parcel_response.features[i].attributes["PARCEL_ID"];
-        
-                  const addFeature =  new Graphic({
-                    geometry: geometry,
-                    attributes: attributes
-                  });
-                
-                  const deleteFeatures = [
-                    { objectId: 467 },
-                    { objectId: 500 }
-                  ];
-                
-                  durm.advsearch_features.applyEdits({
-                    addFeatures: [addFeature]
-                    //deleteFeatures: deleteFeatures
-                  }).then(function(results) {});
-
-                  //advsearch_result_parcel_attributes.push(parcel_response[i].attributes);
-                  //durm.advsearch_features.add(advsearchPoly);
-                  //durm.advsearch_features.applyEdits(advsearchPoly);
-
-                  // ADD INDIVIDUAL POLYGON TO FEATURE LAYER HERE.  SOMEHOW.  IDK.
-
+                  features2add.push(advsearchGraphic)              
                 }
-                console.log(durm.advsearch_graphics)
-                console.log(durm.advsearch_features)
-                durm.mapView.goTo(durm.advsearch_graphics.graphics)
 
-                //durm.featureTable.layer = durm.advsearch_graphics.graphics;  
-                
-
-              });  
-  
-            });
-          });
-        } catch (e) { 
-          console.log(e);
-        }	
-      },
-      call_REST_working_but_VERYslow: function(streetstring,ownerstring) {
-        try {
-          durm.mapView.when(() => {
-            durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){
-              
-              console.log(streetstring)
-              console.log(ownerstring)
-  
-              let advaddrquery = durm.active_address_points.createQuery();
-              let advparcelquery = durm.parcelboundaryLayer.createQuery();
-  
-              //1.  query address points by streetname
-              //2.  get the results as x,y and do spatial query intersecting with parcels
-              //3.  get parcels as objectids only
-              //4.  load a new FeatureLayer with a definition expression loading only those objectid's
-              //5.  add that to the map and the table
-  
-              advaddrquery.returnGeometry = true;
-              advaddrquery.outSpatialReference = { wkid: 4326 };
-              advaddrquery.outFields = [ "STREETNAME" ];
-              let de = "STREETNAME = '"+ streetstring +"'"
-              advaddrquery.where = de
-              return durm.active_address_points.queryFeatures(advaddrquery)
-              .then(function(addrresponse) {
-                let mp00 = new Multipoint()
-                for(var j = 0; j < addrresponse.features.length; j++){
-                  mp00.addPoint(addrresponse.features[j].geometry);
-                }
-                advparcelquery.geometry = mp00;
-                advparcelquery.spatialRelationship = "intersects";
-                advparcelquery.returnGeometry = false;
-                advparcelquery.outSpatialReference = { wkid: 4326 };
-                advparcelquery.outFields = ['OBJECTID'];              
-                return durm.parcelboundaryLayer.queryObjectIds(advparcelquery)
-              }).then(function(parcel_response){
-                //console.log(parcel_response)
-
-                console.log(parcel_response.length)
+                advthis.addFeatures(durm.advsearch_features,{
+                  addFeatures: features2add
+                });
 
                 document.getElementById("tableDiv").style.visibility = "visible";   
-                document.getElementById("searchpanel").classList.remove("is-visible")  
-
-                let defex = "OBJECTID IN ("
-                for(var j = 0; j < parcel_response.length; j++){
-                  if(j == parcel_response.length-1) {
-                    defex = defex + parcel_response
-                  } else {
-                  defex = defex + parcel_response + ", "
-                  }
-                }
-                defex = defex + ")"
-
-                //console.log(defex)
-
-                const parcels_temp = new FeatureLayer({
-                  id: "parcels_temp",
-                  url: PARCELS_AGOL,
-                  spatialReference: { wkid: 102100 },
-                  listMode: "hide",
-                  definitionExpression: defex,
-                  renderer: thicc_parcelboundaryRenderer
-                });
-                durm.map.add(parcels_temp)
-                durm.featureTable.layer = parcels_temp;  
-
-              });  
-  
+                document.getElementById("searchpanel").classList.remove("is-visible") 
+                console.log(features2add)
+                durm.mapView.goTo(features2add)
+              });    
             });
           });
         } catch (e) { 
           console.log(e);
         }	
       },
-      call_REST_NOTWORKING: function(streetstring,ownerstring) {
-        try {
-          durm.mapView.when(() => {
-            durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){
-              
-              console.log(streetstring)
-              console.log(ownerstring)
-
-              durm.featureTable.layer = durm.parcelboundaryLayer;  
-  
-              let advaddrquery = durm.active_address_points.createQuery();
-              let advparcelquery = durm.parcelboundaryLayer.createQuery();
-  
-              //1.  query address points by streetname
-              //2.  get the results as x,y and do spatial query intersecting with parcels
-              //3.  get parcels
-              //4.  add parcels to map + table
-  
-              advaddrquery.returnGeometry = true;
-              advaddrquery.outSpatialReference = { wkid: 4326 };
-              advaddrquery.outFields = [ "STREETNAME" ];
-              let de = "STREETNAME = '"+ streetstring +"'"
-              console.log(de)
-              //STREETNAME = 'Englewood'
-              advaddrquery.where = de
-              return durm.active_address_points.queryFeatures(advaddrquery)
-              .then(function(addrresponse) {
-                let mp00 = new Multipoint()
-                for(var j = 0; j < addrresponse.features.length; j++){
-                  mp00.addPoint(addrresponse.features[j].geometry);
-                }
-                advparcelquery.geometry = mp00;
-                advparcelquery.spatialRelationship = "intersects";
-                advparcelquery.returnGeometry = true;
-                advparcelquery.outSpatialReference = { wkid: 4326 };
-                advparcelquery.outFields = ['PARCEL_ID','SITE_ADDRE'];              
-                return durm.parcelboundaryLayer.queryFeatures(advparcelquery)
-              }).then(async function(pars){
-                const geometries = pars.features.map(function (
-                  graphic
-                ) {
-                  return graphic.geometry;
-                });
-                queryGeometry = await geometryEngineAsync.union(
-                  geometries
-                );
-                document.getElementById("tableDiv").style.visibility = "visible";   
-                document.getElementById("searchpanel").classList.remove("is-visible")  
-
-  
-                //durm.featureTable.filterGeometry = queryGeometry;
-                //console.log(durm.mapView.extent)
-                //durm.featureTable.filterGeometry = durm.mapView.extent;
-
-                //durm.featureTable.selectRows(pars.features);
-                
-                
-                
-                
-                
-                //tblscope.selectFeatures(queryGeometry);  
-
-
-                
-                
-
-                if (durm.parcellayerView) {
-                  // create a query and set its geometry parameter to the
-                  // rectangle that was drawn on the view
-                  console.log(queryGeometry)
-                  const query = {
-                    geometry: queryGeometry,
-                    outFields: ["*"]
-                  };
-      
-                  // query graphics from the csv layer view. Geometry set for the query
-                  // can be polygon for point features and only intersecting geometries are returned
-                  durm.parcellayerView
-                    .queryFeatures(query)
-                    .then((results) => {
-                      console.log(results)
-                      if (results.features.length === 0) {
-                        console.log("results had no features so we cleared")
-                        durm.featureTable.clearSelection();
-                      } else {
-                        // pass in the query results to the table by calling its selectRows method.
-                        // This will trigger FeatureTable's selection-change event
-                        // where we will be setting the feature effect on the csv layer view
-                        console.log("results had features so we filtered")
-                        durm.featureTable.filterGeometry = queryGeometry;
-                        console.log(results.features)
-                        durm.featureTable.selectRows(results.features);
-                      }
-                    })
-                    .catch(console.log("Error"));
-                }
-
-
-
-
-
-
-
-
-
-
-
-              });  
-  
-            });
-          });
-        } catch (e) { 
-          console.log(e);
-        }	
-      },
+      //not used
       selectFeatures: function(geometry){
         try {
           console.log("SELECT FEATURES")

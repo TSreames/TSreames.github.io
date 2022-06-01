@@ -49,6 +49,8 @@ else if (bowser.gecko) { }
 <link rel="stylesheet" href="/css/phone.css" type="text/css">
 <link rel="stylesheet" href="/css/print.css" type="text/css" media="print" />
 
+<link rel="stylesheet" href="/css/overwrites-all.css" type="text/css">
+
 <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 <!--<script src="/lib/mdc/material-components-web.min12.js"></script>-->
 <script type="text/javascript" charset="utf-8" src="/lib/moment.js"></script>
@@ -86,16 +88,30 @@ try {
 		return !val ? '':val[1];
 	}
 	function openTab(evt, cityName) {
-		var i, tabcontent, addrtablinks;
-		tabcontent = document.getElementsByClassName("tabcontent");
-		for (i = 0; i < tabcontent.length; i++) {
-			tabcontent[i].style.display = "none";
+		var i, addrtabcontent, addrtablinks;
+		addrtabcontent = document.getElementsByClassName("addrtabcontent");
+		for (i = 0; i < addrtabcontent.length; i++) {
+			addrtabcontent[i].style.display = "none";
 		}
 		addrtablinks = document.getElementsByClassName("addrtablinks");
 		for (i = 0; i < addrtablinks.length; i++) {
 			addrtablinks[i].className = addrtablinks[i].className.replace(" active", "");
 		}
 		document.getElementById(cityName).style.display = "block";
+		evt.currentTarget.className += " active";
+	}
+
+	function openAdvTab(evt, elementid) {
+		var i, advtabcontent, advtablinks;
+		advtabcontent = document.getElementsByClassName("advtabcontent");
+		for (i = 0; i < advtabcontent.length; i++) {
+			advtabcontent[i].style.display = "none";
+		}
+		advtablinks = document.getElementsByClassName("advtablinks");
+		for (i = 0; i < advtablinks.length; i++) {
+			advtablinks[i].className = advtablinks[i].className.replace(" active", "");
+		}
+		document.getElementById(elementid).style.display = "inline-grid";
 		evt.currentTarget.className += " active";
 	}
 	
@@ -266,7 +282,7 @@ try {
 
 			<span id="results-close" role="button" tabindex="0" aria-label="Close" title="Close">&#10006;</span>	
 
-			<div id="Owner_Addresses" class="tabcontent">
+			<div id="Owner_Addresses" class="addrtabcontent">
 				<span id="owner-results-header" class="resultsheader"></span>					
 				<span id="owner_results_table_content" class="resultstablecontent">
 					<span id="parcelnotification_recordcount" class="recordcount"></span>
@@ -276,7 +292,7 @@ try {
 				</span>	
 			</div>
 
-			<div id="Site_Addresses" class="tabcontent">
+			<div id="Site_Addresses" class="addrtabcontent">
 				<span id="resident-results-header" class="resultsheader"></span>	
 				<span id="resident_results_table_content" class="resultstablecontent">
 					<span id="addressnotification_recordcount" class="recordcount"></span>
@@ -371,8 +387,33 @@ try {
 	<div id="closebar2"></div>		<!-- binding? -->
 	<div class="cd-panel-content">
 		<div id="advanced_search_bigcontainer" style="border: 1px solid #bbb; border-radius: 20px; width:85%; top:50px; position:fixed;">
-			
-			<div id="advanced_search_form">
+			<span class="adv_tab">
+				<button class="advtablinks" onclick="openAdvTab(event, 'advanced_search_form_street')" id="defaultAdvOpen">Streetname</button>
+				<button class="advtablinks" onclick="openAdvTab(event, 'advanced_search_form_owner')">Owner</button>
+			</span>
+
+			<div id="advanced_search_form_street" class="advtabcontent">
+				<form>
+					<label for="streetname">Street name:</label>
+					<input type="text" id="sname" name="streetname"><br><br>				
+				</form>
+				<div id="advanced_search_submit_street">			
+					<button class="esri-button" id="street_submit">Submit</button>
+			 </div>
+			</div>
+
+			<div id="advanced_search_form_owner" class="advtabcontent">
+				<form>
+					<label for="ownername">Owner name:</label>
+					<input type="text" id="oname" name="ownername"><br><br>					
+				</form>
+				<div id="advanced_search_submit_owner">			
+					<button class="esri-button" id="owner_submit">Submit</button>
+			 </div>
+				
+			</div>
+			<!--
+			<div id="advanced_search_formOLD">
 				<form>
 					<label for="streetname">Street name:</label>
 					<input type="text" id="sname" name="streetname"><br><br>
@@ -380,10 +421,10 @@ try {
 					<input type="text" id="oname" name="ownername"><br><br>					
 				</form>
 			</div>			
-			<div id="advanced_search_submit">			
- 				<button class="esri-button" id="advanced_submit">Submit</button>
+			<div id="advanced_search_submitOLD">			
+ 				<button class="esri-button" id="streetname_submit">Submit</button>
 			</div>
-			<div id="advanced_search_candidates"></div>
+			<div id="advanced_search_candidates"></div>-->
 		</div>
 		
 	</div> <!-- cd-panel-content -->
@@ -393,17 +434,20 @@ try {
 </body>
 
 <script>
-	document.getElementById("advanced_submit").addEventListener("click", function(event){
+	document.getElementById("street_submit").addEventListener("click", function(event){
 		let sname00 = document.getElementById("sname").value
-		let oname00 = document.getElementById("oname").value
-		callrest(sname00,oname00)
+		require(["../durm/durm_table.js"], function(durm_table) {
+			durm_table.call_REST_streetname(sname00)
+		 });
     });
 
-	function callrest(sn,on) {
+	document.getElementById("owner_submit").addEventListener("click", function(event){
+		let oname00 = document.getElementById("oname").value
 		require(["../durm/durm_table.js"], function(durm_table) {
-			durm_table.call_REST(sn,on)
+			durm_table.call_REST_ownername(oname00)
 		 });
-	}
+    });
+
 </script>
 
 <script>

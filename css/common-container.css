@@ -253,40 +253,12 @@ table.popup_response tr th { width:auto; }
 	max-width:80%;
 	resize:both;
 }
-/* Style the tab */
-.address_tab {
-  overflow: hidden;
-  background-color: #f1f1f1;
-}
 
-/* Style the buttons that are used to open the tab content */
-.address_tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-	font-weight:500;
-}
 
-/* Change background color of buttons on hover */
-.address_tab button:hover {
-  background-color: #ddd;
-}
 
-/* Create an active/current tablink class */
-.address_tab button.active {
-  background-color:#284f8d;
-}
 
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border-top: none;
-}
+
+
 
 /* independent popup styling */
 #independent_case_popup #independent-popup-close {

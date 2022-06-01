@@ -31,8 +31,10 @@ else if (bowser.blink) { }
 else if (bowser.gecko) { }
 </script>
 
-<link rel="stylesheet" href="/css/dgrid.css" type="text/css">
-<link rel="stylesheet" href="/lib/mdc/material-components-web.min12.css" type="text/css">
+<!--<link rel="stylesheet" href="/css/dgrid.css" type="text/css">-->
+<!--<link rel="stylesheet" href="/lib/mdc/material-components-web.min12.css" type="text/css">-->
+<link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" media="print" onload="this.media='all'; this.onload=null;">
 <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/css/main.css" type="text/css" media="print" onload="this.media='all'; this.onload=null;">
 
@@ -47,8 +49,8 @@ else if (bowser.gecko) { }
 <link rel="stylesheet" href="/css/phone.css" type="text/css">
 <link rel="stylesheet" href="/css/print.css" type="text/css" media="print" />
 
-
-<script src="/lib/mdc/material-components-web.min12.js"></script>
+<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<!--<script src="/lib/mdc/material-components-web.min12.js"></script>-->
 <script type="text/javascript" charset="utf-8" src="/lib/moment.js"></script>
 <script type="text/javascript" charset="utf-8" src="/lib/Sortable.min.js"></script>
 <script src="https://js.arcgis.com/4.19/"></script>
@@ -210,8 +212,7 @@ try {
 
 	<div class="mdc-drawer-scrim" id="scrim1"></div>
 
-
-		<div class="mdc-menu mdc-menu-surface" tabindex="-1">
+	<div class="mdc-menu mdc-menu-surface" tabindex="-1">
 			<ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
 				<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="distanceButton">
 					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">timeline</i>
@@ -238,10 +239,15 @@ try {
 				<section class="mdc-top-app-bar__section mdc-top-app-bar__section">
 					<div id="default_search_container"></div>
 				</section>
-				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end buttonbar">
+				<section class="mdc-top-app-bar__section buttonbar">
 					<button id="layerlistbutton1">
 					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">layers</i>
-					</button>					
+					</button>	
+				</section>
+				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end buttonbar">
+					<button id="advanced_search_button">
+					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">search</i>
+					</button>	
 				</section>
 			</div>
 		</header>
@@ -280,10 +286,12 @@ try {
 			</div>
 		</div>
 
-
 		<div id="mapViewDiv" class="mdc-top-app-bar--fixed-adjust">
+			
 			<div id="sketch_button_container"></div>		
 			<div id="devcase_form_panel" class="ui_panel" style="display:none;visibility:hidden;">
+				
+
 				<div id="devcase_search">
 					<label for="development_search_container" class="devsearchlabel">Search</label>
 					<div id="development_search_container"></div>
@@ -329,6 +337,8 @@ try {
 			</div>
 		</div>	
 
+		<div id="tableDiv" style="width:100%;z-index:999999;height:20%;position:absolute;bottom:0;visibility:hidden;"></div>
+
 		<div class="cd-main-content do-not-print"></div>
 	
 </div>
@@ -350,7 +360,51 @@ try {
 		</div> <!-- cd-panel-content -->
 	</div> <!-- cd-panel-container -->
 </div> <!-- cd-panel -->
+
+<div id="searchpanel" class="cd-panel from-left do-not-print">
+	<header class="cd-panel-header shortercontainer">
+		<h1>Advanced Search</h1>
+		<a href="#0" class="cd-panel-close">Close</a>
+	</header>
+
+<div class="cd-panel-container shortercontainer">	
+	<div id="closebar2"></div>		<!-- binding? -->
+	<div class="cd-panel-content">
+		<div id="advanced_search_bigcontainer" style="border: 1px solid #bbb; border-radius: 20px; width:85%; top:50px; position:fixed;">
+			
+			<div id="advanced_search_form">
+				<form>
+					<label for="streetname">Street name:</label>
+					<input type="text" id="sname" name="streetname"><br><br>
+					<label for="ownername">Owner name:</label>
+					<input type="text" id="oname" name="ownername"><br><br>					
+				</form>
+			</div>			
+			<div id="advanced_search_submit">			
+ 				<button class="esri-button" id="advanced_submit">Submit</button>
+			</div>
+			<div id="advanced_search_candidates"></div>
+		</div>
+		
+	</div> <!-- cd-panel-content -->
+</div> <!-- cd-panel-container -->
+</div> <!-- cd-panel -->
+
 </body>
+
+<script>
+	document.getElementById("advanced_submit").addEventListener("click", function(event){
+		let sname00 = document.getElementById("sname").value
+		let oname00 = document.getElementById("oname").value
+		callrest(sname00,oname00)
+    });
+
+	function callrest(sn,on) {
+		require(["../durm/durm_table.js"], function(durm_table) {
+			durm_table.call_REST(sn,on)
+		 });
+	}
+</script>
 
 <script>
 	window.mdc.autoInit();

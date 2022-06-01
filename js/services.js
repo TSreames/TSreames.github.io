@@ -108,6 +108,9 @@ const WATERSHEDS_URL_SUBLAYER = "https://webgis.durhamnc.gov/server/rest/service
 const VOTERPRECINCT_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/"
 const DCHCMPO_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Administrative/MapServer/14"
 
+const DEMO_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Inspections/MapServer/10"
+const DRIVEWAY_URL = "https://webgis.durhamnc.gov/server/rest/services/PublicServices/Inspections/MapServer/9"
+
 //CartographicServices
 const ELEM1920_URL = "https://webgis.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2019_2020/MapServer"
 const ELEM2021_URL = "https://webgis.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2020_2021/MapServer"

@@ -1,6 +1,5 @@
 /*
-Matt Reames, 2019
-This module loads the Map and MapView, and begins a cascade of related functions
+Matt Reames, 2019-22
 */
 
 define([
@@ -9,18 +8,18 @@ define([
     "esri/widgets/Popup", "esri/widgets/Popup/PopupViewModel","esri/tasks/GeometryService",
     "../durm/durm_popups.js",
     "../durm/durm_gallery.js","../durm/durm_watch.js",
-    "../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js",
+    "../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js","../durm/durm_table.js",
     "../durm/durm_ui.js"
   ], function(Map, MapView, 
     esriConfig,
     Popup, PopupViewModel, GeometryService,
     durm_popups,
     durm_gallery,durm_watch,
-    durm_layers, durm_url, durm_addresstool,
+    durm_layers, durm_url, durm_addresstool,durm_table,
     durm_ui
   ) {
   return {
-    init: function(){
+    init: function() {
       try {
         document.getElementById("bodycontainer").style.cursor = "progress";
         durm.all_planner_button = document.getElementById("all_planner_button");
@@ -56,6 +55,8 @@ define([
           }
         });
 
+
+        
         durm.map = new Map();
         durm.mapView = new MapView({
           map: durm.map,
@@ -70,7 +71,6 @@ define([
           }
         });
 
-        
         esriConfig.geometryService = new GeometryService(geometryservice_url);
 
         durm_gallery.populate_array_of_basemaps()	
@@ -158,7 +158,8 @@ define([
 
             durm_ui.init_layer_control();
             durm_ui.reorder_all_layers_to_default();
-            durm_addresstool.init();            
+            durm_addresstool.init();   
+            durm_table.init();         
           });
         });
       } catch (e) { 

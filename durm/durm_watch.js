@@ -165,7 +165,10 @@ define([
               document.getElementById("layerpanel").classList.remove("is-visible")
             });
 
-            console.log("Set Map Toggle event")
+            let cb2 = document.getElementById("closebar2")
+            cb2.addEventListener("click", function(){
+              document.getElementById("searchpanel").classList.remove("is-visible")
+            });
 
             let t0gg = document.getElementById("maptoggle")
             t0gg.addEventListener("click", () => {
@@ -175,6 +178,8 @@ define([
                 durm_ui.disable_aerials_mode();
               }
             });
+
+
 
           } catch (e) { console.log(e); }
         }

@@ -74,9 +74,9 @@ var thicc_parcelboundaryRenderer = {
   type: "simple",
   symbol: {
 	type: "simple-fill", // autocasts as new SimpleFillSymbol()
-	color: [0, 0, 0, 0],
+	color: [168, 74, 52, 0.1],
 	outline: {
-	  color: [99, 161, 69, 0.8],
+	  color: [50, 50, 162, 1],
 	  width: 1.5,
 	}
   }

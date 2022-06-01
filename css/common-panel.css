@@ -477,7 +477,7 @@ html, body {
   height: 100%;
   top: 0;
   /*background: #dbe2e9;*/
-  background: #e1e1e1;
+  background-color: rgb(255, 255, 255);
   z-index: 56;
   -webkit-transition-property: -webkit-transform;
   -moz-transition-property: -moz-transform;
@@ -508,6 +508,7 @@ html, body {
   width: 33px;
   height: 100%;
   top: 0;
+  right:0;
   background: #222;
   z-index: 56;
   background-color: #222;
@@ -551,6 +552,9 @@ html, body {
   .shortcontainer {
     width: 70%;
   }
+  .shortercontainer {
+    width: 40%;
+  }
 }
 @media only screen and (min-width: 1170px) {
   .cd-panel-container {
@@ -559,6 +563,9 @@ html, body {
 
   .shortcontainer {
     width: 40%;
+  }
+  .shortercontainer {
+    width: 20%;
   }
 }
 
@@ -578,16 +585,17 @@ html, body {
   /* smooth scrolling on touch devices */
   -webkit-overflow-scrolling: touch;
 }
+/*
 .cd-panel-content p {
   color: #333;
   line-height: 1.4;
   margin: 2em 0;
-}
-.cd-panel-content li {
+}*/
+/*.cd-panel-content li {
   color: #333;
-  /*line-height: 1.4;
-  margin: 0.5em 0;*/
-}
+  line-height: 1.4;
+  margin: 0.5em 0;
+}*/
 .cd-panel-content p:first-of-type {
   margin-top: 0;
 }

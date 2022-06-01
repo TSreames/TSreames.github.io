@@ -182,6 +182,7 @@ table.popup_response tr th { width:auto; }
 /* nav_bar styling  */
 .layer-table-list-item {
  border-bottom: 1px solid #ccc;
+ border-top:1px solid #fff;
 }
 
 .mdc-top-app-bar__section--align-start {
@@ -338,7 +339,10 @@ color: #e4e4e4;
 }
 
 div.cd-panel-content {
-	font-size:0.8em;
+	font-size:14px;
+	font-weight:600;
+	-webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #layerpanel > header > h1 {
@@ -372,17 +376,21 @@ div.cd-panel-content {
 
 
 .lyrlist-header {
-	color: #333;
-	margin-top:0.5em;
+	color: #1b3660;
+	margin-top:1em;
 	margin-bottom:0.25em;
 	margin-left:3px;
-	font-size:1.1em;
+	font-size:16px;
 	font-weight:600;
 }
 
 #parcelresultsbutton, #parcelclearbutton, #parcelselectbutton, #parceldeselectbutton, #reset_button{
 	color:white;
 	background-color:#72b352;
+}
+
+#aerials_tag {
+	color:#72b352;
 }
 
 #draw_button {

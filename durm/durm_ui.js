@@ -15,7 +15,7 @@ define([
 		init: function(){
 			try {
 				uiscope = this;
-				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels", "graphics","waterlayer","sewerlayer"]
+				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels","aeriallabels", "graphics","waterlayer","sewerlayer"]
 
 				document.getElementById("bodycontainer").style.cursor = "progress";				
 				//js pointers to HTML Buttons in the 'development case' form.
@@ -62,6 +62,7 @@ define([
 				});
 
 				//click auto-closes
+				
 				const clbr = document.getElementById('closebar1');   
 				clbr.addEventListener('click', () => {
 						if(durm.drawer1.open === true){
@@ -583,6 +584,7 @@ define([
 					fps.style.display = "inline-block";
 				}
 		},
+
 		init_layer_control: function(){
 			try {
 					lyrctrlscope = this;	
@@ -638,21 +640,24 @@ define([
 					durm.map.layers.items.forEach(function(r) {
 						if (r.listMode == "hide") {} // if we've set listmode to hide, ignore this layer.
 						else {
-							var newli = document.createElement('li')
+							/* Build HTML elements */
+							let newli = document.createElement('li')
 							newli.id = r.id
 							newli.setAttribute("data-durmdrawindex", r.lyr_zindex)  //  this matches up the html data property with the js data property
 							newli.style.display = "list-item"
 							newli.classList.add("noselect")
 							newli.classList.add("layer-table-list-item")
-							var onoff = document.createElement('div')
+							let onoff = document.createElement('div')
 							onoff.style.display = "inline-block"
 							onoff.classList.add("onoffswitch")
-							var inp = document.createElement('input')
+							let inp = document.createElement('input')
 							inp.style.display = "none"
 							inp.style.lineHeight = "inherit"
 							inp.setAttribute("type", "checkbox")
 							inp.setAttribute("name", "onoffswitch")
 							inp.classList.add("onoffswitch-checkbox")
+
+							/* Manipulate HTML elements */
 							let random_id = Math.random().toString(36).substring(7)
 							inp.id = random_id
 							onoff.appendChild(inp)
@@ -717,7 +722,23 @@ define([
 								proper_ul_category = document.getElementById(r.listcategory);
 								proper_ul_category.appendChild(newli)
 							}
-							else {}		
+							else {}
+
+							/*
+							//metadata
+												
+							if(r.url == null) {
+								console.log(r)
+							} else {
+								let source_link = document.createElement("a")
+								source_link.innerHTML = "source"
+								source_link.href = "#"		
+								source_link.href = r.url
+								newli.appendChild(source_link)
+							}	
+							*/						
+							
+							
 
 							/* watch layer visibility;  when true/false, toggle the html */
 							watchUtils.whenTrue(r, "visible", function() {
@@ -748,6 +769,7 @@ define([
 				}
 			} catch (e) { console.log(e); }
 		},
+
 		ensure_not_in_url: function(r) {
 			try {
 				durm.layer_state_string = durm.layer_state_string.replace(r.id + ",",'')
@@ -755,9 +777,14 @@ define([
 			} catch (e) { console.log(e); }
 		},
 
+		enable_table_mode: function() {
+			try {
+
+			} catch (e) { console.log(e); }
+		},	
+
 		enable_aerials_mode: function(aerialid) {
 			try {
-				console.log("Enable aerials mode")
 				this.ensure_aerials_are_nonvisible() // When this is run we want to ensure all aerials are off first to avoid problems.
 				if(aerialid == -1) {
 					this.disable_aerials_mode()
@@ -782,10 +809,10 @@ define([
 				}
 
 			} catch (e) { console.log(e); }
-		},		
+		},
+
 		disable_aerials_mode: function() {
 			try {
-				console.log("Disable aerials mode")
 				durm.aparam = "-1"
 				durm.sliderinput.value = durm.defaultaerialid; // Set slider back to original position
 				durm.map.basemap = durm.basemaparray[11]; //Switch back to original basemap
@@ -809,6 +836,7 @@ define([
 
 			} catch (e) { console.log(e); }
 		},
+
 		ensure_aerials_are_nonvisible: function() {
 			// This is just a helper function that ensures aerials are all nonvisible, without affecting URL parameters, UI, etc.
 			try {

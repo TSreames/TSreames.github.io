@@ -658,6 +658,7 @@ define([
 				listcategory: "Planning",
 				layer_order:0,
 				lyr_zindex:4,
+				opacity:0.6,
 				url: UGB_URL,
 				icon: "DUR",
 				visible: false
@@ -735,6 +736,21 @@ define([
 				visible: false
 			});
 			pplt.add_to_map(durm.activemechpermitLayer);
+
+			durm.demopermits = new FeatureLayer({
+				id: "demopermits",
+				title: "Demolition Permits",
+				listcategory: "Permits",
+				listMode: "show",
+				layer_order:0,
+				lyr_zindex:10,
+				url: DEMO_URL,
+				icon: "DUR",
+				outFields: ["*"],	  
+				visible: false
+			});
+			pplt.add_to_map(durm.demopermits);
+
 
 			durm.certificates_of_occupancy = new FeatureLayer({
 				id: "certificates_of_occupancy",

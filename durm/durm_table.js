@@ -8,8 +8,11 @@ define([
 ) {
 return {
       init: function(){
+        advthis = this;
         console.log("Table Init")
         document.getElementById("defaultAdvOpen").click();
+        advanced_parcel_fieldnames = ["PARCEL_ID","SITE_ADDRE","OWNER_NAME","OWNER_ADDR"]
+        advanced_parcel_fields = []
         let table_features = []
         try {
           let defaultemptyfeatures000 = [
@@ -21,10 +24,21 @@ return {
               attributes: {
                 ObjectID: 0,
                 SITE_ADDRE: '.',
-                PARCEL_ID: '.'
+                PARCEL_ID: '.',
+                OWNER_NAME: '.',
+                OWNER_ADDR: '.'
               }
             }
            ];
+
+          advanced_parcel_fields.push({ name : "OBJECTID", alias : "OBJECTID", type : "oid" })
+          for(let k = 0; k < advanced_parcel_fieldnames.length; k++){
+            let field = { name : advanced_parcel_fieldnames[k], alias : advanced_parcel_fieldnames[k], type : "string" }
+            advanced_parcel_fields.push(field);
+          }
+
+          console.log(advanced_parcel_fields)
+          
 
           durm.advsearch_features = new FeatureLayer({
             id:'advsearch_feature_results',
@@ -32,23 +46,8 @@ return {
             title:'Search Results',
             renderer: thicc_parcelboundaryRenderer,
             objectIDField: "ObjectID",
-            fields: [
-                {
-                    name: "ObjectID",
-                    alias: "ObjectID",
-                    type: "oid"
-                },
-                {
-                    name: "SITE_ADDRE",
-                    alias: "SITE_ADDRE",
-                    type: "string"
-                },
-                {
-                    name: "PARCEL_ID",
-                    alias: "PARCEL_ID",
-                    type: "string"
-                }
-            ]
+            fields: advanced_parcel_fields,
+            legendEnabled:false
           });
           durm.map.add(durm.advsearch_features);
 
@@ -70,6 +69,7 @@ return {
             visibleElements: {selectionColumn: true},
             container: "tableDiv"
           });
+          durm.featureTable.hideColumn("OBJECTID")
 
           
           durm.featureTable.viewModel.watch("state", function (state) {
@@ -117,6 +117,17 @@ return {
             }			
           });
 
+          // This pre-empts the "Enter" button
+          document.getElementById('streetform').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let sname00 = document.getElementById("sname").value
+            advthis.call_REST_streetname(sname00)
+          });
+          document.getElementById('ownerform').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let oname00 = document.getElementById("oname").value
+            advthis.call_REST_ownername(oname00)            
+          });
 
         } catch (e) { console.log(e); }
       },
@@ -211,12 +222,9 @@ return {
       call_REST_streetname: function(streetstring) {
         console.log("call_REST_streetname")
         try {
-          advthis = this;
           durm.mapView.when(() => {
-            durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){
-              
-              console.log(streetstring)
- 
+            durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView){              
+              console.log(streetstring) 
               let advaddrquery = durm.active_address_points.createQuery();
               let advparcelquery = durm.parcelboundaryLayer.createQuery();
     
@@ -238,16 +246,19 @@ return {
                 advparcelquery.outSpatialReference = { wkid: 4326 };           
                 return durm.parcelboundaryLayer.queryFeatures(advparcelquery)
               }).then(function(parcel_response){
-                advthis.removeAllFeatures(durm.advsearch_features);                
+                advthis.removeAllFeatures(durm.advsearch_features);     
+
                 features2add = []
                 for (var i=0; i < parcel_response.features.length; i++) {
                   let advsearchGraphic = new Graphic({
                     title:"idk",
                         geometry: parcel_response.features[i].geometry,
                         attributes: {
-                          ObjectID: parcel_response.features[i].attributes.OBJECTID,
+                          ObjectID: parcel_response.features[i].attributes.OBJECTID,                          
+                          PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID,
                           SITE_ADDRE: parcel_response.features[i].attributes.SITE_ADDRE,
-                          PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID
+                          OWNER_NAME: parcel_response.features[i].attributes.OWNER_NAME,
+                          OWNER_ADDR: parcel_response.features[i].attributes.OWNER_ADDR,
                         }
                   });
                   features2add.push(advsearchGraphic)              
@@ -293,9 +304,11 @@ return {
                     title:"idk",
                         geometry: parcel_response.features[i].geometry,
                         attributes: {
-                          ObjectID: parcel_response.features[i].attributes.OBJECTID,
+                          ObjectID: parcel_response.features[i].attributes.OBJECTID,                          
+                          PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID,
                           SITE_ADDRE: parcel_response.features[i].attributes.SITE_ADDRE,
-                          PARCEL_ID: parcel_response.features[i].attributes.PARCEL_ID
+                          OWNER_NAME: parcel_response.features[i].attributes.OWNER_NAME,
+                          OWNER_ADDR: parcel_response.features[i].attributes.OWNER_ADDR,
                         }
                   });
                   features2add.push(advsearchGraphic)              

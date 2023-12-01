@@ -268,10 +268,10 @@ return {
       //thisschool.generate_individual_school_result_FOR2025(zoneresult_special,specialdiv,"special",specialprefix)
       //return
     //})
-    // .then(function() {
-    //   ss.generate_html_for_new_schools();
-    //   return
-    // });
+    .then(function() {
+       ss.generate_html_for_new_schools();
+       return
+    });
   },
   
   generate_individual_school_result_for2024: function(zr,yr,flag,yearprefix) {
@@ -585,196 +585,6 @@ return {
       console.log(e);
     }
   },
-  // generate_individual_school_result_FOR2025: function(zr,yr,flag,yearprefix) {
-  //   try {
-  //     let specialtext2 = "Please Note: Currently, only elementary school application programs and school boundaries have been finalized for 2024-2025 school year. For more information about the Growing Together Student Assignment Plan, please visit <a class='dpsredlink' href='https://www.dpsnc.net/domain/2546'>https://www.dpsnc.net/domain/2546</a>."
-  //     let specialtext = "Please Note: The lottery submission window for DPS application-based programs runs from early January to early February each year. For more information about application program options please visit <a class='dpsredlink' href='https://www.dpsnc.net/magnet'>https://www.dpsnc.net/magnet</a>."
-  //     //let specialtext2 = "Currently, only elementary school application programs and school boundaries have been set under the Growing Together Student Assignment Plan. For more information about the Growing Together Student Assignment Plan, please see <a href='https://www.dpsnc.net/domain/2546'>https://www.dpsnc.net/domain/2546</a>."
-
-  //     let specialmessage = document.createElement('p')
-  //     specialmessage.classList = "h4specialmsg"
-  //     specialmessage.innerHTML = specialtext
-
-  //     let specialmessage2 = document.createElement('p')
-  //     specialmessage2.classList = "h4specialmsg"
-  //     specialmessage2.innerHTML = specialtext2
-
-  //     yr.appendChild(specialmessage2)
-
-      
-  //     /* wrap results in a div that we can reset */
-  //     let unique_list_of_zones = [];
-  //     let zones = zr.features;
-  //     if(zones) {
-  //       /* Create HTML top-level items */
-  //       //base assignments
-  //       let base_assignment_header = thisschool.writeH4(yearprefix + " Elementary Base Assignments")
-  //       yr.appendChild(base_assignment_header)
-  //       let guaranteed_base_ul = document.createElement("ul")
-  //       guaranteed_base_ul.classList.add("school_type_ul")
-  //       yr.appendChild(guaranteed_base_ul)
-
-
-  //       // application-based programs
-  //       let appbasedprog_header = thisschool.writeH4(yearprefix+ " Elementary Application-based Programs")        
-  //       yr.appendChild(appbasedprog_header)
-  //       yr.appendChild(specialmessage)
-  //       let appbasedprog_ul = document.createElement("ul")
-  //       appbasedprog_ul.classList.add("school_type_ul")
-  //       yr.appendChild(appbasedprog_ul)
-
-  //       /* Populate top-level items with LI's */
-  //       let elementarybase_li = document.createElement("li")
-  //       elementarybase_li.classList.add("segment_li")
-  //       let elementarybase_tbl = document.createElement('table')
-  //       elementarybase_li.appendChild(elementarybase_tbl);
-  //       guaranteed_base_ul.appendChild(elementarybase_li)
-
-  //       /*let middlebase_li = document.createElement("li")
-  //       middlebase_li.classList.add("segment_li")
-  //       let middlebase_tbl = document.createElement('table');
-  //       middlebase_li.appendChild(middlebase_tbl)
-  //       guaranteed_base_ul.appendChild(middlebase_li);*/
-
-  //       let appbasedprog_elem_li = document.createElement("li")
-  //       appbasedprog_elem_li.classList.add("segment_li")
-  //       let appbasedprog_elem_tbl = document.createElement('table');
-  //       appbasedprog_elem_li.appendChild(appbasedprog_elem_tbl)
-  //       appbasedprog_ul.appendChild(appbasedprog_elem_li);
-
-        
-
-  //       zones.forEach(function(z) {
-  //         if (z.name == "Hillside New Tech High School") {}
-  //         else {            
-  //           unique_list_of_zones.push({type:z.attributes.type, name:z.attributes.name, facilityid:z.attributes.facilityid, stateid:z.attributes.stateid})
-  //         }
-  //       });
-
-  //       unique_list_of_zones.sort((a, b) => (a.disttype > b.disttype) ? 1 : -1)
-
-
-
-  //       let school2use
-  //       if(flag=="next") {
-  //         school2use = durm.all_schools_next
-  //       }
-  //       else {
-  //         school2use = durm.all_schools
-  //       }
-
-  //       /* This is where we join the polygon/school zone attributes to the point/school attributes,  and we're using the facilityid field to do that. */
-  //       /* This is because we're dealing with a many-to-many relationship structure that doesn't jive well with Esri's toolset */
-  //       /* The basic idea is that we construct an array called unique_list_of_zones as a sort of on-the-fly Javascript join, creating a "Master List" that we can rely on to be unique, flat-file of schools */
-
-  //       unique_list_of_zones.forEach(function(s){
-  //         if (s.name == "Hillside New Tech High School") {}
-  //         else {
-  //           var result = school2use.filter(obj => { 
-  //             return obj.attributes.stateid == s.stateid
-  //           })
-  //           if(result.length == 0) { 
-  //             //The zone we're matching up doesn't have a school -- this would only happen if there was an error.
-  //             console.log("Error : We found a zone that had no school.  Check the facilityid fields of the educational points and zones to ensure data integrity.")
-  //             console.log(result[0])
-  //             console.log(s)
-  //           }
-  //           else if (result.length == 1) {
-  //             //This is when there's a 1:1 relationship between the school and zone.
-  //             s.agencyurl = result[0].attributes.agencyurl
-  //             s.agency = result[0].attributes.agency
-  //             s.agencytype = result[0].attributes.agencytype
-  //             s.caltype = result[0].attributes.caltype
-  //             s.spectype = result[0].attributes.spectype
-  //             s.factype = result[0].attributes.factype
-  //             s.fulladdr = result[0].attributes.fulladdr
-  //             s.grades = result[0].attributes.grades
-  //             s.municipality = result[0].attributes.municipality
-  //             s.schoolpoint_name = result[0].attributes.name
-  //             s.numstudent = result[0].attributes.numstudent
-  //             s.operdays = result[0].attributes.operdays
-  //             s.operhours = result[0].attributes.operhours
-  //             s.phone = result[0].attributes.phone
-  //             s.pocemail = result[0].attributes.pocemail
-  //             s.pocname = result[0].attributes.pocname
-  //             s.pocphone = result[0].attributes.pocphone
-  //             s.prektype = result[0].attributes.prektype
-  //           }
-  //           else {
-  //             // these are edge cases, where schools have multiple zones, and vice-versa
-  //             s.agencyurl = result[0].attributes.agencyurl
-  //             s.agency = result[0].attributes.agency
-  //             s.agencytype = result[0].attributes.agencytype
-  //             s.caltype = result[0].attributes.caltype
-  //             s.spectype = result[0].attributes.spectype
-  //             s.factype = result[0].attributes.factype
-  //             s.fulladdr = result[0].attributes.fulladdr
-  //             s.grades = result[0].attributes.grades
-  //             s.municipality = result[0].attributes.municipality
-  //             s.schoolpoint_name = result[0].attributes.name
-  //             s.numstudent = result[0].attributes.numstudent
-  //             s.operdays = result[0].attributes.operdays
-  //             s.operhours = result[0].attributes.operhours
-  //             s.phone = result[0].attributes.phone
-  //             s.pocemail = result[0].attributes.pocemail
-  //             s.pocname = result[0].attributes.pocname
-  //             s.pocphone = result[0].attributes.pocphone
-  //             s.prektype = result[0].attributes.prektype
-
-  //             // Important:  This loop starts on the SECOND feature [1], not the first, [0].
-  //             // On these, we need to create a new record to insert into unique_list_of_zones
-  //             for(var i = 1; i < result.length; i++) {
-  //               unique_list_of_zones.push({
-  //                 type:s.type, 
-  //                 name:s.name, 
-  //                 facilityid:s.facilityid, 
-  //                 stateid:s.stateid,
-  //                 agencyurl:result[i].attributes.agencyurl,
-  //                 agency:result[i].attributes.agency,
-  //                 agencytype:result[i].attributes.agencytype,
-  //                 caltype:result[i].attributes.caltype,
-  //                 spectype:result[i].attributes.spectype,
-  //                 factype:result[i].attributes.factype,
-  //                 fulladdr:result[i].attributes.fulladdr,
-  //                 grades:result[i].attributes.grades,
-  //                 municipality:result[i].attributes.municipality,
-  //                 schoolpoint_name:result[i].attributes.name,
-  //                 numstudent:result[i].attributes.numstudent,
-  //                 operdays:result[i].attributes.operdays,
-  //                 operhours:result[i].attributes.operhours,
-  //                 phone:result[i].attributes.phone,
-  //                 pocemail:result[i].attributes.pocemail,
-  //                 pocname:result[i].attributes.pocname,
-  //                 pocphone:result[i].attributes.pocphone,
-  //                 prektype:result[i].attributes.prektype
-  //                 })
-  //             }
-  //           }
-  //         }
-  //       });
-
-  //       try {
-  //         unique_list_of_zones.forEach(function(singleschool){
-  //           if (singleschool.type == 'Elementary School Base Assignment Zone') { 
-  //             thisschool.write_school_html_202425(singleschool,elementarybase_tbl,"elementary","next");
-  //           }
-  //         });
-  //       } catch (e) { console.log(e) }
-
-  //       let ASZ4 = durm.allschoolregions_next.createQuery();
-  //       ASZ4.geometry = durm.current_location_geometry;
-  //       ASZ4.spatialRelationship = "intersects";
-  //       durm.allschoolregions_next.queryFeatures(ASZ4).then(function(regionresult_next) {
-  //         thisschool.write_options_from_region(regionresult_next.features[0],flag,appbasedprog_elem_tbl)
-  //         appbasedprog_header.innerHTML = appbasedprog_header.innerHTML + " for the <span class='dpsredtext'>"+regionresult_next.features[0].attributes.Region+"</span> region"
-  //       });
-  //     }
-  //     else { console.log("There were no school zones found.  The address could be outside of Durham County, or there could be a problem with the application.") }   
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // },
-  
   generate_individual_school_result_FOR2025: function(zr,yr,flag,yearprefix) {
     try {
       //let specialtext2 = "Please Note: Currently, only elementary school application programs and school boundaries have been finalized for 2024-2025 school year. For more information about the Growing Together Student Assignment Plan, please visit <a class='dpsredlink' href='https://www.dpsnc.net/domain/2546'>https://www.dpsnc.net/domain/2546</a>."
@@ -1093,6 +903,7 @@ return {
   },
   write_individual_option_using_stateid25: function(tbl,flag,schoolid,label) {
     try {
+      if(schoolid) {
       singleschool = thisschool.get_singleschool_from_id25(flag,schoolid)[0].attributes
       tbl.appendChild(mainscope.write_tr("","<a target='_blank' class='schoollink' href='"+ singleschool.agencyurl +"'>"+singleschool.name+"</a>"));
       tbl.appendChild(mainscope.write_tr("","<span class='progtypelabel'>Program Type: "+label+"</span>"));
@@ -1101,13 +912,16 @@ return {
       tbl.appendChild(mainscope.write_tr("","<span class='school hrs'>Operating Hours : "+singleschool.operdays +" "+ singleschool.operhours+"</span>")); 
       tbl.appendChild(mainscope.write_tr("","<span class='school tel'>Telephone : "+ singleschool.pocphone+"</span>"));
       tbl.appendChild(mainscope.write_tr_single("&nbsp;"));
+      }
     } catch (e) { 
-      if (schoolid) { console.log("Problem finding school " + schoolid.toString())}
+      if (schoolid) { 
+        console.log(e)
+        console.log("Problem finding school " + schoolid.toString())}
       else {
         console.log(label) 
         console.log(schoolid) 
       }
-      console.log(e);
+      
     }
   },
   get_singleschool_from_id25: function(flag,schoolid) {
@@ -1195,6 +1009,7 @@ return {
     }
   },
   generate_html_for_new_schools: function() {
+    console.log("OK")
     /* Note: For version 1.06, we left the "Next Year Change Detection" code unchanged. No "special" here. */
 
     //Right now this triggers on name mismatch

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="description" content="Find your public school assignment in Durham, NC, USA" />
+<meta http-equiv='expires' content='0'>
+<link rel="shortcut icon" href="./img/favicon.ico">
+<title>Durham Public School Locator | City of Durham and Durham County</title>
+<noscript>This application requires Javascript.</noscript>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115627848-6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-115627848-6');
+</script>
+
+<link rel="stylesheet" href="./lib/mdc/material-components-web.min.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<link rel="stylesheet" href="https://js.arcgis.com/4.30/esri/css/main.css" type="text/css">
+<link rel="stylesheet" href="./css/main.css" type="text/css">
+<link rel="stylesheet" href="./css/responsive.css" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="https://maps.durhamnc.gov/js/services.js"></script>
+<script type="text/javascript" charset="utf-8" src="./lib/mdc/material-components-web.min.js"></script>
+<script src="https://js.arcgis.com/4.30/"></script>
+
+
+<style>
+/* accordion CSS */
+.w3-btn,.w3-button{font-size:1.4rem;border:none;display:inline-block;padding:8px 16px;vertical-align:middle;overflow:hidden;text-decoration:none;color:inherit;background-color:inherit;text-align:center;cursor:pointer;white-space:nowrap}
+.w3-btn:hover{box-shadow:0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)}
+.w3-btn,.w3-button{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}   
+.w3-btn.w3-disabled:hover,.w3-btn:disabled:hover{box-shadow:none}
+.w3-container:after,.w3-container:before,.w3-panel:after,.w3-panel:before,.w3-row:after,.w3-row:before,.w3-row-padding:after,.w3-row-padding:before,
+.w3-content,.w3-auto{margin-left:auto;margin-right:auto}.w3-content{max-width:980px}.w3-auto{max-width:1140px}
+.w3-hide{display:none!important}.w3-show-block,.w3-show{display:block!important}.w3-show-inline-block{display:inline-block!important}
+
+.w3-activeaccordion:after {
+  content: '\2212';
+  color: rgb(92, 168, 99);
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.w3-inactiveaccordion:after {
+  content: "\002B";
+  color: rgb(92, 168, 99);
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+</style>
+<script>
+	/* accordion js */
+	function open_accordion(id,but) {
+		let x = document.getElementById(id)
+		let y = document.getElementById(but)
+		if (x.className.indexOf("w3-show") == -1) {x.className += " w3-show"} else {x.className = x.className.replace(" w3-show", "") }
+
+		if (y.className.indexOf("w3-activeaccordion") == -1) {y.className = y.className.replace(" w3-inactiveaccordion", " w3-activeaccordion")} 
+		else { y.className = y.className.replace(" w3-activeaccordion", " w3-inactiveaccordion") }
+	}
+</script>
+
+<script>
+try {
+	var durm = {};
+	require([
+	"./durm/durm_main.js"
+	], function(
+	durm_main
+	) {
+		durm = {};
+		try {
+			durm_main.init();
+		} catch (e) { console.log(e); }
+	});
+	
+} catch (e) { console.log(e); }
+</script>
+</head>
+
+
+<body id="bodycontainer">
+<!-- Top App Bar -->
+<header class="mdc-top-app-bar">
+		<div class="mdc-top-app-bar__row">
+			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+				<button class="mdc-top-app-bar__navigation-icon material-icons">menu</button>
+				<a class="mdc-top-app-bar__title" href="#" target="_blank" style="color: inherit;">Durham School Locator</a>
+			</section>
+		</div>
+	</header>	  
+	
+	<div class="app-drawer-layout mdc-top-app-bar--fixed-adjust">
+		<!-- Drawer -->
+		<aside class="mdc-drawer mdc-drawer--dismissible durm-drawer">
+			<nav class="mdc-drawer__drawer">
+				<nav class="mdc-drawer__content">
+					<div id="icon-with-text-durm" class="mdc-list">
+						<a class="mdc-list-item durm-drawer-list-item"  id="propertybutton" href="#">
+							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">description</i>Property Info
+						</a>
+						<a class="mdc-list-item durm-drawer-list-item" id="schoolsbutton" href="#">
+							<i class="material-icons mdc-list-item__graphic" aria-hidden="true">school</i>School Assignment
+						</a>
+					</div>	
+					<hr class="mdc-list-divider">
+				</nav>
+			</nav>
+		</aside>
+	
+		<!-- Content -->
+		<main class="mdc-drawer-app-content main-content">
+				<div class="durm__searchbox" id="searchbox"></div>
+				<div id="mapViewDiv"></div>
+				<div id="results"></div>
+		</main>
+	</div>
+
+</body>
+
+<script>
+	window.mdc.autoInit();
+</script>
+
+</html>

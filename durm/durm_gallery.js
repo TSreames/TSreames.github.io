@@ -105,6 +105,7 @@ define([
 				})
 				durm.map.add(durm.graymap_labels);	
 
+				//this doesn't work on page load, only on clicks.
 				durm.map.watch('basemap', function(e){
 					if(e.param==11) {
 						durm.graymap_roads.visible = true;
@@ -121,6 +122,10 @@ define([
 			},
 			setBasemapID: function(bparam) {
 				durm.map.basemap = durm.basemaparray[bparam];
+				if(bparam==11) {
+					durm.graymap_roads.visible = true;
+					durm.graymap_labels.visible = true;				
+				}
 			},
     };
 });

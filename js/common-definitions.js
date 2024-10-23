@@ -1,3 +1,4 @@
+
 //var APPROVED = "(AppStatus = 'Approved' OR AppStatus = 'Approved With Conditions')"; 
 //var UNDER_REVIEW = "(AppStatus = 'Approvals Received' OR AppStatus = 'Complete' OR AppStatus ='Corrections Required' OR AppStatus = 'Under Review' OR AppStatus = 'Received')"; 
 //Statuses

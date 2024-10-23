@@ -14,7 +14,7 @@ define([
 						layer: durm.active_address_points,
 						name: "Durham County Addresses",
 						placeholder: "Search Addresses",
-						searchFields: ["SITE_ADDRE"],
+						searchFields: ["SITE_ADDRE", "STREETNAME"],
 						displayField:"SITE_ADDRE",
 						outFields: ["*"],
 						suggestionTemplate: "{SITE_ADDRE}",	
@@ -30,10 +30,10 @@ define([
 						layer: durm.parcelboundaryLayer,
 						name: "Durham County Parcels",
 						placeholder: "Search Parcels",
-						searchFields: ["PARCEL_ID", "PIN"],
-						displayField: "PARCEL_ID",					
-						outFields: ["PARCEL_ID", "PIN"],
-						suggestionTemplate: "PIN: {PIN} <br> Parcel ID: {PARCEL_ID}",	
+						searchFields: ["REID", "PIN"],
+						displayField: "REID",					
+						outFields: ["REID", "PIN"],
+						suggestionTemplate: "PIN: {PIN} <br> REID: {REID}",	
 						exactMatch: false,
 						autoNavigate: true,
 						popupOpenOnSelect:true,
@@ -46,7 +46,7 @@ define([
 					id: "default-Search",
 					view: durm.mapView,
 					container: "default_search_container",
-					allPlaceholder:"Find by Address or Parcel ID",
+					allPlaceholder:"Find by Address or REID",
 					includeDefaultSources:false,
 					suggestionsEnabled: true,
 					locationEnabled:false,
@@ -88,6 +88,7 @@ define([
 
 			this.build_children();
 		},
+		
 		build_children: function(){
 		  try {		
 				let development_search_sources = [{
@@ -140,15 +141,15 @@ define([
 					allPlaceholder:"Search Permits and Development Cases",
 					sources: development_search_sources,
 					includeDefaultSources:false,
-          resultSymbol: {
-            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-            size: 12,
-						color: [99, 161, 69],
-            outline: { // autocasts as new SimpleLineSymbol()
-							color: [255, 255, 255], // autocasts as new Color()
-							width: 1.5
-						}
-          },
+					resultSymbol: {
+						type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+						size: 12,
+									color: [99, 161, 69],
+						outline: { // autocasts as new SimpleLineSymbol()
+										color: [255, 255, 255], // autocasts as new Color()
+										width: 1.5
+									}
+					},
 					suggestionsEnabled: true,
 					locationEnabled:false,
 					searchAllEnabled:true,			
@@ -163,9 +164,6 @@ define([
 				durm.searchWidget_development.on("search-complete", function(event){
 					console.log("Search Complete")
 				});
-
-
-
 		  } catch (e) { console.log(e); }	
 		}
   };

@@ -30,8 +30,6 @@ define([
 
         Output should give you two buttons :  Export Parcel Info,  and Export Owner Info
 
-        // PARCEL_ID	PIN	OWNER_NAME	OWNER_ADDR	OWCITY	OWSTA	OWZIPA	SITE_ADDRE	FRONT_DIM	SUM_ACRE	CITY_CODE	DIST_CODE	LAND_USE	LANDUSE_DESC	NBR_CLASS	NBR_CODE	EXEMPT_CODE	LAND_VALUE	BLDG_VALUE	TOTAL_VALU	DEED_BOOK	DEED_PAGE	PLAT_BOOK	PLAT_PAGE	DATE_SOLD	SALE_PRICE	SUBD_ID	SUBD_DESC
-        // PARCEL_ID	PIN	OWNER_NAME	OWNER_ADDR	OWCITY	OWSTA	OWZIPA	SITE_ADDRE
 
         */
         init: function(){
@@ -275,20 +273,20 @@ define([
             atthis.bufferaction(document.getElementById("bufferfeetinput").value).then(function(response){
               parcelresponse = response[0] ?? []
               addressresponse = response[1] ?? []
-              console.log(parcelresponse)
-              console.log(addressresponse)
               full_parcel_table = parcelresponse;
               document.getElementById("ownergrid").innerHTML = ""
               grid1 = new Grid({
                   columns: {
-                      SITE_ADDRE: 'Site Address',
-                      PARCEL_ID: 'Parcel ID',
-                      PIN: 'PIN',
-                      OWNER_NAME: 'Owner Name',
-                      OWNER_ADDR: 'Owner Address',
-                      OWCITY: 'Owner City',
-                      OWSTA: 'Owner State',
-                      OWZIPA: 'Owner Zip'
+                    LOCATION_ADDR: 'Site Address',
+                    REID: 'REID',
+                    PIN: 'PIN',
+                    PROPERTY_OWNER: 'Property Owner',
+                    OWNER_MAIL_1: 'Owner Address Line 1',
+                    OWNER_MAIL_2: 'Owner Address Line 2',
+                    OWNER_MAIL_3: 'Owner Address Line 3',
+                    OWNER_MAIL_CITY: 'Owner City',
+                    OWNER_MAIL_STATE: 'Owner State',
+                    OWNER_MAIL_ZIP: 'Owner Zip'
                   }
               }, 'ownergrid');              
               grid1.refresh();
@@ -407,7 +405,7 @@ define([
             for(var i = 0; i < full_parcel_table.length; i++){
               let row = []
               for (let [key, value] of Object.entries(full_parcel_table[i])) {
-                row.push(value)
+                row.push('"'+value+'"')
               }
               csv.push(row.join(","));
             }
@@ -422,7 +420,7 @@ define([
             for(var i = 0; i < rows.length; i++){
                 var row = [], cols = rows[i].querySelectorAll("td, th");
                 for(var j = 0; j < cols.length; j++){
-                    row.push(cols[j].innerText);
+                    row.push('"'+cols[j].innerText+'"');
                 }
                 csv.push(row.join(","));
             }

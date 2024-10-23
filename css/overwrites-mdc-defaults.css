@@ -87,12 +87,17 @@ flex-grow:0;
 .buttonbar button {
 color:white;
 border:0px;
-padding:0px;
-}
+padding-left:0px;
+padding-top: 0px;
+padding-bottom: 0px;
+padding-right: 0px;}
 .buttonbar i {
 	background-color:#72b352;
 	border:0.1px solid white;
-	padding:4px;
+	padding-left:4px;
+	padding-top: 4px;
+	padding-bottom: 7px;
+	padding-right: 4px;
 }
 
 /* OTHER?? SECTION */

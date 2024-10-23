@@ -69,17 +69,14 @@ div.esri-legend__service-label {
 }
 
 /* some of these overwrite bootstrap defaults instead of ESRI defaults -- which are listed below */
-/*
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section, main {
 	display: block;
 }
-*/
 /*body {
 	line-height: 1;
 }*/
 
-/*
 blockquote, q {
 	quotes: none;
 }
@@ -92,4 +89,8 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-*/
+
+/* don't show this class in popups */
+.esri-feature__last-edited-info {
+	visibility:hidden;
+}

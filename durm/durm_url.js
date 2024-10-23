@@ -24,9 +24,9 @@ define([], function() {
           durm.zparam = urlParam('z'); // scale
           durm.rparam = urlParam('r'); // rotation
           durm.bparam = urlParam('b'); // basemap          
-          durm.pidparam = urlParam('pid'); //Parcel ID 
+          durm.pidparam = urlParam('pid'); //REID
 
-          /* Test if Parcel ID is valid */
+          /* Test if REID is valid */
           const isValidPID = /^\d{6}$/gm.test(durm.pidparam);
           if(isValidPID) {
             durm.pidparam = urlParam('pid');
@@ -84,7 +84,7 @@ define([], function() {
       },
       zoom_to_pid: function() {
         let query = durm.parcelboundaryLayer.createQuery();
-        query.where = "PARCEL_ID = '"+durm.pidparam+"'";
+        query.where = "REID = '"+durm.pidparam+"'";
         query.returnGeometry = true;
         query.outSpatialReference = { wkid: 102100 };
         query.outFields = [ "*" ];
@@ -116,13 +116,9 @@ define([], function() {
 
             } else {
               //the server didn't return a valid result, so nothing
-              console.log("URL Parameter passed in invalid Parcel ID")
+              console.log("URL Parameter passed in invalid REID")
             }
           });
-
-
-
-
       }
   };
 });

@@ -3,10 +3,13 @@ Matt Reames, 2019
 This module includes a variety of custom events, particularly those related to the UI
 */
 define([
-    "esri/core/watchUtils",
+    //"esri/core/watchUtils",
+    "esri/core/reactiveUtils",
     "../durm/durm_ui.js",
     "esri/widgets/DistanceMeasurement2D", "esri/widgets/AreaMeasurement2D"
-    ], function(watchUtils,durm_ui,
+    ], function(//watchUtils, 
+      reactiveUtils,
+      durm_ui,
       DistanceMeasurement2D,AreaMeasurement2D) {
     return {       
         set_watches: function(){
@@ -26,53 +29,52 @@ define([
             durm.map.watch('basemap', function(){
               push_new_url();              
             });
+
             /* update URL when mapView is stationary */
-            watchUtils.whenTrue(durm.mapView, "stationary", function() {
-              push_new_url();     
-            });	
+            reactiveUtils.when(
+              () => durm.mapView.stationary === true,
+              () => {
+                push_new_url();
+              }
+             );
 
             //When the Popup cycles thru its active selections, push that to the PID
             //Remember that some of these are not always Parcel popups, they could be any layer that has a popup
             durm.mapView.popup.when(() => {
-              watchUtils.watch(durm.mapView.popup, "selectedFeature", function(v) {
-                if(v==null) {
-                  durm.pidparam = "NA"
-                }
-                else {
-                  if(v.layer==null){
+              reactiveUtils.watch(
+                () => durm.mapView.popup.selectedFeature,
+                (v) => {
+                  if(v==null) {
                     durm.pidparam = "NA"
                   }
                   else {
-                    if(v.layer.id == "parcels") {
-                      durm.pidparam = v.attributes.PARCEL_ID
-                    }
-                    else {
+                    if(v.layer==null){
                       durm.pidparam = "NA"
                     }
+                    else {
+                      if(v.layer.id == "parcels") {
+                        durm.pidparam = v.attributes.REID
+                      }
+                      else {
+                        durm.pidparam = "NA"
+                      }
+                    }
                   }
+                  push_new_url()
+                });
+            });
+
+
+            reactiveUtils.watch(
+              () => durm.mapView.popup.visible,
+              (v) => {
+                if(durm.mapView.popup.visible){           
+                } else {
+                  durm.pidparam = "NA";
                 }
-                push_new_url()
+                push_new_url();
               });
-            });
-
-            //when the popup closes, make sure the PID in the URL switches back to NA
-            watchUtils.watch(durm.mapView.popup, "visible", function() {
-              if(durm.mapView.popup.visible){           
-              } else {
-                durm.pidparam = "NA";
-              }
-              push_new_url();              
-            });
-            
-
-            //idk .. ?  I think this is related to the right-click menu but im not sure what it does / why it exists.
-            //was it supposed to trigger a button?
-            durm.mapView.popup.on("visible", function(event) {
-              console.log("mysterious right click menu watcher fired.")
-              rightclickmenu.setAbsolutePosition(event.x, event.y);
-              rightclickmenu.open = true;
-            });
-
+      
 
             durm.mapView.on("hold", function(event) {
               rightclickmenu.setAbsolutePosition(event.x, event.y);
@@ -164,22 +166,14 @@ define([
             cb1.addEventListener("click", function(){
               document.getElementById("layerpanel").classList.remove("is-visible")
             });
-
-            let cb2 = document.getElementById("closebar2")
-            cb2.addEventListener("click", function(){
-              document.getElementById("searchpanel").classList.remove("is-visible")
-            });
-
             let t0gg = document.getElementById("maptoggle")
             t0gg.addEventListener("click", () => {
               if(durm.aparam==-1) {
-                durm_ui.enable_aerials_mode(30);
+                durm_ui.enable_aerials_mode(durm.defaultaerialid);
               } else {
                 durm_ui.disable_aerials_mode();
               }
             });
-
-
 
           } catch (e) { console.log(e); }
         }

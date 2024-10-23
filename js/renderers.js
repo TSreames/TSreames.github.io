@@ -70,13 +70,25 @@ var green_parcelboundaryRenderer = {
   }
 };
 
+var lavender_parcelboundaryRenderer = {
+	type: "simple",
+	symbol: {
+	  type: "simple-fill", // autocasts as new SimpleFillSymbol()
+	  color: [0, 0, 0, 0],
+	  outline: {
+		color: [220, 208, 250, 0.8],
+		width: 0.5,
+	  }
+	}
+  };
+
 var thicc_parcelboundaryRenderer = {
   type: "simple",
   symbol: {
 	type: "simple-fill", // autocasts as new SimpleFillSymbol()
-	color: [168, 74, 52, 0.1],
+	color: [0, 0, 0, 0],
 	outline: {
-	  color: [168, 74, 52, 1],
+	  color: [99, 161, 69, 0.8],
 	  width: 1.5,
 	}
   }
@@ -114,11 +126,11 @@ var renderer_cases = {
 	defaultSymbol: graysquare,
 	uniqueValueInfos: [
     {
-			value: "Annexation Petition",
-      symbol: yellowsquare
-		},{
-			value: "Board of Adjustment Cases",
-      symbol: greensquare
+		value: "Annexation Petition",
+		symbol: yellowsquare
+	},{
+		value: "Board of Adjustment Cases",
+		symbol: greensquare
     },{
       value: "Common Signage Plan Review",  
       symbol: purplesquare  
@@ -192,37 +204,3 @@ var renderer_cases = {
 	else if (type == 'D_REZ') {lbl="Zoning Map Change"}
   return lbl;
 `;
-
-
-const caseLayer_popup = {title:"Development Cases",content:[{
-	type: "fields",
-	fieldInfos: [{
-		fieldName: "A_NUMBER",
-		label: "Case Number"
-		},{
-			fieldName: "AppStatus",
-			label: "Status"
-		},{
-			fieldName: "A_STATUS_DATE",
-			label: "Last Status Update"
-		},{
-			fieldName: "A_DATE",
-			label: "Application Date"
-		},{
-			fieldName: "A_PROJECT_NAME",
-			label: "Case Title"
-		},{
-			fieldName: "AppType",
-			label: "Case Type"
-		},{
-			fieldName: "A_DESCRIPTION",
-			label: "Case Description"
-		},{
-			fieldName: "CasePlanner",
-			label: "Case Planner"
-		},{
-			fieldName: "EMAIL",
-			label: "Case Planner EMail"
-		}]
-	}]
-}

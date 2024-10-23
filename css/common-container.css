@@ -52,7 +52,7 @@ h4 { color:#111;
 #bodycontainer #mapViewDiv { position: absolute; top:0px; bottom:0px; right:0px; left:0px; z-index:48; overflow:hidden; }/* container for ESRI JSAPI 4 maps */
 
 .mdc-menu {
-	z-index:99;
+	z-index:65;
 }
 
 .centered-spinner {
@@ -86,6 +86,27 @@ ol, ul {
 	margin-top:0;
 	padding:0;
 }
+
+.drillListItem h4 {
+	font-weight:700;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding-top:1px;
+	padding-bottom:0px;
+	text-align:left;
+	border-bottom:1px solid #999999;
+}
+
+.permitListItem h4 {
+	font-weight:700;
+	margin-top:0px;
+	margin-bottom:0px;
+	padding-top:1px;
+	padding-bottom:0px;
+	text-align:left;
+	border-bottom:1px solid #999999;
+}
+
 
 .drilltablerecord td {
 	padding:2px 10px;
@@ -161,6 +182,10 @@ margin:0;
 	padding:0;
 }
 
+.permitListItem {
+	padding-bottom:1.0em;
+}
+
 .permitListItem tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
@@ -182,7 +207,6 @@ table.popup_response tr th { width:auto; }
 /* nav_bar styling  */
 .layer-table-list-item {
  border-bottom: 1px solid #ccc;
- border-top:1px solid #fff;
 }
 
 .mdc-top-app-bar__section--align-start {
@@ -253,12 +277,40 @@ table.popup_response tr th { width:auto; }
 	max-width:80%;
 	resize:both;
 }
+/* Style the tab */
+.address_tab {
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
 
+/* Style the buttons that are used to open the tab content */
+.address_tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+	font-weight:500;
+}
 
+/* Change background color of buttons on hover */
+.address_tab button:hover {
+  background-color: #ddd;
+}
 
+/* Create an active/current tablink class */
+.address_tab button.active {
+  background-color:#284f8d;
+}
 
-
-
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
 
 /* independent popup styling */
 #independent_case_popup #independent-popup-close {
@@ -296,7 +348,7 @@ bottom:0;
 	position:absolute;
 	margin:auto;
 	top:60px;
-	bottom:0;
+	bottom:5%;
 	left:0;
 	right:0;
 	height:auto;
@@ -311,10 +363,7 @@ color: #e4e4e4;
 }
 
 div.cd-panel-content {
-	font-size:14px;
-	font-weight:600;
-	-webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-size:0.8em;
 }
 
 #layerpanel > header > h1 {
@@ -348,21 +397,17 @@ div.cd-panel-content {
 
 
 .lyrlist-header {
-	color: #1b3660;
-	margin-top:1em;
+	color: #333;
+	margin-top:0.5em;
 	margin-bottom:0.25em;
 	margin-left:3px;
-	font-size:16px;
+	font-size:1.1em;
 	font-weight:600;
 }
 
 #parcelresultsbutton, #parcelclearbutton, #parcelselectbutton, #parceldeselectbutton, #reset_button{
 	color:white;
 	background-color:#72b352;
-}
-
-#aerials_tag {
-	color:#72b352;
 }
 
 #draw_button {
@@ -544,6 +589,7 @@ height:40px;
 	opacity: 1;
 	margin-left:1.4%;
 	font-weight:600;
+	line-height:0.8em;
 }
 
 input[type=range] {

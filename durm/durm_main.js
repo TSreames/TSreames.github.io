@@ -1,38 +1,41 @@
 /*
-Matt Reames, 2019-22
+Matt Reames, 2019
+This module loads the Map and MapView, and begins a cascade of related functions
 */
 
 define([
     "esri/Map","esri/views/MapView",
-    "esri/config",
-    "esri/widgets/Popup", "esri/widgets/Popup/PopupViewModel","esri/tasks/GeometryService",
+    //"esri/config",
+    "esri/widgets/Popup", "esri/widgets/Popup/PopupViewModel",//"esri/rest/geometryService",
     "../durm/durm_popups.js",
     "../durm/durm_gallery.js","../durm/durm_watch.js",
-    "../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js","../durm/durm_table.js",
+    "../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js",
     "../durm/durm_ui.js"
   ], function(Map, MapView, 
-    esriConfig,
-    Popup, PopupViewModel, GeometryService,
+    //esriConfig,
+    Popup, PopupViewModel, //geometryService,
     durm_popups,
     durm_gallery,durm_watch,
-    durm_layers, durm_url, durm_addresstool,durm_table,
+    durm_layers, durm_url, durm_addresstool,
     durm_ui
   ) {
   return {
-    init: function() {
+    init: function(){
       try {
         document.getElementById("bodycontainer").style.cursor = "progress";
         durm.all_planner_button = document.getElementById("all_planner_button");
         durm.planner_checkboxes = document.getElementById("planner-checkboxes");
 
         //independent popup control
-        durm.fire_devcase_popup = function(caseid){	durm_popups.load_case_popup(caseid)	}
-        durm.fire_allpermit_popup = function(permitid){	durm_popups.load_permit_popup(permitid)	}
-        durm.fire_tradepermit_popup = function(permitid){	durm_popups.load_tradepermit_popup(permitid)	}
-        durm.fire_bldgpermit_popup = function(permitid){	durm_popups.load_bldgpermit_popup(permitid)	}
-        durm.fire_mechpermit_popup = function(permitid){	durm_popups.load_mechpermit_popup(permitid)	}
-        durm.fire_elecpermit_popup = function(permitid){	durm_popups.load_elecpermit_popup(permitid)	}
-        durm.fire_plumpermit_popup = function(permitid){	durm_popups.load_plumpermit_popup(permitid)	}
+        durm.fire_devcase_popup = function(permitid){	durm_popups.load_special_popup("A_NUMBER",permitid,ALL_DEV_CASES,"Development Cases")	}
+        durm.fire_allpermit_popup = function(permitid){	durm_popups.load_special_popup("PermitNum",permitid,BUILDING_PERMITS_SUBLAYER,"Building Permit")	}
+        durm.fire_tradepermit_popup = function(permitid){	durm_popups.load_special_popup("A_NUMBER",permitid,ALL_BI_TRADE_PERMITS,"Trade Permit") }
+        durm.fire_bldgpermit_popup = function(permitid){	durm_popups.load_special_popup("Permit_ID",permitid,ACTV_BLDG_PERMITS_URL_SUBLAYER,"Building Permit") }
+        durm.fire_mechpermit_popup = function(permitid){	durm_popups.load_special_popup("Permit_ID",permitid,ACTV_MECH_PERMITS_URL_SUBLAYER,"Mechanical Permit")	}
+        durm.fire_elecpermit_popup = function(permitid){	durm_popups.load_special_popup("Permit_ID",permitid,ACTV_ELEC_PERMITS_URL_SUBLAYER,"Electrical Permit")	}
+        durm.fire_plumpermit_popup = function(permitid){	durm_popups.load_special_popup("Permit_ID",permitid,ACTV_PLUMB_PERMITS_URL_SUBLAYER,"Plumbing Permit")	}
+        durm.fire_ccpermit_popup = function(permitid){	durm_popups.load_special_popup("A_NUMBER",permitid,CROSS_CONNECT_PERMITS_URL,"Cross Connection Permit")	}
+  
 
         d = new Date();
 				yearnum = d.getFullYear();
@@ -52,11 +55,12 @@ define([
             buttonEnabled: false,
             breakpoint: false,
             position: "top-left"
+          },
+          visibleElements: {
+              collapseButton: false
           }
         });
 
-
-        
         durm.map = new Map();
         durm.mapView = new MapView({
           map: durm.map,
@@ -71,12 +75,11 @@ define([
           }
         });
 
-        esriConfig.geometryService = new GeometryService(geometryservice_url);
-
         durm_gallery.populate_array_of_basemaps()	
         durm.map.basemap = durm_gallery.getDefaultBasemap();
 
         durm.mapView.when(() => {
+          durm_layers.connect_to_portal();
           durm_ui.init();
           durm_ui.draw_initial_widgets();	
           durm_layers.populate();      
@@ -98,7 +101,7 @@ define([
             durm.parcellayerView = parcellayerView;
             document.getElementById("bodycontainer").style.cursor = "default";
 
-            /* This is the section where we IMPLEMENT whatever initial parameters were passed in through the URL */
+            /* implement whatever initial parameters were passed in through the URL */
 
             if(durm.PID_passed){
               durm_url.zoom_to_pid();
@@ -115,18 +118,28 @@ define([
               durm_gallery.setBasemapID(durm.bparam);
             }
 
+            stuff_to_ignore = ["parcels","active_address_points","countymask","graymap_roads","graymap_labels","graphics","orangepars","wakepars"]
+
             if ((durm.appstate_passed) && (durm.lyrstate_passed)) {
               // IF the status is anything but default, then make whatever you find in durm.layer_state_string visible.
-              if(durm.app_state_string == "custom") {
+              if(durm.app_state_string == "custom") {               
                 lyrIDlist = durm.layer_state_string.split(',')
                 durm.map.layers.items.forEach(function(r) {
                   //Preset button should ignore certain layers
-                  if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
-                  else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-                  else if(r.id === "graphics") {}
-                  else if (lyrIDlist.includes(r.id)) { r.visible = true; }
-                  else { r.visible = false; }
+                  //if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
+                  if(stuff_to_ignore.includes(r.id)) {
+                  }
+                  //else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
+                  //else if(r.id === "graphics") {}
+                  else if (lyrIDlist.includes(r.id)) { 
+                    r.visible = true; 
+                  }
+                  else { 
+                    r.visible = false; 
+                  }
                 });
+
+
 
                 // then run something that ensures the individual layers have visibility set to "true"
               }
@@ -158,8 +171,7 @@ define([
 
             durm_ui.init_layer_control();
             durm_ui.reorder_all_layers_to_default();
-            durm_addresstool.init();   
-            durm_table.init();         
+            durm_addresstool.init();            
           });
         });
       } catch (e) { 

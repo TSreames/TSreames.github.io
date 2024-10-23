@@ -3,10 +3,12 @@ Matt Reames, 2019
 This module is to manage the user interface
 */
 define([
-	"esri/core/watchUtils",
+	//"esri/core/watchUtils",
+	"esri/core/reactiveUtils",
 	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",
 	"esri/layers/GraphicsLayer"
-	], function(watchUtils,
+	], function(//watchUtils,
+		reactiveUtils,
 		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch, 
 		GraphicsLayer
     ) {
@@ -15,7 +17,8 @@ define([
 		init: function(){
 			try {
 				uiscope = this;
-				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels","aeriallabels", "graphics","waterlayer","sewerlayer"]
+				durm.preset_ignore_list = ["parcels", "active_address_points", "countymask", "graymap_roads", "graymap_labels","aeriallabels", "graphics","waterlayer","sewerlayer","orangepars","wakepars","stormsewersheds", "stormwaterlayer"]
+				
 
 				document.getElementById("bodycontainer").style.cursor = "progress";				
 				//js pointers to HTML Buttons in the 'development case' form.
@@ -62,7 +65,6 @@ define([
 				});
 
 				//click auto-closes
-				
 				const clbr = document.getElementById('closebar1');   
 				clbr.addEventListener('click', () => {
 						if(durm.drawer1.open === true){
@@ -129,12 +131,14 @@ define([
 
 		draw_initial_widgets: function() {
 			try {
-				durm.mapView.popup.collapseEnabled = false;
+				
+				//durm.mapView.popup.collapseEnabled = false;
 
 				//compass
 				durm.compassWidget = new Compass({
 					view: durm.mapView
 				});
+				
 							
 				//basemap gallery widget and button
 				basemapGallery = new BasemapGallery({
@@ -150,6 +154,7 @@ define([
 					autoCollapse: true,
 					expandIconClass: "esri-icon-basemap"
 				});	
+				
 
 				//print (pdf export) widget and button
 				durm.print = new Print({
@@ -175,7 +180,7 @@ define([
 				sd.classList.add("scale_div") 
 				durm.scaleWidget = new ScaleBar({
 					view: durm.mapView,
-					unit:"non-metric"
+					unit:"imperial"
 				});
 				durm.scaleWidget.container = sd;
 
@@ -323,11 +328,7 @@ define([
 			} catch (e) { console.log(e); }	
 		},
 		
-		// Note:  app_state was a poorly-thought out idea, in hindsight. its basically a preset.
-		// Right now it means : zoning, devcases, drainage.  It currently includes Utilities (water sewer) too, but that needs to change at some point.  
-		// We also have a 'mode' which ought (from the users perspective) to act independently of state, switching between 'Map Mode' (Graybase) and 'Aerial Mode' (Aerial switcher)
 		set_app_state: function(state,layerparams){
-			// first argument is mandatory, second argument is optional.
 			durm.app_state_string = state;
 			switch(state) {
 				case "zoning":
@@ -362,11 +363,8 @@ define([
 					break;
 			}
 		},
-
-		//this is called on init, and frequently thereafter
-		//this is a semi-hacky sort of thing that controls parts of the panel.
-		//this is a great example of "Never do premature optimization." Many of these DOM elements never got used, and a lot of this complexity is unnecessary.
-    trigger_panel_situation: function(state){
+		
+    	trigger_panel_situation: function(state){
 			let allpanels = [];
 			allpanels.push(document.getElementById("devcase_form_panel"))
 			
@@ -424,6 +422,7 @@ define([
 				//do nothing.  This is just a status change that allows you to load something custom on init.
 			} catch (e) { console.log(e); }	
 		},
+
 		load_zoning_preset: function(layerparams)
 		{
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
@@ -481,6 +480,7 @@ define([
 			}
 			} catch (e) { console.log(e); }	
 		},
+
 		load_storm_preset: function(layerparams) {
 			try {
 			if(layerparams) { lyrIDlist = layerparams.split(',') }
@@ -490,7 +490,7 @@ define([
 					else if(durm.aeriallist_ids.includes(r.id)) {}
 					else { r.visible = false; }
 			}); 		  
-			const wetland_layers = [durm.stormwatergroup,durm.impervious,durm.NWIlayer,durm.FEMA_risk_development,durm.TOPO_2ft,durm.countymask];
+			const wetland_layers = [durm.impervious,durm.NWIlayer,durm.FEMA_risk_development,durm.TOPO_2ft,durm.countymask];
 			let allvisible = true;
 			wetland_layers.forEach(function(r) {
 				if(r.visible) {}
@@ -508,47 +508,57 @@ define([
 			}
 			} catch (e) { console.log(e); }	
 		},
+
 		toggle_utilities: function()
 		{		
-			try{
-				/*let are_utilities_on = "idk"
-				durm.map.layers.items.forEach(function(r) {
-					if(r.id === "waterlayer" || r.id === "sewerlayer") {
-						are_utilities_on = "yeah"	
-					}
-					else { 						
-						are_utilities_on = "nah"
-					}				
-				});*/ 
+			try {
 				switch(durm.uparam) {
 					case 1:
+						durm.cityportal.authMode = "anonymous";
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
-			  		durm.sewerlayer.visible = false;	
+			  			durm.sewerlayer.visible = false;						
+						durm.map.remove(durm.stormsewersheds);
+						durm.stormsewersheds.visible = false;
+						durm.map.remove(durm.stormwatergroup);
+						durm.stormwatergroup.visible = false;
+						
 						durm.uparam = 0
 						push_new_url()
 						break;
 					case 0:
+						durm.cityportal.authMode = "auto";
 						durm.map.add(durm.waterlayer);
 						durm.waterlayer.visible = true;
 						durm.map.add(durm.sewerlayer);	
-			  		durm.sewerlayer.visible = true;	
+			  			durm.sewerlayer.visible = true;
+						durm.map.add(durm.stormsewersheds);
+						durm.stormsewersheds.visible = true;
+						durm.map.add(durm.stormwatergroup);
+						durm.stormwatergroup.visible = true;
 						durm.uparam = 1
 						push_new_url()
 						break;
 					default: 
+						durm.cityportal.authMode = "anonymous";
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
 						durm.sewerlayer.visible = false;	
+						durm.map.remove(durm.stormsewersheds);
+						durm.stormsewersheds.visible = false;
+						durm.map.remove(durm.stormwatergroup);
+						durm.stormwatergroup.visible = false;
 						durm.uparam = 0
 						push_new_url()
 						break;
 				}
 			} catch (e) { console.log(e); }		
 		},
+
 		load_utilities: function() {
+			durm.cityportal.authMode = "auto";
 			durm.map.add(durm.waterlayer);
 			durm.waterlayer.visible = true;
 			durm.map.add(durm.sewerlayer);	
@@ -557,7 +567,8 @@ define([
 			push_new_url()
 
 		},
-    shrink_to_portrait_phone: function(){
+
+        shrink_to_portrait_phone: function(){
 			durm.mapView.ui.remove([durm.legend]);
 			let fps = document.getElementById("devcase_form_panel")
 			fps.style.display = "inline-block";		
@@ -572,6 +583,7 @@ define([
 				fps[i].style.display = "none";
 			}	*/
 		},	
+
 		// grow runs on init, and on resizing					
 		grow: function(){
 				durm.mapView.ui.add([{
@@ -640,24 +652,21 @@ define([
 					durm.map.layers.items.forEach(function(r) {
 						if (r.listMode == "hide") {} // if we've set listmode to hide, ignore this layer.
 						else {
-							/* Build HTML elements */
-							let newli = document.createElement('li')
+							var newli = document.createElement('li')
 							newli.id = r.id
 							newli.setAttribute("data-durmdrawindex", r.lyr_zindex)  //  this matches up the html data property with the js data property
 							newli.style.display = "list-item"
 							newli.classList.add("noselect")
 							newli.classList.add("layer-table-list-item")
-							let onoff = document.createElement('div')
+							var onoff = document.createElement('div')
 							onoff.style.display = "inline-block"
 							onoff.classList.add("onoffswitch")
-							let inp = document.createElement('input')
+							var inp = document.createElement('input')
 							inp.style.display = "none"
 							inp.style.lineHeight = "inherit"
 							inp.setAttribute("type", "checkbox")
 							inp.setAttribute("name", "onoffswitch")
 							inp.classList.add("onoffswitch-checkbox")
-
-							/* Manipulate HTML elements */
 							let random_id = Math.random().toString(36).substring(7)
 							inp.id = random_id
 							onoff.appendChild(inp)
@@ -671,7 +680,7 @@ define([
 									lyrctrlscope.add_to_url(r);
 								}
 								//If we were "Default",  change to "Custom"
-								// But we learned the hard way :  People want to be able to click a user preset, then turn a layer on, and keep the preset,  so don't do this for Devcases/Zoning/Drainage/Util, only do it for default
+								// People want to be able to click a user preset, then turn a layer on, and keep the preset,  so don't do this for Devcases/Zoning/Drainage/Util, only do it for default
 								if(durm.app_state_string=="default"){lyrctrlscope.set_app_state("custom",durm.layer_state_string)}
 								else{}
 							});
@@ -722,33 +731,47 @@ define([
 								proper_ul_category = document.getElementById(r.listcategory);
 								proper_ul_category.appendChild(newli)
 							}
-							else {}
-
-							/*
-							//metadata
-												
-							if(r.url == null) {
-								console.log(r)
-							} else {
-								let source_link = document.createElement("a")
-								source_link.innerHTML = "source"
-								source_link.href = "#"		
-								source_link.href = r.url
-								newli.appendChild(source_link)
-							}	
-							*/						
-							
-							
+							else {}		
 
 							/* watch layer visibility;  when true/false, toggle the html */
-							watchUtils.whenTrue(r, "visible", function() {
+							/*watchUtils.whenTrue(r, "visible", function() {
 								inp.checked = true;
 								lyrctrlscope.add_to_url(r);
 							});						
 							watchUtils.whenFalse(r, "visible", function() {
 								inp.checked = false;							
 								lyrctrlscope.ensure_not_in_url(r);
-							});
+							});*/
+
+
+							/* watchUtils used to fire automatically on init */
+							/* reactiveUtils seems to want the whole app to initialize before it begins watching anything */
+							/* therefore reactiveUtils is not suitable for setting the layer list's initial on/off setting */
+							
+							//only runs once on init to set HTML switches on/off depending on what is visible at init
+							if(r.visible) {
+								inp.checked = true;
+							}
+							
+							reactiveUtils.when(
+								() => r?.visible === false,
+								() => {
+									inp.checked = false;							
+									lyrctrlscope.ensure_not_in_url(r);
+								}
+							);
+							   
+							reactiveUtils.when(
+								() => r?.visible === true,
+								() => {
+									inp.checked = true;
+									lyrctrlscope.add_to_url(r);
+								}
+							);
+
+
+
+
 						}
 					});
 
@@ -777,12 +800,6 @@ define([
 			} catch (e) { console.log(e); }
 		},
 
-		enable_table_mode: function() {
-			try {
-
-			} catch (e) { console.log(e); }
-		},	
-
 		enable_aerials_mode: function(aerialid) {
 			try {
 				this.ensure_aerials_are_nonvisible() // When this is run we want to ensure all aerials are off first to avoid problems.
@@ -796,7 +813,7 @@ define([
 					durm.aparam = aerialid
 					durm.aeriallabelsVT.visible = true; // Make labels visible
 					durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap		
-					durm.parcelboundaryLayer.renderer = green_parcelboundaryRenderer //Show green parcels
+					durm.parcelboundaryLayer.renderer = lavender_parcelboundaryRenderer
 					let sd00 = document.getElementById("sliderDiv")
 					sd00.style.visibility = "visible"; //toggle panel visibility
 					push_new_url()
@@ -849,7 +866,6 @@ define([
 		load_simple_basemap: function() {
 			return durm.basemaparray[11];
 		},
-
 
 		// This is critical to layer ordering, what layers draw on top of one another, which all must be pre-set at the very beginning, ONCE and never changes.
 		// This is very slow and very inefficient and is therefore only run at the beginning.

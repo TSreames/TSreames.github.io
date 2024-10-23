@@ -1,3 +1,5 @@
+/* First section are breakpoints that control font sizes and total screen width */
+/* These tend to have more relevance in sizing of large screens and browsers. */
 @media only screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) {
 	/* For landscape layouts only */
 	body {
@@ -42,3 +44,237 @@
 		width:35%;
 	}	
 }
+
+
+/* Second section are breakpoints that control sizes of some of the individual user interface elements */
+/* These generally specify landscape vs. portrait and are heavily skewed towards smaller browsers like phones */
+/* if using max sizes (as we are), then keep larger-sized breakpoints towards the top, smaller-sized breakpoints towards the bottom*/
+
+/* PORTRAIT */
+@media only screen and (orientation : portrait) and (min-device-width:768px){
+	/* iPad */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	 width:50%;
+   }
+   .mdc-top-app-bar {
+	width:50%;
+	}
+  }
+  
+  @media only screen and (orientation : portrait) and (max-device-width:768px){
+	/* iPad */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width:70%;
+	}
+  }
+  
+  @media only screen and (orientation : portrait) and (max-device-width:540px){
+	/* surface duo */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width:99%;
+	}
+  }
+  
+  @media only screen and (orientation : portrait) and (max-device-width:411px){
+	/* Pixel 2 portrait */
+   .mdc-top-app-bar {
+	  width:99%;   
+	}
+	.ui_panel {
+	  width:50%;
+	}
+  }
+  
+  @media only screen and (orientation : portrait) and (max-device-width:320px){
+	/* iPHONE VERTICAL */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+  }
+  
+  @media only screen and (orientation : portrait) and (max-device-width:280px){
+	/* WEIRDO OUTLIER - Galaxy Fold turned vertical */
+	#independent_case_popup {
+	  width:90%;
+	}
+	.ui_panel {
+	  width:50%;
+	  }
+  }
+  
+  
+  /* LANDSCAPE */
+  
+  @media only screen and (orientation : landscape) and (min-device-width:1700px){
+	/* Everything larger than 1366px PC */
+   #independent_case_popup {
+	 width:50%;
+   }
+   .ui_panel {
+	width:100%;
+	}
+   .mdc-top-app-bar {
+	width:41%;
+	}
+  }
+
+  @media only screen and (orientation : landscape) and (max-device-width:1700px){
+	/* 1025 - 1366 px width */
+	 #independent_case_popup {
+	   width:60%;
+	 }
+	 .ui_panel {
+	  width:100%;
+	  }
+	 .mdc-top-app-bar {
+	  width:42%;
+	  }
+	}
+  
+  @media only screen and (orientation : landscape) and (max-device-width:1366px){
+  /* 1025 - 1366 px width */
+   #independent_case_popup {
+	 width:80%;
+   }
+   .ui_panel {
+	width:100%;
+	}
+   .mdc-top-app-bar {
+	width:42%;
+	}
+  }
+  
+  @media only screen and (orientation : landscape) and (max-device-width:1024px){
+	/* 824-1024px width */
+	/* e.g., iPad landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width: 46%;
+	}
+  }
+  
+  @media only screen and (orientation : landscape) and (max-device-width:823px){
+	/* 813-823px width */
+	/* e.g. Pixel 2 XL landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width: 57%;
+	}
+  }  
+  @media only screen and (orientation : landscape) and (max-device-width:812px){
+	/* 737-812px width */
+	/* e.g. iPhoneX landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width: 56%;
+	}
+  }  
+  @media only screen and (orientation : landscape) and (max-device-width:736px){
+	/* 732-736px width */
+	/* e.g. iPhone 6/7/8 landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width: 71%;
+	}
+  }
+  
+  @media only screen and (orientation : landscape) and (max-device-width:731px){
+	/* 569-731px width */
+	/* e.g. pixel 2 landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width:71%;
+	}
+  }
+  
+  @media only screen and (orientation : landscape) and (max-device-width:568px){
+	/* iPHONE 5 landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	}
+   .mdc-top-app-bar {
+	width:72%;
+	}
+  }
+  
+  @media only screen and (orientation : landscape) and (max-device-width:480px){
+	/* iPHONE 4 landscape */
+   #independent_case_popup {
+	 width:90%;
+   }
+   .ui_panel {
+	width:50%;
+	} 
+   .mdc-top-app-bar {
+	width:99%;
+	}
+  } 
+
+  /* Third section */
+  /* Vary popup width by esri's HTML class-based sizing system */  
+  /* 0 - 544 */
+  .esri-view-width-xsmall .esri-popup__main-container {
+	  width:99%;
+  }
+  /* 545-768 */
+  .esri-view-width-small .esri-popup__main-container {
+	  width:70%;
+  }
+  /* 769-992 */
+  .esri-view-width-medium .esri-popup__main-container {
+	  width:55%;
+  }
+  /* 993-1200 */
+  .esri-view-width-large .esri-popup__main-container {
+	  width:45%;
+  }
+  /* 1201+ */
+  .esri-view-width-xlarge .esri-popup__main-container {
+	  width:40%;
+  }

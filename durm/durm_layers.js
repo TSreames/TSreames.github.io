@@ -5,26 +5,27 @@ This controls almost all the operational layers
 define([
 	"esri/portal/PortalItem",
 	  "esri/layers/FeatureLayer","esri/layers/TileLayer","esri/layers/MapImageLayer","esri/layers/GroupLayer","esri/layers/VectorTileLayer","esri/layers/ImageryLayer",
-	  "esri/tasks/QueryTask","esri/portal/Portal",
+	  "esri/portal/Portal",
 		"../durm/durm_popups.js", "../durm/durm_devcases.js", "../durm/durm_search.js"
 		], function(
 			PortalItem,
 			FeatureLayer, TileLayer, MapImageLayer, GroupLayer, VectorTileLayer,ImageryLayer,
-			QueryTask,  Portal,
+			Portal,
 			durm_popups, durm_devcases, durm_search
     ) {
     return {
+		connect_to_portal: function() {
+			durm.cityportal = new Portal({
+				url: DURHAM_PORTAL_URL // First instance
+			});
+			durm.cityportal.authMode = "anonymous";
+		},
 		// This is super important
-    populate: async function(){
+    	populate: async function(){
 			try {//	
 				pplt = this;
+				layers2load = []
 				durm_popups.pre_init();
-
-				durm.cityportal = new Portal({
-					url: DURHAM_PORTAL_URL // First instance
-				});
-				durm.cityportal.authMode = "auto";
-
 				this.add_defaults();
 				this.add_administrative();
 				this.add_utilities();
@@ -47,10 +48,11 @@ define([
 				durm.draw_button.addEventListener("click", function(){
 					durm_devcases.render_development_cases()
 				});
+				this.add_to_map0(layers2load);
 
-			} catch (e) { 
+			} catch (error) { 
 				console.log("We caught a layer that failed to load")
-				console.log(e);
+				console.log(error);
 			}
 		},
 		add_defaults: async function(){
@@ -99,30 +101,6 @@ define([
 			durm.active_address_points.on('error', function(error){
 				console.info(error);
 			});
-
-			/*const pinlabelClass = { // autocasts as new LabelClass()
-				symbol: {
-					type: "text", // autocasts as new TextSymbol()
-					color: "black",
-					haloColor: "white",
-					haloSize: "0.8px",
-					yoffset: "-5pt",
-					xoffset: 0,
-					font: { // autocast as new Font()
-						family: "sans-serif",
-						size: 9,
-						weight: "bold",
-						decoration: "none",
-						style: "normal"
-					}
-				},
-					labelPlacement: "always-horizontal", // This changes between polygon/point/line
-					minScale: 3000,
-					labelExpressionInfo: {
-						expression: "$feature.PIN" + "\n"
-					}
-				};
-				pinlabelClass.deconflictionStrategy = "none";*/
 
 			durm.parcellabels = new MapImageLayer({
 				id: "parcellabels",
@@ -184,7 +162,7 @@ define([
 				outFields: ["*"],
 				renderer: parcelboundaryRenderer,
 				popupTemplate: {
-					title: "Parcel ID: {PARCEL_ID}", 
+					title: "REID: {REID}", 
 					actions: [parcelNotificationToolAction],
 					outFields: ["*"],// We NEED for outfields to be specified here, because it makes the popups work correctly in cases where there are multiple target parcels.
 					content: durm_popups.queryParcelforPopup //Note that this fires, not for every click, but for every parcel that gets selected. So it could run 10x or 100x
@@ -192,7 +170,34 @@ define([
 			});
 			durm.parcelboundaryLayer.minScale = 18000;
 			pplt.add_to_map(durm.parcelboundaryLayer);
-			durm.parcelrecordquerytask = new QueryTask({ url: PARCELS_AGOL });
+
+			durm.orangepars = new FeatureLayer({
+				id:"orangepars",
+				title:"Parcels, City of Durham in Orange County",
+				listMode: "show",
+				listcategory: "Administrative",
+				layer_order:0,
+				lyr_zindex:7,
+				renderer: orangeparcelboundaryRenderer,
+				url: ORANGE_URL,
+				definitionExpression: "Zoning_Admin = 'Durham'"	
+			});
+			durm.orangepars.minScale = 18000;
+			pplt.add_to_map(durm.orangepars);	
+
+			durm.wakepars = new FeatureLayer({
+				id:"wakepars",
+				title:"Parcels, City of Durham in Wake County",
+				listMode: "show",
+				listcategory: "Administrative",
+				layer_order:0,
+				lyr_zindex:7,
+				renderer: wakeparcelboundaryRenderer,
+				url: WAKE_URL,
+				definitionExpression: "CITY = 'DUR'"
+			});
+			durm.wakepars.minScale = 18000;
+			pplt.add_to_map(durm.wakepars);
 
 			durm.countymask = new VectorTileLayer({
 				id: "countymask",
@@ -271,36 +276,7 @@ define([
 				],
 				visible: false
 			});
-			pplt.add_to_map(durm.parcellabels);	
-
-			durm.orangepars = new FeatureLayer({
-				id:"orangepars",
-				title:"Parcels, City of Durham in Orange County",
-				listMode: "show",
-				listcategory: "Administrative",
-				layer_order:0,
-				lyr_zindex:7,
-				renderer: orangeparcelboundaryRenderer,
-				url: ORANGE_URL,
-				definitionExpression: "Zoning_Admin = 'Durham'"	
-			});
-			pplt.add_to_map(durm.orangepars);
-			durm.parcelrecordquerytask_o = new QueryTask({ url: ORANGE_URL });
-
-			
-			durm.wakepars = new FeatureLayer({
-				id:"wakepars",
-				title:"Parcels, City of Durham in Wake County",
-				listMode: "show",
-				listcategory: "Administrative",
-				layer_order:0,
-				lyr_zindex:7,
-				renderer: wakeparcelboundaryRenderer,
-				url: WAKE_URL,
-				definitionExpression: "CITY = 'DUR'"
-			});
-			pplt.add_to_map(durm.wakepars);
-			durm.parcelrecordquerytask_w = new QueryTask({ url: WAKE_URL });
+			pplt.add_to_map(durm.parcellabels);			
 
 			durm.RTPboundarylayer = new FeatureLayer({
 				id: "RTPboundary",
@@ -356,8 +332,8 @@ define([
 				icon: "DUR",
 				outFields: ["*"],	  
 				visible: false,
-				renderer: renderer_cases,
-				popupTemplate: caseLayer_popup
+				renderer: renderer_cases
+				//popupTemplate: caseLayer_popup
 			});
 			pplt.add_to_map(durm.caseLayer);
 
@@ -508,6 +484,60 @@ define([
 			});
 			pplt.add_to_map(durm.LocHistDist);
 
+			durm.FGAs = new FeatureLayer({
+				id: "FGAs",
+				title: "Future Growth Areas",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:7,
+				url: NEW_FGA_URL,
+				icon: "DUR",
+				visible: false,
+				opacity: 0.65
+			});
+			pplt.add_to_map(durm.FGAs);
+
+			durm.urbangrowthboundary = new FeatureLayer({
+				id: "urbangrowthboundary",
+				title: "Urban Growth Boundary",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:4,
+				url: NEW_UGB_URL,
+				icon: "DUR",
+				visible: false
+			});
+			pplt.add_to_map(durm.urbangrowthboundary);
+
+			// durm.placetype = new TileLayer({
+			// 	id: "placetype",
+			// 	title: "Draft Place Type Map",
+			// 	listMode: "show",
+			// 	listcategory: "Planning",
+			// 	layer_order:0,
+			// 	lyr_zindex:2,
+			// 	url: PLACETYPE_URL,
+			// 	icon: "DUR",
+			// 	visible: false,
+			// 	opacity: 1
+			// });
+			// pplt.add_to_map(durm.placetype);
+
+			durm.placetype = new FeatureLayer({
+				id: "placetype",
+				title: "Place Type Map",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:2,
+				url: NEW_PLACETYPE_URL,
+				icon: "DUR",
+				visible: false
+			});
+			pplt.add_to_map(durm.placetype);
+
 			durm.zoninglayer = new TileLayer({
 				id: "zoning",
 				title: "Zoning",
@@ -522,19 +552,19 @@ define([
 			});
 			pplt.add_to_map(durm.zoninglayer);
 			
-			durm.FLUlayer = new TileLayer({
-				id: "FLU",
-				title: "Future Land Use",
-				listMode: "show",
-				listcategory: "Planning",
-				layer_order:0,
-				lyr_zindex:2,
-				url: FUTURE_LAND_USE_URL,
-				icon: "DUR",
-				visible: false,
-				opacity: 1
-			});
-			pplt.add_to_map(durm.FLUlayer);
+			// durm.FLUlayer = new TileLayer({
+			// 	id: "FLU",
+			// 	title: "Future Land Use",
+			// 	listMode: "show",
+			// 	listcategory: "Planning",
+			// 	layer_order:0,
+			// 	lyr_zindex:2,
+			// 	url: FUTURE_LAND_USE_URL,
+			// 	icon: "DUR",
+			// 	visible: false,
+			// 	opacity: 1
+			// });
+			// pplt.add_to_map(durm.FLUlayer);
 
 			durm.STREETSIMPACTFEEZONE = new FeatureLayer({
 				id: "STREETSIMPACTFEEZONE",
@@ -578,22 +608,24 @@ define([
 			});
 			pplt.add_to_map(durm.PARKSIMPACTFEEZONES);	
 			
-			/* Note for future reference --  Development Tiers should use server-side rendering because the 'urban' tier has a big donut hole that causes problems in client-side labeling. */	
-			durm.developmenttiers = new MapImageLayer({
+			durm.developmenttiers = new FeatureLayer({
 				id: "developmenttiers",
 				title: "Development Tiers",
 				listcategory: "Planning",
-				sublayers:[{
-					id: 5,
-					visible:true
-				}],
+				//sublayers:[{
+				//	id: 5,
+				//	visible:true
+				//}],
 				layer_order:0,
 				lyr_zindex:8,
-				url: PLANNING_BASE_URL,
+				url: DEVELOPMENT_TIERS_URL_SUBLAYER,
 				icon: "DUR",
-				visible: false,  
+				visible: false,
+				popupEnabled: false
 			});
 			pplt.add_to_map(durm.developmenttiers);
+
+
 
 			durm.airportoverlay = new FeatureLayer({
 				id: "airportoverlay",
@@ -651,19 +683,6 @@ define([
 			});
 			durm.EDOSPgroup.add(durm.EDOSPWC);
 
-			durm.urbangrowthboundary = new FeatureLayer({
-				id: "urbangrowthboundary",
-				title: "Proposed Urban Growth Boundary",
-				listMode: "show",
-				listcategory: "Planning",
-				layer_order:0,
-				lyr_zindex:4,
-				opacity:0.6,
-				url: UGB_URL,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.urbangrowthboundary);
 
 		},
 		add_permits: async function(){
@@ -737,21 +756,6 @@ define([
 			});
 			pplt.add_to_map(durm.activemechpermitLayer);
 
-			durm.demopermits = new FeatureLayer({
-				id: "demopermits",
-				title: "Demolition Permits",
-				listcategory: "Permits",
-				listMode: "show",
-				layer_order:0,
-				lyr_zindex:10,
-				url: DEMO_URL,
-				icon: "DUR",
-				outFields: ["*"],	  
-				visible: false
-			});
-			pplt.add_to_map(durm.demopermits);
-
-
 			durm.certificates_of_occupancy = new FeatureLayer({
 				id: "certificates_of_occupancy",
 				title: "Certificates of Occupancy",
@@ -777,7 +781,35 @@ define([
 					}
 				}
 			});
-			pplt.add_to_map(durm.certificates_of_occupancy);	
+			pplt.add_to_map(durm.certificates_of_occupancy);
+
+			durm.demo_permits = new FeatureLayer({
+				id: "demo_permits",
+				title: "Demolition Permits",
+				listcategory: "Permits",
+				listMode: "show",
+				layer_order:0,
+				lyr_zindex:10,
+				url: DEMO_PERMITS_URL,
+				icon: "DUR",
+				outFields: ["*"],	  
+				visible: false
+			});
+			pplt.add_to_map(durm.demo_permits);
+
+			durm.crossconnectpermits = new FeatureLayer({
+				id: "crossconnectpermits",
+				title: "Cross Connection Permits",
+				listcategory: "Permits",
+				listMode: "show",
+				layer_order:0,
+				lyr_zindex:10,
+				url: CROSS_CONNECT_PERMITS_URL,
+				icon: "DUR",
+				outFields: ["*"],	  
+				visible: false
+			});
+			pplt.add_to_map(durm.crossconnectpermits);
 
 		},
 		add_economic: async function(){
@@ -924,359 +956,242 @@ define([
 				visible: false
 			});
 			pplt.add_to_map(durm.FEMA_risk_insurance);
+
+
+			durm.triassicsoils = new FeatureLayer({
+				id: "triassicsoils",
+				title: "Triassic Soils Basin",
+				listMode: "show",
+				listcategory: "Environmental",
+				layer_order:0,
+				lyr_zindex:3,
+				url: TRIASSIC_SOILS_URL,
+				icon: "USA",
+				opacity:0.65,
+				visible: false
+			});				
+			pplt.add_to_map(durm.triassicsoils);	
+
+			durm.erosiondistricts = new FeatureLayer({
+				id: "erosiondistricts",
+				title: "Sedimentation and Erosion Inspection Districts",
+				listMode: "show",
+				listcategory: "Environmental",
+				layer_order:0,
+				lyr_zindex:3,
+				url: EROSIONDISTRICTS_URL,
+				icon: "DUR",
+				opacity:0.65,
+				visible: false
+			});				
+			pplt.add_to_map(durm.erosiondistricts);
+
+
 		},
 		add_education: async function(){
-			//We should probably figure out a less labor-intensive way to manage this
-			//But FeatureLayers provides the sort of labeling + interactivity we need.
 
-			//21-22
-			durm.elemschools21_22 = new GroupLayer({
-				id: "elemschools21_22",
-				title: "Elementary Schools and Zones, 2021-2022",
+
+			/* 25-26 */
+			durm.highschools25_26 = new VectorTileLayer({
+				id: "highschools25_26",
+				title: "High Schools and Zones, 2025-2026",
 				listMode: "show",
 				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.elemschools21_22);
-
-			durm.elem21_22_6 = new FeatureLayer({
-				id: "elem21_22_6",
-				layerId: 6,
-				listMode: "show",
-				listcategory: "Education",
+				url: dps_high_2526,
 				layer_order:0,
 				lyr_zindex:6,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_6);
-
-			durm.elem21_22_5 = new FeatureLayer({
-				id: "elem21_22_5",
-				layerId: 5,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:8,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_5);
-
-			durm.elem21_22_4 = new FeatureLayer({
-				id: "elem21_22_4",
-				layerId: 4,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:6,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_4);
-
-			durm.elem21_22_3 = new FeatureLayer({
-				id: "elem21_22_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_3);
-
-			durm.elem21_22_2 = new FeatureLayer({
-				id: "elem21_22_2",
-				layerId: 2,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_2);
-
-			durm.elem21_22_1 = new FeatureLayer({
-				id: "elem21_22_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_1);
-
-			durm.elem21_22_0 = new FeatureLayer({
-				id: "elem21_22_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools21_22.add(durm.elem21_22_0);
-			
-			durm.middleschools21_22 = new GroupLayer({
-				id: "middleschools21_22",
-				title: "Middle Schools and Zones, 2021-2022",
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.middleschools21_22);
-
-			durm.middle21_22_3 = new FeatureLayer({
-				id: "middle21_22_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools21_22.add(durm.middle21_22_3);
-
-			durm.middle21_22_2 = new FeatureLayer({
-				id: "middle21_22_2",
-				layerId: 2,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools21_22.add(durm.middle21_22_2);
-			
-			durm.middle21_22_1 = new FeatureLayer({
-				id: "middle21_22_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools21_22.add(durm.middle21_22_1);
-
-			durm.middle21_22_0 = new FeatureLayer({
-				id: "middle21_22_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools21_22.add(durm.middle21_22_0);
-
-			/* high */
-			durm.highschools21_22 = new GroupLayer({
-				id: "highschools21_22",
-				title: "High Schools and Zones, 2021-2022",
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.highschools21_22);
-
-			durm.high21_22_3 = new FeatureLayer({
-				id: "high21_22_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools21_22.add(durm.high21_22_3);
-
-			durm.high21_22_2 = new FeatureLayer({
-				id: "high21_22_2",
-				layerId: 2,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools21_22.add(durm.high21_22_2);
-			
-			durm.high21_22_1 = new FeatureLayer({
-				id: "high21_22_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools21_22.add(durm.high21_22_1);
-
-			durm.high21_22_0 = new FeatureLayer({
-				id: "high21_22_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2122_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools21_22.add(durm.high21_22_0);
-
-			//22-23
-			durm.elemschools22_23 = new GroupLayer({
-				id: "elemschools22_23",
-				title: "Elementary Schools and Zones, 2022-2023",
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.elemschools22_23);
-
-			durm.elem22_23_6 = new FeatureLayer({
-				id: "elem22_23_6",
-				layerId: 6,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:6,
-				url: ELEM2223_URL,					
 				icon: "DUR",
 				visible: true,
-				opacity:0.45,
+				opacity:0.65
 			});
-			durm.elemschools22_23.add(durm.elem22_23_6);
+			pplt.add_to_map(durm.highschools25_26);
 
-			durm.elem22_23_5 = new FeatureLayer({
-				id: "elem22_23_5",
+
+			durm.middleschools25_26 = new VectorTileLayer({
+				id: "middleschools25_26",
+				title: "Middle Schools and Zones, 2025-2026",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_middle_2526,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.middleschools25_26);
+
+
+			durm.elemschools25_26 = new VectorTileLayer({
+				id: "elemschools25_26",
+				title: "Elementary Schools and Zones, 2025-2026",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_elementary_2526,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.elemschools25_26);
+			
+			
+
+			/* 24-25 */
+			durm.highschools24_25 = new VectorTileLayer({
+				id: "highschools24_25",
+				title: "High Schools and Zones, 2024-2025",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_high_2425,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: true,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.highschools24_25);
+
+
+			durm.middleschools24_25 = new VectorTileLayer({
+				id: "middleschools24_25",
+				title: "Middle Schools and Zones, 2024-2025",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_middle_2425,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.middleschools24_25);
+
+
+			durm.elemschools24_25 = new VectorTileLayer({
+				id: "elemschools24_25",
+				title: "Elementary Schools and Zones, 2024-2025",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_elementary_2425,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.elemschools24_25);
+
+
+			/* 23-24 */
+			durm.elemschools23_24 = new GroupLayer({
+				id: "elemschools23_24",
+				title: "Elementary Schools and Zones, 2023-2024",
+				listMode: "show",
+				listcategory: "Education",
+				layer_order:0,
+				lyr_zindex:7,
+				icon: "DUR",
+				visible: false
+			});
+			pplt.add_to_map(durm.elemschools23_24);
+
+			durm.elem23_24_6 = new FeatureLayer({
+				id: "elem23_24_6",
+				layerId: 6,
+				listMode: "show",
+				listcategory: "Education",
+				layer_order:0,
+				lyr_zindex:6,
+				opacity:0.4,
+				url: ELEM2324_URL,					
+				icon: "DUR",
+				visible: true
+			});
+			durm.elemschools23_24.add(durm.elem23_24_6);
+
+			durm.elem23_24_5 = new FeatureLayer({
+				id: "elem23_24_5",
 				layerId: 5,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:8,
-				url: ELEM2223_URL,					
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_5);
+			durm.elemschools23_24.add(durm.elem23_24_5);
 
-			durm.elem22_23_4 = new FeatureLayer({
-				id: "elem22_23_4",
+			durm.elem23_24_4 = new FeatureLayer({
+				id: "elem23_24_4",
 				layerId: 4,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:6,
-				url: ELEM2223_URL,					
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_4);
+			durm.elemschools23_24.add(durm.elem23_24_4);
 
-			durm.elem22_23_3 = new FeatureLayer({
-				id: "elem22_23_3",
+			durm.elem23_24_3 = new FeatureLayer({
+				id: "elem23_24_3",
 				layerId: 3,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: ELEM2223_URL,					
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_3);
+			durm.elemschools23_24.add(durm.elem23_24_3);
 
-			durm.elem22_23_2 = new FeatureLayer({
-				id: "elem22_23_2",
+			durm.elem23_24_2 = new FeatureLayer({
+				id: "elem23_24_2",
 				layerId: 2,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: ELEM2223_URL,					
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_2);
+			durm.elemschools23_24.add(durm.elem23_24_2);
 
-			durm.elem22_23_1 = new FeatureLayer({
-				id: "elem22_23_1",
+			durm.elem23_24_1 = new FeatureLayer({
+				id: "elem23_24_1",
 				layerId: 1,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: ELEM2223_URL,					
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_1);
+			durm.elemschools23_24.add(durm.elem23_24_1);
 
-			//points
-			durm.elem22_23_0 = new MapImageLayer({
-				id: "elem22_23_0",
+			durm.elem23_24_0 = new FeatureLayer({
+				id: "elem23_24_0",
 				layerId: 0,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: ELEM2223_URL,
-				sublayers:[
-					{
-						id: 0,
-						visible: true
-					}
-				],				
+				url: ELEM2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.elemschools22_23.add(durm.elem22_23_0);
+			durm.elemschools23_24.add(durm.elem23_24_0);
 			
-			durm.middleschools22_23 = new GroupLayer({
-				id: "middleschools22_23",
-				title: "Middle Schools and Zones, 2022-2023",
+			durm.middleschools23_24 = new GroupLayer({
+				id: "middleschools23_24",
+				title: "Middle Schools and Zones, 2023-2024",
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
@@ -1284,78 +1199,64 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			pplt.add_to_map(durm.middleschools22_23);
+			pplt.add_to_map(durm.middleschools23_24);
 
-			durm.middle22_23_3 = new FeatureLayer({
-				id: "middle22_23_3",
+			durm.middle23_24_3 = new FeatureLayer({
+				id: "middle23_24_3",
 				layerId: 3,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: MID2223_URL,	
-				opacity:0.4,				
+				url: MID2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.middleschools22_23.add(durm.middle22_23_3);
+			durm.middleschools23_24.add(durm.middle23_24_3);
 
-			durm.middle22_23_2 = new FeatureLayer({
-				id: "middle22_23_2",
+			durm.middle23_24_2 = new FeatureLayer({
+				id: "middle23_24_2",
 				layerId: 2,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: MID2223_URL,					
+				url: MID2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.middleschools22_23.add(durm.middle22_23_2);
+			durm.middleschools23_24.add(durm.middle23_24_2);
 			
-			durm.middle22_23_1 = new MapImageLayer({
-				id: "middle22_23_1",
-				//layerId: 1,
-				sublayers:[
-					{
-						id: 1,
-						visible: true
-					}
-				],	
+			durm.middle23_24_1 = new FeatureLayer({
+				id: "middle23_24_1",
+				layerId: 1,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: MID2223_URL,					
+				url: MID2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.middleschools22_23.add(durm.middle22_23_1);
+			durm.middleschools23_24.add(durm.middle23_24_1);
 
-			durm.middle22_23_0 = new MapImageLayer({
-				id: "middle22_23_0",
-				//layerId: 0,
+			durm.middle23_24_0 = new FeatureLayer({
+				id: "middle23_24_0",
+				layerId: 0,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: MID2223_URL,	
-				sublayers:[
-					{
-						id: 0,
-						visible: true
-					}
-				],					
+				url: MID2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.middleschools22_23.add(durm.middle22_23_0);
-
+			durm.middleschools23_24.add(durm.middle23_24_0);
 
 			/* high */
-			durm.highschools22_23 = new GroupLayer({
-				id: "highschools22_23",
-				title: "High Schools and Zones, 2022-2023",
+			durm.highschools23_24 = new GroupLayer({
+				id: "highschools23_24",
+				title: "High Schools and Zones, 2023-2024",
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
@@ -1363,72 +1264,328 @@ define([
 				icon: "DUR",
 				visible: false
 			});
-			pplt.add_to_map(durm.highschools22_23);
+			pplt.add_to_map(durm.highschools23_24);
 
-			durm.high22_23_3 = new FeatureLayer({
-				id: "high22_23_3",
+			durm.high23_24_3 = new FeatureLayer({
+				id: "high23_24_3",
 				layerId: 3,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2223_URL,
-				opacity:0.5,			
+				lyr_zindex:7,
+				opacity:0.3,
+				url: HIGH2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.highschools22_23.add(durm.high22_23_3);
+			durm.highschools23_24.add(durm.high23_24_3);
 
-			durm.high22_23_2 = new FeatureLayer({
-				id: "high22_23_2",
+			durm.high23_24_2 = new FeatureLayer({
+				id: "high23_24_2",
 				layerId: 2,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: HIGH2223_URL,					
+				url: HIGH2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.highschools22_23.add(durm.high22_23_2);
+			durm.highschools23_24.add(durm.high23_24_2);
 			
-			durm.high22_23_1 = new MapImageLayer({
-				id: "high22_23_1",
-				//layerId: 1,
+			durm.high23_24_1 = new FeatureLayer({
+				id: "high23_24_1",
+				layerId: 1,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: HIGH2223_URL,
-				sublayers:[
-					{
-						id: 1,
-						visible: true
-					}
-				],						
+				url: HIGH2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.highschools22_23.add(durm.high22_23_1);
+			durm.highschools23_24.add(durm.high23_24_1);
 
-			durm.high22_23_0 = new MapImageLayer({
-				id: "high22_23_0",
-				//layerId: 0,
+			durm.high23_24_0 = new FeatureLayer({
+				id: "high23_24_0",
+				layerId: 0,
 				listMode: "show",
 				listcategory: "Education",
 				layer_order:0,
 				lyr_zindex:9,
-				url: HIGH2223_URL,	
-				sublayers:[
-					{
-						id: 0,
-						visible: true
-					}
-				],					
+				url: HIGH2324_URL,					
 				icon: "DUR",
 				visible: true
 			});
-			durm.highschools22_23.add(durm.high22_23_0);
+			durm.highschools23_24.add(durm.high23_24_0);
+
+			//22-23
+			// durm.elemschools22_23 = new GroupLayer({
+			// 	id: "elemschools22_23",
+			// 	title: "Elementary Schools and Zones, 2022-2023",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.elemschools22_23);
+
+			// durm.elem22_23_6 = new FeatureLayer({
+			// 	id: "elem22_23_6",
+			// 	layerId: 6,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:6,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true,
+			// 	opacity:0.45,
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_6);
+
+			// durm.elem22_23_5 = new FeatureLayer({
+			// 	id: "elem22_23_5",
+			// 	layerId: 5,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:8,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_5);
+
+			// durm.elem22_23_4 = new FeatureLayer({
+			// 	id: "elem22_23_4",
+			// 	layerId: 4,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:6,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_4);
+
+			// durm.elem22_23_3 = new FeatureLayer({
+			// 	id: "elem22_23_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_3);
+
+			// durm.elem22_23_2 = new FeatureLayer({
+			// 	id: "elem22_23_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_2);
+
+			// durm.elem22_23_1 = new FeatureLayer({
+			// 	id: "elem22_23_1",
+			// 	layerId: 1,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_1);
+
+			// //points
+			// durm.elem22_23_0 = new MapImageLayer({
+			// 	id: "elem22_23_0",
+			// 	layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2223_URL,
+			// 	sublayers:[
+			// 		{
+			// 			id: 0,
+			// 			visible: true
+			// 		}
+			// 	],				
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools22_23.add(durm.elem22_23_0);
+			
+			// durm.middleschools22_23 = new GroupLayer({
+			// 	id: "middleschools22_23",
+			// 	title: "Middle Schools and Zones, 2022-2023",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.middleschools22_23);
+
+			// durm.middle22_23_3 = new FeatureLayer({
+			// 	id: "middle22_23_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2223_URL,	
+			// 	opacity:0.4,				
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools22_23.add(durm.middle22_23_3);
+
+			// durm.middle22_23_2 = new FeatureLayer({
+			// 	id: "middle22_23_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools22_23.add(durm.middle22_23_2);
+			
+			// durm.middle22_23_1 = new MapImageLayer({
+			// 	id: "middle22_23_1",
+			// 	//layerId: 1,
+			// 	sublayers:[
+			// 		{
+			// 			id: 1,
+			// 			visible: true
+			// 		}
+			// 	],	
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools22_23.add(durm.middle22_23_1);
+
+			// durm.middle22_23_0 = new MapImageLayer({
+			// 	id: "middle22_23_0",
+			// 	//layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2223_URL,	
+			// 	sublayers:[
+			// 		{
+			// 			id: 0,
+			// 			visible: true
+			// 		}
+			// 	],					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools22_23.add(durm.middle22_23_0);
+
+
+			// /* high */
+			// durm.highschools22_23 = new GroupLayer({
+			// 	id: "highschools22_23",
+			// 	title: "High Schools and Zones, 2022-2023",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.highschools22_23);
+
+			// durm.high22_23_3 = new FeatureLayer({
+			// 	id: "high22_23_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2223_URL,
+			// 	opacity:0.5,			
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools22_23.add(durm.high22_23_3);
+
+			// durm.high22_23_2 = new FeatureLayer({
+			// 	id: "high22_23_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2223_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools22_23.add(durm.high22_23_2);
+			
+			// durm.high22_23_1 = new MapImageLayer({
+			// 	id: "high22_23_1",
+			// 	//layerId: 1,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2223_URL,
+			// 	sublayers:[
+			// 		{
+			// 			id: 1,
+			// 			visible: true
+			// 		}
+			// 	],						
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools22_23.add(durm.high22_23_1);
+
+			// durm.high22_23_0 = new MapImageLayer({
+			// 	id: "high22_23_0",
+			// 	//layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2223_URL,	
+			// 	sublayers:[
+			// 		{
+			// 			id: 0,
+			// 			visible: true
+			// 		}
+			// 	],					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools22_23.add(durm.high22_23_0);
 		},
 		add_electoral: async function(){
 			durm.voter_precincts = new MapImageLayer({
@@ -1568,33 +1725,155 @@ define([
 			});
 			pplt.add_to_map(durm.aeriallabelsVT);
 
-			durm.satellite2008_ir = new MapImageLayer({
+			durm.satellite2007 = new TileLayer({
+				id: "satellite2007",
+				title: "2007 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2007/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2007);
+
+			durm.satellite2008_ir = new TileLayer({
 				id: "satellite2008_ir",
 				title: "2008 Color-infrared Satellite Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Satellite2008_ColorIR/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2008_ColorIR/MapServer",
 				icon: "DUR",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.satellite2008_ir);
 			
-			durm.satellite2008 = new MapImageLayer({
+			durm.satellite2008 = new TileLayer({
 				id: "satellite2008",
 				title: "2008 Satellite Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Satellite2008/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2008/MapServer",
 				icon: "DUR",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.satellite2008);
 
-			durm.soils1983 = new MapImageLayer({
+			durm.satellite2009 = new TileLayer({
+				id: "satellite2009",
+				title: "2009 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2009/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2009);
+
+			durm.satellite2010 = new TileLayer({
+				id: "satellite2010",
+				title: "2010 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2010/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2010);
+
+			durm.satellite2011 = new TileLayer({
+				id: "satellite2011",
+				title: "2011 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2011/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2011);
+
+			durm.satellite2012 = new TileLayer({
+				id: "satellite2012",
+				title: "2012 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2012/MapServer",
+				icon: "DUR",
+				visible: false
+			});				
+			pplt.add_to_map(durm.satellite2012);
+
+			durm.satellite2013 = new TileLayer({
+				id: "satellite2013",
+				title: "2013 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2013/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2013);
+			
+			durm.satellite2014 = new TileLayer({
+				id: "satellite2014",
+				title: "2014 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2014/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2014);
+
+			durm.satellite2015 = new TileLayer({
+				id: "satellite2015",
+				title: "2015 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2015/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2015);
+
+			durm.satellite2016 = new TileLayer({
+				id: "satellite2016",
+				title: "2016 Satellite Photos",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:2,
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Satellite2016/MapServer",
+				icon: "DUR",
+				visible: false, legendEnabled: false, popupEnabled: false
+			});				
+			pplt.add_to_map(durm.satellite2016);
+
+
+
+
+
+
+			durm.soils1983 = new TileLayer({
 				id: "soils1983",
 				title: "1983 Aerial Photos, with stream delination and soils",
 				listMode: "hide",
@@ -1603,166 +1882,298 @@ define([
 				lyr_zindex:2,
 				url: SOILS1983_URL,
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.soils1983);
 
-			durm.aerials2021 = new MapImageLayer({
+			durm.aerials2021 = new TileLayer({
 				id: "aerials2021",
 				title: "2021 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2021/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2021/MapServer",
 				icon: "DUR",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2021);
 
-			durm.aerials2019 = new MapImageLayer({
+			durm.aerials2019 = new TileLayer({
 				id: "aerials2019",
 				title: "2019 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2019/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2019/MapServer",
 				icon: "DUR",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2019);
 
-			durm.aerials2017 = new MapImageLayer({
+			durm.aerials2017 = new TileLayer({
 				id: "aerials2017",
 				title: "2017 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2017/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2017/MapServer",
 				icon: "DUR",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2017);	
 
-			durm.aerials2013 = new MapImageLayer({
+			durm.aerials2013 = new TileLayer({
 				id: "aerials2013",
 				title: "2013 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2013/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2013/MapServer",
 				icon: "NC",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2013);	
 
-			durm.aerials2010 = new MapImageLayer({
+			durm.aerials2010 = new TileLayer({
 				id: "aerials2010",
 				title: "2010 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2010/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2010/MapServer",
 				icon: "NC",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2010);	
 
-			durm.aerials2008 = new MapImageLayer({
+			durm.aerials2008 = new TileLayer({
 				id: "aerials2008",
 				title: "2008 Aerial Photos (NAIP)",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2008/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2008/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2008);
 
 
-			durm.aerials2005 = new MapImageLayer({
+			durm.aerials2005 = new TileLayer({
 				id: "aerials2005",
 				title: "2005 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2005/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2005/MapServer",
 				icon: "NC",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2005);
 
-			durm.aerials2002 = new MapImageLayer({
+			durm.aerials2002 = new TileLayer({
 				id: "aerials2002",
 				title: "2002 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho2002/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho2002/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials2002);
 
-			durm.aerials1999 = new MapImageLayer({
+			durm.aerials1999 = new TileLayer({
 				id: "aerials1999",
 				title: "1999 Aerial Photos",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho1999/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho1999/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials1999);
 
-			durm.aerials1994 = new MapImageLayer({
+			durm.aerials1994 = new TileLayer({
 				id: "aerials1994",
 				title: "1994 Aerial Photos (City Only)",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho1994/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho1994/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials1994);
 
-			durm.aerials1988 = new MapImageLayer({
+			durm.aerials1988 = new TileLayer({
 				id: "aerials1988",
 				title: "1988 Aerial Photos (County Only)",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho1988/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho1988/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials1988);
 
-			durm.aerials1940 = new MapImageLayer({
+			durm.aerials1940 = new TileLayer({
 				id: "aerials1940",
 				title: "1940 Aerial Photos (City Only)",
 				listMode: "hide",
 				listcategory: "Aerial Photos, Historical",
 				layer_order:0,
 				lyr_zindex:2,
-				url: "https://webgis.durhamnc.gov/server/rest/services/Rasters/Ortho1940/MapServer",
+				url: "https://webgis2.durhamnc.gov/server/rest/services/Rasters/Ortho1940/MapServer",
 				icon: "USA",
-				visible: false
+				visible: false, legendEnabled: false, popupEnabled: false
 			});				
 			pplt.add_to_map(durm.aerials1940);
+
+			//Feb 2024   1/28 - 2/15
+
+			//May 2024 -  5/27 to 6/1
+
+			durm.nearmap2024_summer = new ImageryLayer({
+				id: "nearmap2024_summer",
+				title: "2024 Nearmap Aerials, May",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2024-05-27 20:10:05' AND TIMESTAMP '2024-06-01 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2024_summer);
+
+			durm.nearmap2024_spring = new ImageryLayer({
+				id: "nearmap2024_spring",
+				title: "2024 Nearmap Aerials, February",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2024-01-26 20:10:05' AND TIMESTAMP '2024-02-15 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2024_spring);
+
+			durm.nearmap2023_fall = new ImageryLayer({
+				id: "nearmap2023_fall",
+				title: "2023 Nearmap Aerials, October",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-10-01 20:10:05' AND TIMESTAMP '2023-10-29 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2023_fall);
+
+
+			durm.nearmap2023_spring = new ImageryLayer({
+				id: "nearmap2023_spring",
+				title: "2023 Nearmap Aerials, May",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-05-04 20:10:05' AND TIMESTAMP '2023-05-11 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2023_spring);
+
+			durm.nearmap2023_winter = new ImageryLayer({
+				id: "nearmap2023_winter",
+				title: "2023 Nearmap Aerials, Jan",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-01-22 20:10:05' AND TIMESTAMP '2023-01-28 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2023_winter);
+
+
+			durm.nearmap2022_fall = new ImageryLayer({
+				id: "nearmap2022_fall",
+				title: "2022 Nearmap Aerials, Oct",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-10-16 20:10:05' AND TIMESTAMP '2022-10-19 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2022_fall);
+
+			durm.nearmap2022_spring2 = new ImageryLayer({
+				id: "nearmap2022_spring2",
+				title: "2022 Nearmap Aerials, May",
+				listMode: "hide",
+				listcategory: "Aerial Photos, Historical",
+				layer_order:0,
+				lyr_zindex:1,
+				url: NEARMAP_URL,
+				icon: "DUR",
+				visible: false,
+				opacity:1,
+				minScale:0,
+				maxScale:564,
+				popupEnabled:false,
+				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-05-01 20:10:05' AND TIMESTAMP '2022-07-01 20:20:20'"
+			});				
+			pplt.add_to_map(durm.nearmap2022_spring2);
 
 			durm.nearmap2022_spring1 = new ImageryLayer({
 				id: "nearmap2022_spring1",
@@ -1776,7 +2187,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-02-01 20:10:05' AND TIMESTAMP '2022-02-07 20:20:20'"
 			});				
@@ -1794,7 +2205,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-11-01 20:10:05' AND TIMESTAMP '2021-12-01 20:20:20'"
 			});				
@@ -1813,7 +2224,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-05-01 20:10:05' AND TIMESTAMP '2021-06-05 20:20:20'"
 			});				
@@ -1831,7 +2242,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-01-01 20:10:05' AND TIMESTAMP '2021-02-05 20:20:20'"
 			});				
@@ -1849,7 +2260,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-09-01 20:10:05' AND TIMESTAMP '2020-10-02 20:20:20'"
 			});				
@@ -1867,7 +2278,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-05-01 20:10:05' AND TIMESTAMP '2020-07-02 20:20:20'"
 			});				
@@ -1885,7 +2296,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-01-01 20:10:05' AND TIMESTAMP '2020-02-02 20:20:20'"
 			});				
@@ -1903,7 +2314,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-10-01 20:10:05' AND TIMESTAMP '2019-12-01 20:20:20'"
 			});				
@@ -1921,7 +2332,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-05-01 20:10:05' AND TIMESTAMP '2019-06-01 20:20:20'"
 			});				
@@ -1939,7 +2350,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-01-01 20:10:05' AND TIMESTAMP '2019-02-01 20:20:20'"
 			});				
@@ -1957,7 +2368,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-09-01 20:10:05' AND TIMESTAMP '2018-11-01 20:20:20'"
 			});				
@@ -1975,7 +2386,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-01-01 20:10:05' AND TIMESTAMP '2018-02-26 20:20:20'"
 			});				
@@ -1993,7 +2404,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-09-01 20:10:05' AND TIMESTAMP '2017-11-29 20:20:20'"
 			});				
@@ -2011,7 +2422,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-05-01 20:10:05' AND TIMESTAMP '2017-05-29 20:20:20'"
 			});				
@@ -2029,7 +2440,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-01-01 20:10:05' AND TIMESTAMP '2017-03-29 20:20:20'"
 			});				
@@ -2047,7 +2458,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-09-01 20:10:05' AND TIMESTAMP '2016-09-29 20:20:20'"
 			});				
@@ -2065,7 +2476,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-02-01 20:10:05' AND TIMESTAMP '2016-03-29 20:20:20'"
 			});				
@@ -2083,7 +2494,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-11-01 20:10:05' AND TIMESTAMP '2015-11-29 20:20:20'"
 			});				
@@ -2101,7 +2512,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-03-01 20:10:05' AND TIMESTAMP '2015-03-29 20:20:20'"
 			});				
@@ -2119,7 +2530,7 @@ define([
 				visible: false,
 				opacity:1,
 				minScale:0,
-				maxScale:0,
+				maxScale:564,
 				popupEnabled:false,
 				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2014-10-01 20:10:05' AND TIMESTAMP '2014-11-29 20:20:20'"
 			});				
@@ -2128,10 +2539,10 @@ define([
 			this.init_aerial_slider();
 		},
 		add_nconemap: async function(){
-			// Hazards				
+			// Hazards		
 			durm.brownfields = new FeatureLayer({
 				id: "brownfields",
-				title: "Brownfields",
+				title: "NC Brownfields Program",
 				listMode: "show",
 				listcategory: "Hazards",
 				layer_order:0,
@@ -2140,8 +2551,101 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			pplt.add_to_map(durm.brownfields);	
-		
+			pplt.add_to_map(durm.brownfields);
+
+			durm.hazwaste = new FeatureLayer({
+				id: "hazwaste",
+				title: "NC DEQ Hazardous Waste Sites (2019)",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: HAZWASTE_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.hazwaste);		
+
+			/*durm.inactivehazsites = new FeatureLayer({
+				id: "inactivehazsites",
+				title: "NC DEQ Inactive Hazardous Sites",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: INACTIVEHAZ_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.inactivehazsites);*/
+			
+			durm.active_permitted_landfills = new FeatureLayer({
+				id: "active_permitted_landfills",
+				title: "NC DEQ Active Permitted Landfills",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: LANDFILLS_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.active_permitted_landfills);
+
+			durm.preregulatory_landfills = new FeatureLayer({
+				id: "preregulatory_landfills",
+				title: "NC DEQ Pre-Regulatory Landfill Sites",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: LANDFILLS_PREREG_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.preregulatory_landfills);
+
+			durm.deq401cert = new FeatureLayer({
+				id: "deq401cert",
+				title: "NC DEQ Wetland Permits, 401 Certification",
+				listMode: "show",
+				listcategory: "Environmental",
+				layer_order:0,
+				lyr_zindex:10,
+				url: DEQ401_cert_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.deq401cert);
+
+
+			durm.npdesnondischarge = new FeatureLayer({
+				id: "npdesnondischarge",
+				title: "NPDES Non Discharge Permits",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: npdesnondischarge_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.npdesnondischarge);
+
+			durm.npdeswastewaterdischarge = new FeatureLayer({
+				id: "npdeswastewaterdischarge",
+				title: "NPDES Wastewater Discharge Permits",
+				listMode: "show",
+				listcategory: "Hazards",
+				layer_order:0,
+				lyr_zindex:10,
+				url: npdeswastewaterdischarge_URL,
+				icon: "NC",
+				visible: false
+			});				
+			pplt.add_to_map(durm.npdeswastewaterdischarge);
+
+			/*
 			durm.drycleaning = new FeatureLayer({
 				id: "drycleaning",
 				title: "Dry-cleaning Solvent Cleanup Sites",
@@ -2153,47 +2657,11 @@ define([
 				icon: "NC",
 				visible: false
 			});				
-			pplt.add_to_map(durm.drycleaning);	
+			pplt.add_to_map(durm.drycleaning);
+			*/
 
-			durm.hazwaste = new FeatureLayer({
-				id: "hazwaste",
-				title: "Hazardous Waste Sites",
-				listMode: "show",
-				listcategory: "Hazards",
-				layer_order:0,
-				lyr_zindex:10,
-				url: HAZWASTE_URL,
-				icon: "NC",
-				visible: false
-			});				
-			pplt.add_to_map(durm.hazwaste);
-
-			durm.inactivehazsites = new FeatureLayer({
-				id: "inactivehazsites",
-				title: "Inactive Hazardous Sites",
-				listMode: "show",
-				listcategory: "Hazards",
-				layer_order:0,
-				lyr_zindex:10,
-				url: INACTIVEHAZ_URL,
-				icon: "NC",
-				visible: false
-			});				
-			pplt.add_to_map(durm.inactivehazsites);
-
-			durm.active_permitted_landfills = new FeatureLayer({
-				id: "active_permitted_landfills",
-				title: "Active Permitted Landfills",
-				listMode: "show",
-				listcategory: "Hazards",
-				layer_order:0,
-				lyr_zindex:10,
-				url: LANDFILLS_URL,
-				icon: "NC",
-				visible: false
-			});				
-			pplt.add_to_map(durm.active_permitted_landfills);
-
+			
+			/*
 			durm.state_hydrography = new FeatureLayer({
 				id: "state_hydrography",
 				title: "State Hydrography",
@@ -2206,6 +2674,7 @@ define([
 				visible: false
 			});
 			pplt.add_to_map(durm.state_hydrography); 
+			*/
 
 			const statelandlabelClass = { // autocasts as new LabelClass()
 				symbol: {
@@ -2229,7 +2698,7 @@ define([
 						expression: "$feature.ComplexNam"
 					}
 			};
-
+			
 			durm.state_owned_land = new FeatureLayer({
 				id: "state_owned_land",
 				title: "State-Owned Land",
@@ -2243,9 +2712,10 @@ define([
 				labelingInfo: [statelandlabelClass],
 			});
 			pplt.add_to_map(durm.state_owned_land)
+			
 		},
 		add_transportation: async function(){
-			  durm.STREETMAINT = new FeatureLayer({
+			  durm.STREETMAINT = new TileLayer({
 				  id: "STREETMAINT",
 				  title: "Road and Street Maintenance Responsibility",
 					listMode: "show",
@@ -2272,18 +2742,32 @@ define([
 				pplt.add_to_map(durm.major_transportation_corridor); 
 
 				
-				durm.speedhumps = new FeatureLayer({
-				  id: "speedhumps",
-				  title: "Speed Humps",
-					listMode: "show",
-					listcategory: "Transportation",
-					layer_order:0,
-					lyr_zindex:6,
-					url: SPEED_HUMPS_URL,
-					icon: "DUR",
-				  visible: false
-				});
-				pplt.add_to_map(durm.speedhumps);  
+				// durm.speedhumps = new FeatureLayer({
+				//   id: "speedhumps",
+				//   title: "Speed Humps",
+				// 	listMode: "show",
+				// 	listcategory: "Transportation",
+				// 	layer_order:0,
+				// 	lyr_zindex:6,
+				// 	url: SPEED_HUMPS_URL,
+				// 	icon: "DUR",
+				//   visible: false
+				// });
+				// pplt.add_to_map(durm.speedhumps);
+
+				durm.VTCD = new FeatureLayer({
+					id: "VTCD",
+					title: "Vertical Traffic Calming Devices",
+					  listMode: "show",
+					  listcategory: "Transportation",
+					  layer_order:0,
+					  lyr_zindex:6,
+					  url: VTCD_URL,
+					  icon: "DUR",
+					visible: false
+				  });
+				  pplt.add_to_map(durm.VTCD);  
+
 				
 			  durm.sidewalkslayer = new FeatureLayer({
 				  id: "sidewalkslayer",
@@ -2504,11 +2988,11 @@ define([
 						listcategory: "Utilities",
 						opacity: 0.9,
 						portalItem: { 
-							id: "ba2f19b723e24c178bd0ea3754bfa1bc",
+							id: "6674d68fa69b40ec87befed3af9e94ce",
 							portal:durm.cityportal
 						}
 					});
-				pplt.add_to_map(durm.stormwatergroup);
+				//pplt.add_to_map(durm.stormwatergroup);
 
 				durm.waterlayer = new MapImageLayer({
 					id: "waterlayer",
@@ -2519,7 +3003,7 @@ define([
 					listcategory: "Utilities",
 					opacity: 0.9,
 					portalItem: { 
-						id: "03f6ea70ee0246aea7e450d1e69d9608",
+						id: "91c5e853e83244d68dca4df30ff37add",
 						portal:durm.cityportal
 					}
 				});
@@ -2532,7 +3016,7 @@ define([
 					layer_order:0,
 					lyr_zindex:8,
 					portalItem: { 
-						id: "8e3ab1d74c864574a47c74a4adb528de",
+						id: "3d5220432ce84ea1b8f1f160c0b1505f",
 						portal:durm.cityportal
 					},
 				  opacity: 0.9
@@ -2564,7 +3048,7 @@ define([
 				  visible: false,
 				  opacity: 0.7
 				});
-				pplt.add_to_map(durm.stormsewersheds);
+				//pplt.add_to_map(durm.stormsewersheds);
 
 				durm.citysewerdrainingtocounty = new FeatureLayer({
 				  id: "citysewerdrainingtocounty",
@@ -2594,6 +3078,19 @@ define([
 				  visible: false
 				});
 				pplt.add_to_map(durm.emmitigationlayer);
+
+				durm.crpsa = new FeatureLayer({
+					id: "crpsa",
+					title: "HEART Service Area",
+					listMode: "show",
+					listcategory: "Safety",
+					icon: "DUR",
+					layer_order:0,
+					lyr_zindex:6,
+					url: crpsa_URL,
+					visible: false
+				  });
+				  pplt.add_to_map(durm.crpsa);
 
 				//recreation
 				durm.trailslayer = new MapImageLayer({
@@ -2674,6 +3171,8 @@ define([
 		init_aerial_slider: function(){
 			// Critical that this runs AFTER aerials have been added to map.
 			//Slider
+			durm.defaultaerialid = 39; //This is used to specify which aerial is the default, as defined by its place in aeriallist[]
+
 			durm.aeriallist = [
 				durm.aerials1940,
 				durm.soils1983,
@@ -2682,13 +3181,22 @@ define([
 				durm.aerials1999,
 				durm.aerials2002,
 				durm.aerials2005,
+				durm.satellite2007,
 				durm.satellite2008,
 				durm.aerials2008,
+				durm.satellite2009,
+				durm.satellite2010,
 				durm.aerials2010,
+				durm.satellite2011,
+				durm.satellite2012,
+				durm.satellite2013,
 				durm.aerials2013,
+				durm.satellite2014,
 				durm.nearmap2014,
+				durm.satellite2015,
 				durm.nearmap2015_spring,
 				durm.nearmap2015_fall,
+				durm.satellite2016,
 				durm.nearmap2016_spring,
 				durm.nearmap2016_fall,
 				durm.aerials2017,
@@ -2707,7 +3215,14 @@ define([
 				durm.nearmap2021_spring1,
 				durm.aerials2021,
 				durm.nearmap2021_fall,
-				durm.nearmap2022_spring1
+				durm.nearmap2022_spring1,
+				durm.nearmap2022_spring2,
+				durm.nearmap2022_fall,
+				durm.nearmap2023_winter,
+				durm.nearmap2023_spring,
+				durm.nearmap2023_fall,
+				durm.nearmap2024_spring,
+				durm.nearmap2024_summer
 			];	
 
 			durm.aeriallist_ids = []
@@ -2725,7 +3240,7 @@ define([
 			durm.sliderinput.id = "rangeinput"
 			durm.sliderinput.type = "range"
 
-			durm.defaultaerialid = 30; //Note: This is used to specify which aerial is the default, as defined by its place in aeriallist[]
+			
 			durm.sliderinput.min = 0;
 			durm.sliderinput.max = durm.aeriallist.length-1;
 			sliderholder.appendChild(durm.sliderinput)
@@ -2746,26 +3261,28 @@ define([
 					else { durm.aeriallist[i].visible = false; }
 				}
 			};
-		//	durm.ainput.oninput();
 		},
 		handle_layer_loading_failure: async function(l0){
 			console.log("Caught: Layer Failed to Load")
 			console.log(l0)
 			if(l0.details.ssl===false) {
-				console.log("Caught SSL error")
+				console.log("SSL was false")
 			}
 			else if(l0.details.ssl===true) {
-				console.log("Error was not SSL")
+				console.log("SSL was true")
 			}
 			else { console.log("Other") }
 		},
-		add_to_map: async function(l0){
-			durm.map.add(l0)
-			l0.when(function(){})
-			.catch(function(error){
-				pplt.handle_layer_loading_failure(error);
-			});
+		add_to_map: async function(l0){			
+			layers2load.push(l0)
+			//durm.map.add(l0)
+			//l0.when(function(){})
+			//.catch(function(error){
+		//		pplt.handle_layer_loading_failure(error);
+	//		});
+		},
+		add_to_map0: function(layers2load){
+			durm.map.addMany(layers2load);
 		}
-		
 };
 });

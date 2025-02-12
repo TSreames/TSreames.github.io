@@ -43,8 +43,12 @@ define([
 					i.src = url_for_county_photos +	REID + ".JPG"
 					i.alt = "Photo of Parcel " + REID + " from Durham County Tax Administration website"
 					i.style.width = "100%"
-					//i.height = "237"
-					//i.width = "342"
+					i.onerror = function() {
+						console.log(`Image not found for REID: ${REID}`);
+						i.alt = "No image available"
+						//i.src = "path/to/placeholder/image.jpg"; // Provide a path to a placeholder image
+						//i.alt = "Placeholder image"; // Update alt text for the placeholder
+					};
 					return i
 				} catch (e) { console.log(e); }
 			},

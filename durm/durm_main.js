@@ -94,6 +94,109 @@ define([
         console.log(e);
       }	
     }, 
+    whenLoaded_NEW_BUT_ADDED_DUPLICATES: function() {
+      try {
+        durm.mapView.when(() => {
+          durm.mapView.whenLayerView(durm.parcelboundaryLayer).then(function(parcellayerView) {
+            durm.parcellayerView = parcellayerView;
+            document.getElementById("bodycontainer").style.cursor = "default";
+    
+            // Set initial view parameters (from URL if available)
+            if (durm.PID_passed) {
+              durm_url.zoom_to_pid();
+            } else if (durm.all_initial_view_parameters_passed) {
+              durm.mapView.scale = durm.zparam;
+              durm.mapView.center = [durm.yparam, durm.xparam];
+              durm.mapView.rotation = durm.rparam;
+            } else {
+              durm.mapView.center = [-78.8986, 35.994];
+              durm.mapView.zoom = 11;
+            }
+    
+            if (durm.basemap_passed) {
+              durm_gallery.setBasemapID(durm.bparam);
+            }
+    
+            // Layers you want to ignore when setting visibility from the URL state
+            const stuff_to_ignore = [
+              "parcels", "active_address_points", "countymask",
+              "graymap_roads", "graymap_labels", "graphics",
+              "orangepars", "wakepars"
+            ];
+    
+            if (durm.appstate_passed && durm.lyrstate_passed) {
+              // When the state is "custom", set layers visible according to your URL state string.
+              if (durm.app_state_string === "custom") {
+                // Create a list of layer IDs that should be visible.
+                let lyrIDlist = durm.layer_state_string.split(',');
+    
+                // Combine layers already in the map with secured layers not yet added.
+                let allLayers = durm.map.layers.items.slice(); // layers already added to the map
+                if (durm.securedLayers && durm.securedLayers.length) {
+                  durm.securedLayers.forEach(function(secLayer) {
+                    // If the secured layer isn’t already in the map, add it to our working array.
+                    if (!durm.map.findLayerById(secLayer.id)) {
+                      allLayers.push(secLayer);
+                    }
+                  });
+                }
+    
+                // Loop over the combined layer list
+                allLayers.forEach(function(r) {
+                  // Skip any layer IDs that you want to ignore.
+                  if (stuff_to_ignore.includes(r.id)) {
+                    return;
+                  }
+    
+                  // If this layer's ID is in the URL's state string, ensure it's added to the map (if not already) and set it visible.
+                  if (lyrIDlist.includes(r.id)) {
+                    if (!durm.map.findLayerById(r.id)) {
+                      durm.map.add(r);
+                    }
+                    r.visible = true;
+                  } else {
+                    r.visible = false;
+                  }
+                });
+              } else {
+                durm_ui.set_app_state(durm.sparam, durm.lparam);
+              }
+            } else if (durm.appstate_passed) {
+              durm_ui.set_app_state(durm.sparam);
+            } else {
+              durm_ui.set_app_state("default");
+            }
+    
+            if (durm.aerials_passed) {
+              if (durm.aparam == -1) {
+                durm_ui.disable_aerials_mode();
+              } else {
+                durm_ui.enable_aerials_mode(durm.aparam);
+              }
+            } else {
+              durm_ui.disable_aerials_mode();
+            }
+    
+            if (durm.utilities_passed) {
+              if (durm.uparam == 1) {
+                durm_ui.load_utilities();
+              } else {
+                durm.uparam = 0;
+              }
+            } else {
+              durm.uparam = 0;
+            }
+    
+            // (Re)build your layer control UI and order
+            durm_ui.init_layer_control();
+            durm_ui.reorder_all_layers_to_default();
+            durm_addresstool.init();
+          });
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
     whenLoaded: function() {
       try {
         durm.mapView.when(() => {
@@ -120,25 +223,35 @@ define([
 
             stuff_to_ignore = ["parcels","active_address_points","countymask","graymap_roads","graymap_labels","graphics","orangepars","wakepars"]
 
+
             if ((durm.appstate_passed) && (durm.lyrstate_passed)) {
               // IF the status is anything but default, then make whatever you find in durm.layer_state_string visible.
               if(durm.app_state_string == "custom") {               
                 lyrIDlist = durm.layer_state_string.split(',')
                 durm.map.layers.items.forEach(function(r) {
                   //Preset button should ignore certain layers
-                  //if(r.id === "parcels" || r.id === "active_address_points" || r.id === "countymask") {}
                   if(stuff_to_ignore.includes(r.id)) {
                   }
-                  //else if(r.id=="graymap_roads" || r.id=="graymap_labels") {}
-                  //else if(r.id === "graphics") {}
                   else if (lyrIDlist.includes(r.id)) { 
                     r.visible = true; 
                   }
                   else { 
-                    r.visible = false; 
+                    r.visible = false; // Force any other layers nonvisible
                   }
                 });
-
+                durm.securedLayers.forEach(function(r) {
+                  console.log(r.id)
+                  if(stuff_to_ignore.includes(r.id)) {
+                  }
+                  else if (lyrIDlist.includes(r.id)) {
+                    //This should be fine, but it carries r
+                    durm.map.add(r);
+                    r.visible = true; 
+                  }
+                  else { 
+                    r.visible = false; // Force any other layers nonvisible
+                  }
+                });
 
 
                 // then run something that ensures the individual layers have visibility set to "true"

@@ -154,36 +154,49 @@ try {
 	}
 
 	function checkAgreement() {
-		cookname = "durham_maps_acknowledgement"
-		
-		//Normally we use getCookie to see if a cookie exists.
-		//const agreedToTerms = getCookie(cookname);
-		//But until the language is finalized, we set agreedToTerms to true to skip this.
-		const agreedToTerms = true
+    const cookname = "durham_maps_acknowledgement";
+    
+    // Normally we use getCookie to see if a cookie exists.
+    const agreedToTerms = getCookie(cookname);
+    // But until the language is finalized, we set agreedToTerms to true to skip this.
+    // const agreedToTerms = true;
 
-		const modal = document.getElementById('termsModal');
-		const agreeCheckbox = document.getElementById('agreeCheckbox');
-		const agreeButton = document.getElementById('agreeButton');
+    const modal = document.getElementById('termsModal');
+    const agreeCheckbox = document.getElementById('agreeCheckbox');
+    const agreeButton = document.getElementById('agreeButton');
 
-		if (!agreedToTerms) {
-			// Show modal if terms are not agreed
-			modal.classList.add('show');
+    if (!agreedToTerms) {
+        // Show modal if terms are not agreed
+        modal.classList.add('show');
 
-			// Handle the submit button click event
-			agreeButton.addEventListener('click', function() {
-				if (agreeCheckbox.checked) {
-					setCookie(cookname, "true", 365); // Set cookie for 365 days
-					modal.classList.remove('show');
-					init_application(); // Initialize application after agreeing
-				} else {
-					alert("You must agree to the terms.");
-				}
-			});
-		} else {
-			// If terms are already agreed, initialize the application
-			init_application();
-		}
-	}
+        // Initially disable the agree button if the checkbox is not checked
+        agreeButton.disabled = true;
+
+        // Handle the checkbox click event to enable or disable the button
+        agreeCheckbox.addEventListener('change', function() {
+            if (agreeCheckbox.checked) {
+                agreeButton.disabled = false; // Enable button if checked
+            } else {
+                agreeButton.disabled = true; // Disable button if not checked
+            }
+        });
+
+        // Handle the submit button click event
+        agreeButton.addEventListener('click', function() {
+            if (agreeCheckbox.checked) {
+                setCookie(cookname, "true", 365); // Set cookie for 365 days
+                modal.classList.remove('show');
+                init_application(); // Initialize application after agreeing
+            } else {
+                alert("You must agree to the terms to proceed.");
+            }
+        });
+    } else {
+        // If terms are already agreed, initialize the application
+        init_application();
+    }
+}
+
 
 	function init_application() {
 		require([
@@ -447,7 +460,7 @@ try {
 <div id="termsModal" class="modal">
 	<div class="modal-content">
 		<label class="disclaimertext">
-			<p>The data offered is provided without warranty. The user should consult public primary information sources, such as recorded deeds and plats, to verify the accuracy of the data provided.</p>                
+			<p>Maps, tabular data, and applications presented are developed from public records. While efforts have been made to use the most current and accurate public record data, <b>no warranties</b> as to the accuracy of the data provided are being made by the City of Durham, Durham County, and the mapping and software companies involved. Users of this content should consult public information sources to verify the accuracy of the data provided.</p>                
 		</label>
 		<span class="approval"><input type="checkbox" id="agreeCheckbox">I agree to the terms.</span>
 
@@ -456,6 +469,21 @@ try {
 	</div>
 </div>
 </body>
+
+<style>
+#agreeCheckbox {
+    transform: scale(1.5);
+	margin-right:12px;
+    border: 2px solid #007bff;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+#agreeCheckbox:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+</style>
 
 <script>
 	window.mdc.autoInit();

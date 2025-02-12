@@ -514,15 +514,15 @@ define([
 			try {
 				switch(durm.uparam) {
 					case 1:
-						durm.cityportal.authMode = "anonymous";
+						//durm.cityportal.authMode = "anonymous";
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
 			  			durm.sewerlayer.visible = false;						
-						durm.map.remove(durm.stormsewersheds);
-						durm.stormsewersheds.visible = false;
-						durm.map.remove(durm.stormwatergroup);
-						durm.stormwatergroup.visible = false;
+						//durm.map.remove(durm.stormsewersheds);
+						//durm.stormsewersheds.visible = false;
+						//durm.map.remove(durm.stormwatergroup);
+						//durm.stormwatergroup.visible = false;
 						
 						durm.uparam = 0
 						push_new_url()
@@ -533,23 +533,23 @@ define([
 						durm.waterlayer.visible = true;
 						durm.map.add(durm.sewerlayer);	
 			  			durm.sewerlayer.visible = true;
-						durm.map.add(durm.stormsewersheds);
-						durm.stormsewersheds.visible = true;
-						durm.map.add(durm.stormwatergroup);
-						durm.stormwatergroup.visible = true;
+						//durm.map.add(durm.stormsewersheds);
+						//durm.stormsewersheds.visible = true;
+						//durm.map.add(durm.stormwatergroup);
+						//durm.stormwatergroup.visible = true;
 						durm.uparam = 1
 						push_new_url()
 						break;
 					default: 
-						durm.cityportal.authMode = "anonymous";
+						//durm.cityportal.authMode = "anonymous";
 						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
 						durm.map.remove(durm.sewerlayer);	
 						durm.sewerlayer.visible = false;	
-						durm.map.remove(durm.stormsewersheds);
-						durm.stormsewersheds.visible = false;
-						durm.map.remove(durm.stormwatergroup);
-						durm.stormwatergroup.visible = false;
+						//durm.map.remove(durm.stormsewersheds);
+						//durm.stormsewersheds.visible = false;
+						//durm.map.remove(durm.stormwatergroup);
+						//durm.stormwatergroup.visible = false;
 						durm.uparam = 0
 						push_new_url()
 						break;
@@ -558,15 +558,23 @@ define([
 		},
 
 		load_utilities: function() {
-			durm.cityportal.authMode = "auto";
-			durm.map.add(durm.waterlayer);
+			durm.cityportal.authMode = "auto";   //Ensure that we aren't running in anonymous mode.
+		  
+			// Check if waterlayer is already added; if not, add it.
+			if (!durm.map.findLayerById(durm.waterlayer.id)) {
+			  durm.map.add(durm.waterlayer);
+			}
 			durm.waterlayer.visible = true;
-			durm.map.add(durm.sewerlayer);	
+		  
+			// Check if sewerlayer is already added; if not, add it.
+			if (!durm.map.findLayerById(durm.sewerlayer.id)) {
+			  durm.map.add(durm.sewerlayer);
+			}
 			durm.sewerlayer.visible = true;
-			durm.uparam = 1
-			push_new_url()
-
-		},
+		  
+			durm.uparam = 1;
+			push_new_url();
+		  },
 
         shrink_to_portrait_phone: function(){
 			durm.mapView.ui.remove([durm.legend]);
@@ -596,8 +604,199 @@ define([
 					fps.style.display = "inline-block";
 				}
 		},
-
 		init_layer_control: function(){
+			try {
+					lyrctrlscope = this;	
+					durm.layerlistcategories = [];
+					let combinedLayers = durm.map.layers.items.concat(durm.securedLayers);
+
+					// Building the HTML list containers							
+					durm.layertable_container = document.getElementById("layerpanel");
+					durm.layertable_ul_nonvisible = document.getElementById("ul_layers");
+
+					/* Building the Categories */
+					combinedLayers.forEach(function(r) {
+						if (durm.layerlistcategories.includes(r.listcategory)) {}
+						else {
+							if (r.listcategory) {durm.layerlistcategories.push(r.listcategory)}						
+						}
+					});
+					durm.layerlistcategories.sort();
+
+					durm.layerlistcategories.forEach(function(r) {
+						var newcategoryli = document.createElement('li')
+						durm.layertable_ul_nonvisible.appendChild(newcategoryli)
+						var newcategoryul = document.createElement('ul')
+						newcategoryul.id = r;
+						newcategoryul.classList.add("ul_category")
+						newcategoryli.appendChild(newcategoryul)   //  this might look backwards, but this is (by intent) a <ul> nested within a <li> nested within a <ul>
+						headerli = document.createElement('li')
+						headerli.classList.add("lyrlist-header")
+						headerli.innerHTML = r
+						newcategoryul.appendChild(headerli)	
+
+						//exception for Aerial Photos.
+						if(r === "Aerial Photos, Historical"){
+							let tag0 = document.createElement('li')
+							let a0 = document.createElement('a')
+							a0.innerHTML = "Aerials"
+							a0.href = "#"
+							a0.id = "aerials_tag"
+							tag0.appendChild(a0)
+							newcategoryul.appendChild(tag0)
+							a0.addEventListener("click", function(){
+								lyrctrlscope.enable_aerials_mode(durm.defaultaerialid)
+								document.getElementById("layerpanel").classList.remove("is-visible")
+							});
+						}
+	
+					});
+
+					/* Sort the layers alphabetically before we begin */
+					//This messes with the layer draw order if r
+					combinedLayers.sort(function(a,b) {return (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0);} );
+
+					/* Building the individual list items */
+					combinedLayers.forEach(function(r) {
+						if (r.listMode == "hide") {} // if we've set listmode to hide, ignore this layer.
+						else {
+							var newli = document.createElement('li')
+							newli.id = r.id
+							newli.setAttribute("data-durmdrawindex", r.lyr_zindex)  //  this matches up the html data property with the js data property
+							newli.style.display = "list-item"
+							newli.classList.add("noselect")
+							newli.classList.add("layer-table-list-item")
+							var onoff = document.createElement('div')
+							onoff.style.display = "inline-block"
+							onoff.classList.add("onoffswitch")
+							var inp = document.createElement('input')
+							inp.style.display = "none"
+							inp.style.lineHeight = "inherit"
+							inp.setAttribute("type", "checkbox")
+							inp.setAttribute("name", "onoffswitch")
+							inp.classList.add("onoffswitch-checkbox")
+							let random_id = Math.random().toString(36).substring(7)
+							inp.id = random_id
+							onoff.appendChild(inp)
+
+
+							
+							// This makes visibility change on click -
+							inp.addEventListener('click', function(e) {
+								if (!durm.map.findLayerById(r.id)) {
+									console.log("ADDING SECURED LAYER")
+									durm.cityportal.authMode = "auto"
+									durm.map.add(r);
+								  }
+
+								if(r.visible) { 
+									r.visible = false
+									lyrctrlscope.ensure_not_in_url(r);
+								} else { 
+									r.visible = true 
+									lyrctrlscope.add_to_url(r);
+								}
+								//If we were "Default",  change to "Custom"
+								// People want to be able to click a user preset, then turn a layer on, and keep the preset,  so don't do this for Devcases/Zoning/Drainage/Util, only do it for default
+								if(durm.app_state_string=="default"){lyrctrlscope.set_app_state("custom",durm.layer_state_string)}
+								else{}
+							});
+
+							let lab = document.createElement('label')
+							lab.style.display = "block"
+							lab.style.margin = 0;
+							lab.classList.add("onoffswitch-label") 
+							lab.htmlFor = random_id
+							onoff.appendChild(lab)
+							let switch1 = document.createElement('span')
+							switch1.style.display = "block"
+							switch1.classList.add("onoffswitch-inner") 
+							lab.appendChild(switch1)
+							let switch2 = document.createElement('span')
+							switch2.style.display = "block"
+							switch2.classList.add("onoffswitch-switch") 
+							lab.appendChild(switch2)
+							newli.appendChild(onoff)
+							/* icon */
+							if(r.icon=="USA") {
+								let iconspan = document.createElement('img')
+								iconspan.className = "flagicon"
+								iconspan.src = "/icons/usflag16.png"
+								newli.appendChild(iconspan)
+							}
+							else if(r.icon=="NC") {			
+								let iconspan = document.createElement('img')
+								iconspan.className = "flagicon"
+								iconspan.src = "/icons/ncflag16.png"
+								newli.appendChild(iconspan)
+							}
+							else if(r.icon=="DUR") {
+								let iconspan = document.createElement('img')
+								iconspan.className = "flagicon"
+								iconspan.src = "/icons/durmflag16.png"
+								iconspan.alt = "City of Durham / Durham County"
+								newli.appendChild(iconspan)
+							}
+							else {}
+
+							let newtext = document.createElement('span')
+							newtext.style.display = "inline-block"
+							newtext.innerHTML = r.title
+							newli.appendChild(newtext)
+
+							if (durm.layerlistcategories.includes(r.listcategory)) {								
+								proper_ul_category = document.getElementById(r.listcategory);
+								proper_ul_category.appendChild(newli)
+							}
+							else {}		
+
+							/* watch layer visibility;  when true/false, toggle the html */
+							/*watchUtils.whenTrue(r, "visible", function() {
+								inp.checked = true;
+								lyrctrlscope.add_to_url(r);
+							});						
+							watchUtils.whenFalse(r, "visible", function() {
+								inp.checked = false;							
+								lyrctrlscope.ensure_not_in_url(r);
+							});*/
+
+
+							/* watchUtils used to fire automatically on init */
+							/* reactiveUtils seems to want the whole app to initialize before it begins watching anything */
+							/* therefore reactiveUtils is not suitable for setting the layer list's initial on/off setting */
+							
+							//only runs once on init to set HTML switches on/off depending on what is visible at init
+							if(r.visible) {
+								inp.checked = true;
+							}
+							
+							reactiveUtils.when(
+								() => r?.visible === false,
+								() => {
+									inp.checked = false;							
+									lyrctrlscope.ensure_not_in_url(r);
+								}
+							);
+							   
+							reactiveUtils.when(
+								() => r?.visible === true,
+								() => {
+									inp.checked = true;
+									lyrctrlscope.add_to_url(r);
+								}
+							);
+
+
+
+
+						}
+					});
+
+					//lyrscope.update_layer_draw_order_based_on_lyr_zindex(); // run once at beginning of app
+				} catch (e) { console.log(e); }
+		},
+
+		init_layer_control_OLD: function(){
 			try {
 					lyrctrlscope = this;	
 					durm.layerlistcategories = [];

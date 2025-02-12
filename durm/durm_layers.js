@@ -18,7 +18,8 @@ define([
 			durm.cityportal = new Portal({
 				url: DURHAM_PORTAL_URL // First instance
 			});
-			durm.cityportal.authMode = "anonymous";
+			//durm.cityportal.authMode = "anonymous";
+			durm.cityportal.authMode = "auto";
 		},
 		// This is super important
     	populate: async function(){
@@ -1001,8 +1002,8 @@ define([
 				layer_order:0,
 				lyr_zindex:6,
 				icon: "DUR",
-				visible: true,
-				opacity:0.65
+				visible: false,
+				opacity:0.55
 			});
 			pplt.add_to_map(durm.highschools25_26);
 
@@ -1017,7 +1018,7 @@ define([
 				lyr_zindex:6,
 				icon: "DUR",
 				visible: false,
-				opacity:0.65
+				opacity:0.55
 			});
 			pplt.add_to_map(durm.middleschools25_26);
 
@@ -1032,7 +1033,7 @@ define([
 				lyr_zindex:6,
 				icon: "DUR",
 				visible: false,
-				opacity:0.65
+				opacity:0.55
 			});
 			pplt.add_to_map(durm.elemschools25_26);
 			
@@ -1048,7 +1049,7 @@ define([
 				layer_order:0,
 				lyr_zindex:6,
 				icon: "DUR",
-				visible: true,
+				visible: false,
 				opacity:0.65
 			});
 			pplt.add_to_map(durm.highschools24_25);
@@ -1084,240 +1085,287 @@ define([
 			pplt.add_to_map(durm.elemschools24_25);
 
 
+
 			/* 23-24 */
-			durm.elemschools23_24 = new GroupLayer({
-				id: "elemschools23_24",
-				title: "Elementary Schools and Zones, 2023-2024",
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.elemschools23_24);
-
-			durm.elem23_24_6 = new FeatureLayer({
-				id: "elem23_24_6",
-				layerId: 6,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:6,
-				opacity:0.4,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_6);
-
-			durm.elem23_24_5 = new FeatureLayer({
-				id: "elem23_24_5",
-				layerId: 5,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:8,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_5);
-
-			durm.elem23_24_4 = new FeatureLayer({
-				id: "elem23_24_4",
-				layerId: 4,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:6,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_4);
-
-			durm.elem23_24_3 = new FeatureLayer({
-				id: "elem23_24_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_3);
-
-			durm.elem23_24_2 = new FeatureLayer({
-				id: "elem23_24_2",
-				layerId: 2,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_2);
-
-			durm.elem23_24_1 = new FeatureLayer({
-				id: "elem23_24_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_1);
-
-			durm.elem23_24_0 = new FeatureLayer({
-				id: "elem23_24_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: ELEM2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.elemschools23_24.add(durm.elem23_24_0);
-			
-			durm.middleschools23_24 = new GroupLayer({
-				id: "middleschools23_24",
-				title: "Middle Schools and Zones, 2023-2024",
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.middleschools23_24);
-
-			durm.middle23_24_3 = new FeatureLayer({
-				id: "middle23_24_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools23_24.add(durm.middle23_24_3);
-
-			durm.middle23_24_2 = new FeatureLayer({
-				id: "middle23_24_2",
-				layerId: 2,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools23_24.add(durm.middle23_24_2);
-			
-			durm.middle23_24_1 = new FeatureLayer({
-				id: "middle23_24_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools23_24.add(durm.middle23_24_1);
-
-			durm.middle23_24_0 = new FeatureLayer({
-				id: "middle23_24_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: MID2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.middleschools23_24.add(durm.middle23_24_0);
-
-			/* high */
-			durm.highschools23_24 = new GroupLayer({
+			durm.highschools23_24 = new VectorTileLayer({
 				id: "highschools23_24",
 				title: "High Schools and Zones, 2023-2024",
 				listMode: "show",
 				listcategory: "Education",
+				url: dps_high_2324,
 				layer_order:0,
-				lyr_zindex:7,
+				lyr_zindex:6,
 				icon: "DUR",
-				visible: false
+				visible: false,
+				opacity:0.65
 			});
 			pplt.add_to_map(durm.highschools23_24);
 
-			durm.high23_24_3 = new FeatureLayer({
-				id: "high23_24_3",
-				layerId: 3,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:7,
-				opacity:0.3,
-				url: HIGH2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools23_24.add(durm.high23_24_3);
 
-			durm.high23_24_2 = new FeatureLayer({
-				id: "high23_24_2",
-				layerId: 2,
+			durm.middleschools23_24 = new VectorTileLayer({
+				id: "middleschools23_24",
+				title: "Middle Schools and Zones, 2023-2024",
 				listMode: "show",
 				listcategory: "Education",
+				url: dps_middle_2324,
 				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2324_URL,					
+				lyr_zindex:6,
 				icon: "DUR",
-				visible: true
+				visible: false,
+				opacity:0.65
 			});
-			durm.highschools23_24.add(durm.high23_24_2);
+			pplt.add_to_map(durm.middleschools23_24);
+
+
+			durm.elemschools23_24 = new VectorTileLayer({
+				id: "elemschools23_24",
+				title: "Elementary Schools and Zones, 2023-2024",
+				listMode: "show",
+				listcategory: "Education",
+				url: dps_elementary_2324,
+				layer_order:0,
+				lyr_zindex:6,
+				icon: "DUR",
+				visible: false,
+				opacity:0.65
+			});
+			pplt.add_to_map(durm.elemschools23_24);
+
+
+			// /* 23-24 */
+			// durm.elemschools23_24 = new GroupLayer({
+			// 	id: "elemschools23_24",
+			// 	title: "Elementary Schools and Zones, 2023-2024",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.elemschools23_24);
+
+			// durm.elem23_24_6 = new FeatureLayer({
+			// 	id: "elem23_24_6",
+			// 	layerId: 6,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:6,
+			// 	opacity:0.4,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_6);
+
+			// durm.elem23_24_5 = new FeatureLayer({
+			// 	id: "elem23_24_5",
+			// 	layerId: 5,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:8,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_5);
+
+			// durm.elem23_24_4 = new FeatureLayer({
+			// 	id: "elem23_24_4",
+			// 	layerId: 4,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:6,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_4);
+
+			// durm.elem23_24_3 = new FeatureLayer({
+			// 	id: "elem23_24_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_3);
+
+			// durm.elem23_24_2 = new FeatureLayer({
+			// 	id: "elem23_24_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_2);
+
+			// durm.elem23_24_1 = new FeatureLayer({
+			// 	id: "elem23_24_1",
+			// 	layerId: 1,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_1);
+
+			// durm.elem23_24_0 = new FeatureLayer({
+			// 	id: "elem23_24_0",
+			// 	layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: ELEM2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.elemschools23_24.add(durm.elem23_24_0);
 			
-			durm.high23_24_1 = new FeatureLayer({
-				id: "high23_24_1",
-				layerId: 1,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools23_24.add(durm.high23_24_1);
+			// durm.middleschools23_24 = new GroupLayer({
+			// 	id: "middleschools23_24",
+			// 	title: "Middle Schools and Zones, 2023-2024",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.middleschools23_24);
 
-			durm.high23_24_0 = new FeatureLayer({
-				id: "high23_24_0",
-				layerId: 0,
-				listMode: "show",
-				listcategory: "Education",
-				layer_order:0,
-				lyr_zindex:9,
-				url: HIGH2324_URL,					
-				icon: "DUR",
-				visible: true
-			});
-			durm.highschools23_24.add(durm.high23_24_0);
+			// durm.middle23_24_3 = new FeatureLayer({
+			// 	id: "middle23_24_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools23_24.add(durm.middle23_24_3);
+
+			// durm.middle23_24_2 = new FeatureLayer({
+			// 	id: "middle23_24_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools23_24.add(durm.middle23_24_2);
+			
+			// durm.middle23_24_1 = new FeatureLayer({
+			// 	id: "middle23_24_1",
+			// 	layerId: 1,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools23_24.add(durm.middle23_24_1);
+
+			// durm.middle23_24_0 = new FeatureLayer({
+			// 	id: "middle23_24_0",
+			// 	layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: MID2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.middleschools23_24.add(durm.middle23_24_0);
+
+			// /* high */
+			// durm.highschools23_24 = new GroupLayer({
+			// 	id: "highschools23_24",
+			// 	title: "High Schools and Zones, 2023-2024",
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	icon: "DUR",
+			// 	visible: false
+			// });
+			// pplt.add_to_map(durm.highschools23_24);
+
+			// durm.high23_24_3 = new FeatureLayer({
+			// 	id: "high23_24_3",
+			// 	layerId: 3,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:7,
+			// 	opacity:0.3,
+			// 	url: HIGH2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools23_24.add(durm.high23_24_3);
+
+			// durm.high23_24_2 = new FeatureLayer({
+			// 	id: "high23_24_2",
+			// 	layerId: 2,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools23_24.add(durm.high23_24_2);
+			
+			// durm.high23_24_1 = new FeatureLayer({
+			// 	id: "high23_24_1",
+			// 	layerId: 1,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools23_24.add(durm.high23_24_1);
+
+			// durm.high23_24_0 = new FeatureLayer({
+			// 	id: "high23_24_0",
+			// 	layerId: 0,
+			// 	listMode: "show",
+			// 	listcategory: "Education",
+			// 	layer_order:0,
+			// 	lyr_zindex:9,
+			// 	url: HIGH2324_URL,					
+			// 	icon: "DUR",
+			// 	visible: true
+			// });
+			// durm.highschools23_24.add(durm.high23_24_0);
 
 			//22-23
 			// durm.elemschools22_23 = new GroupLayer({
@@ -2987,40 +3035,51 @@ define([
 						lyr_zindex:8,
 						listcategory: "Utilities",
 						opacity: 0.9,
+						icon: "DUR",
+						visible: false,
 						portalItem: { 
-							id: "6674d68fa69b40ec87befed3af9e94ce",
+							//id: "6674d68fa69b40ec87befed3af9e94ce",
+							id:"a48db6d6195143f9873b7f4aa486ceff",  //Updated as of 11/24
 							portal:durm.cityportal
 						}
 					});
-				//pplt.add_to_map(durm.stormwatergroup);
+				pplt.add_to_map(durm.stormwatergroup);
 
+				durm.securedLayers = []
 				durm.waterlayer = new MapImageLayer({
 					id: "waterlayer",
-					title: "Water",
+					title: "Water Infrastructure",
 					listMode: "show",
 					layer_order:0,
 					lyr_zindex:8,
 					listcategory: "Utilities",
 					opacity: 0.9,
+					icon: "DUR",
+					visible: false,
 					portalItem: { 
-						id: "91c5e853e83244d68dca4df30ff37add",
+						id: "8aaffdcf38fa4d91afe3519459f776ab",
 						portal:durm.cityportal
 					}
 				});
+				durm.securedLayers.push(durm.waterlayer);  // ADD AS SECURED
+
 
 				durm.sewerlayer = new MapImageLayer({
 				  id: "sewerlayer",
-				  title: "Sewer",
-					listMode: "show",
-					listcategory: "Utilities",
-					layer_order:0,
-					lyr_zindex:8,
-					portalItem: { 
-						id: "3d5220432ce84ea1b8f1f160c0b1505f",
+				  title: "Sewer Infrastructure",
+				  visible: false,
+				  listMode: "show",
+				  listcategory: "Utilities",
+				  layer_order:0,
+				  lyr_zindex:8,
+				  icon: "DUR",
+				  portalItem: { 
+						id: "34ebafea5d6745a38e75cb1ccafac279",
 						portal:durm.cityportal
 					},
 				  opacity: 0.9
 				});
+				durm.securedLayers.push(durm.sewerlayer); // ADD AS SECURED
 
 			  durm.sewershedslayer = new FeatureLayer({
 				  id: "sewershedslayer",
@@ -3048,7 +3107,7 @@ define([
 				  visible: false,
 				  opacity: 0.7
 				});
-				//pplt.add_to_map(durm.stormsewersheds);
+				pplt.add_to_map(durm.stormsewersheds);
 
 				durm.citysewerdrainingtocounty = new FeatureLayer({
 				  id: "citysewerdrainingtocounty",
@@ -3273,13 +3332,10 @@ define([
 			}
 			else { console.log("Other") }
 		},
-		add_to_map: async function(l0){			
-			layers2load.push(l0)
-			//durm.map.add(l0)
-			//l0.when(function(){})
-			//.catch(function(error){
-		//		pplt.handle_layer_loading_failure(error);
-	//		});
+		add_to_map: async function(l0) {
+			layers2load.push(l0);
+			const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+			await delay(500);
 		},
 		add_to_map0: function(layers2load){
 			durm.map.addMany(layers2load);

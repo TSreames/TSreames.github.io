@@ -31,7 +31,7 @@ const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/71665c6
 const HILLSHADE_URL = "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer"
 const ADDRESS_FS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Active_Addresses/FeatureServer/0"
 const PARCELS_AGOL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Parcels_NEW/FeatureServer/0"
-const PARCELS = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/Parcels_NewSchema/MapServer/0" //This is used by the DPS Locator, so don't screw with it
+const PARCELS = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/Parcels_NewSchema/MapServer/0" //This is used by the DPS Locator
 
 //icons
 const AERIAL_IMG = "https://maps.durhamnc.gov/img/aerial.png"
@@ -69,7 +69,10 @@ const ZIPCODE_SUB = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/s
 const CITY_BOUNDARY = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/1"
 const COUNTY_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/2"
 const SOLID_WASTE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/6"
-const PARKS_IMPACT_FEE_ZONES = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Administrative/MapServer/7"
+
+//const PARKS_IMPACT_FEE_ZONES = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Administrative/MapServer/7"
+const PARKS_IMPACT_FEE_ZONES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/7"
+
 const OPENSPACEIMPACTFEEZONE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/8"
 const STREETS_IMPACT_FEE_ZONES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/9"
 const RTP_BOUNDARY_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/11"
@@ -78,19 +81,33 @@ const CODE_ENF_OFF_AREAS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS
 const DCHCMPO_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Administrative/FeatureServer/14"
 
 //Community
-const PARKS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/8"
-const TRAILS_ALL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/"
-const TRAILS_SUB = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/6"
-const SIDEWALKS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/5"
-const RECANDAQUA = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/7"
+// const PARKS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/8"
+// const TRAILS_SUB = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/6"
+// const RECANDAQUA = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/7"
+
+const PARKS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Community/FeatureServer/8"
+const TRAILS_ALL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/"   //We could move this to AGOL but we'd need to redesign the labeling
+const TRAILS_SUB = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Community/FeatureServer/6"
+const SIDEWALKS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Community/MapServer/5" //Sidewalks don't exist in Community on AGOL. sidewalks have some schema choices AGOL doesnt like
+const RECANDAQUA = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Community/FeatureServer/7"
+
+
 
 //Electoral
-const COUNCIL_WARDS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/3"
-const SCHOOL_BOARD_DIST = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/7"
-const US_CONG_DIST = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/6"
-const NCSENATE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/5"
-const NCHOUSE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/4"
-const VOTERPRECINCT_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/"
+const COUNCIL_WARDS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/3"
+const SCHOOL_BOARD_DIST = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/7"
+const US_CONG_DIST = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/6"
+const NCSENATE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/5"
+const NCHOUSE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/4"
+
+// const COUNCIL_WARDS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/3"
+// const SCHOOL_BOARD_DIST = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/7"
+// const US_CONG_DIST = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/6"
+// const NCSENATE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/5"
+// const NCHOUSE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/4"
+
+const VOTERPRECINCT_FEATURE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Electoral/FeatureServer/2"
+const VOTERPRECINCT_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/"  //MAPIMAGELAYER --  NOT USED ANYMORE.
 
 //Inspections
 const UTA_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/7"
@@ -108,9 +125,14 @@ const CROSS_CONNECT_PERMITS_URL = "https://webgis2.durhamnc.gov/server/rest/serv
 //Transportation
 const BUS_STOPS = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/3"
 const BUS_ROUTES = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/2"
-const SPEED_HUMPS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/9"
-const POLES_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/8"
-const SIGNALS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/11"
+
+//const POLES_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/8"
+//const SIGNALS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/11"
+//const VTCD_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/14"
+const POLES_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Transportation/FeatureServer/8"
+const SIGNALS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Transportation/FeatureServer/11"
+const VTCD_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Transportation/FeatureServer/14"
+
 
 //Flood_Zones_Development (advanced popup)
 const FIRM2018D_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Flood_Zones_Development/MapServer/0"
@@ -131,8 +153,7 @@ const TAX_DISTRICTS_URL = "https://webgis2.durhamnc.gov/server/rest/services/Pub
 const TAX_DISTRICTS_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Property/MapServer/2"
 
 //Planning
-//these two use MapImageLayer, so they stay on MapServer / webgis2 / enterprise
-const EDSOP_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer"
+const EDSOP_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer"  //Uses MapImageLayer
 
 //these use FeatureLayer, so they use AGOL bc way faster
 const NPO_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/0"
@@ -155,21 +176,23 @@ const ALL_BI_TRADE_PERMITS = "https://webgis2.durhamnc.gov/server/rest/services/
 const ALL_BLDG_PERMITS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Tables/MapServer/2"
 const NEW_FGA_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/16"  //Future Growth Areas
 const NEW_UGB_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/24"  //Urban Growth Boundary
-const VTCD_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/14"
-const NEW_PLACETYPE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/25"
-const NEW_PLACETYPE_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/25"
+
+const NEW_PLACETYPE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Planning/FeatureServer/25"   //I think this should probably be a Vector Tile
+//const NEW_PLACETYPE_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer/25"
+const NEW_PLACETYPE_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Planning/FeatureServer/25"
 
 
 //CartographicServices
-const ELEM2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2021_2022/MapServer"
-const ELEM2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2022_2023/MapServer"
-const ELEM2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2023_2024/MapServer"
-const MID2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2021_2022/MapServer"
-const MID2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2022_2023/MapServer"
-const MID2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2023_2024/MapServer"
-const HIGH2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2021_2022/MapServer"
-const HIGH2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2022_2023/MapServer"
-const HIGH2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2023_2024/MapServer"
+//const ELEM2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2021_2022/MapServer"
+//const ELEM2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2022_2023/MapServer"
+//const ELEM2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Elementary_2023_2024/MapServer"
+//const MID2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2021_2022/MapServer"
+//const MID2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2022_2023/MapServer"
+//const MID2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_Middle_2023_2024/MapServer"
+//const HIGH2122_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2021_2022/MapServer"
+//const HIGH2223_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2022_2023/MapServer"
+//const HIGH2324_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/DPS_High_2023_2024/MapServer"
+
 const CALCANNO_URL = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/Calculated_Annotation/MapServer"
 const SEWERSHEDS = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/County_Sewer_Boundaries/MapServer/1"
 const SEWERSHEDS_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/CartographicServices/County_Sewer_Boundaries/MapServer/1"

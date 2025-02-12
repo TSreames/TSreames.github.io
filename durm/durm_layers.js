@@ -1636,22 +1636,37 @@ define([
 			// durm.highschools22_23.add(durm.high22_23_0);
 		},
 		add_electoral: async function(){
-			durm.voter_precincts = new MapImageLayer({
+			// durm.voter_precincts = new MapImageLayer({
+			// 	id: "voter_precincts",
+			// 	title: "Voter Precincts",
+			// 	listMode: "show",
+			// 	listcategory: "Electoral",
+			// 	layer_order:0,
+			// 	lyr_zindex:6,
+			// 	url: VOTERPRECINCT_URL,
+			// 	icon: "DUR",
+			// 	sublayers:[{
+			// 		id: 2,
+			// 		visible: true
+			// 	}],
+			// 	visible: false				
+			// });
+			// pplt.add_to_map(durm.voter_precincts);
+
+			durm.voter_precincts = new FeatureLayer({
 				id: "voter_precincts",
 				title: "Voter Precincts",
 				listMode: "show",
 				listcategory: "Electoral",
 				layer_order:0,
 				lyr_zindex:6,
-				url: VOTERPRECINCT_URL,
+				url: VOTERPRECINCT_FEATURE_URL,
 				icon: "DUR",
-				sublayers:[{
-					id: 2,
-					visible: true
-				}],
 				visible: false				
 			});
 			pplt.add_to_map(durm.voter_precincts);
+
+			VOTERPRECINCT_FEATURE_URL
 
 			durm.schoolboard_dist = new FeatureLayer({
 				id: "schoolboard_dist",
@@ -2790,18 +2805,6 @@ define([
 				pplt.add_to_map(durm.major_transportation_corridor); 
 
 				
-				// durm.speedhumps = new FeatureLayer({
-				//   id: "speedhumps",
-				//   title: "Speed Humps",
-				// 	listMode: "show",
-				// 	listcategory: "Transportation",
-				// 	layer_order:0,
-				// 	lyr_zindex:6,
-				// 	url: SPEED_HUMPS_URL,
-				// 	icon: "DUR",
-				//   visible: false
-				// });
-				// pplt.add_to_map(durm.speedhumps);
 
 				durm.VTCD = new FeatureLayer({
 					id: "VTCD",

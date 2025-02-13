@@ -18,8 +18,8 @@ define([
 			durm.cityportal = new Portal({
 				url: DURHAM_PORTAL_URL // First instance
 			});
-			//durm.cityportal.authMode = "anonymous";
-			durm.cityportal.authMode = "auto";
+			durm.cityportal.authMode = "anonymous";
+			//durm.cityportal.authMode = "auto";
 		},
 		// This is super important
     	populate: async function(){
@@ -3031,7 +3031,7 @@ define([
 				//sw
 				durm.stormwatergroup = new MapImageLayer({
 						id: "stormwaterlayer",
-						title: "Stormwater Infrastructure",
+						title: "Stormwater Infrastructure (City)",
 						listMode: "show",
 						icon: "DUR",
 						layer_order:0,
@@ -3051,7 +3051,7 @@ define([
 				durm.securedLayers = []
 				durm.waterlayer = new MapImageLayer({
 					id: "waterlayer",
-					title: "Water Infrastructure",
+					title: "Water Infrastructure (City)",
 					listMode: "show",
 					layer_order:0,
 					lyr_zindex:8,
@@ -3069,7 +3069,7 @@ define([
 
 				durm.sewerlayer = new MapImageLayer({
 				  id: "sewerlayer",
-				  title: "Sewer Infrastructure",
+				  title: "Sewer Infrastructure (City)",
 				  visible: false,
 				  listMode: "show",
 				  listcategory: "Utilities",
@@ -3114,7 +3114,7 @@ define([
 
 				durm.citysewerdrainingtocounty = new FeatureLayer({
 				  id: "citysewerdrainingtocounty",
-				  title: "City Sewer draining to County",
+				  title: "City Sewer Area draining to County",
 					listMode: "show",
 					listcategory: "Utilities",
 					layer_order:0,
@@ -3339,7 +3339,7 @@ define([
 			layers2load.push(l0);
 			const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 			await delay(500);
-		},
+		},				
 		add_to_map0: function(layers2load){
 			durm.map.addMany(layers2load);
 		}

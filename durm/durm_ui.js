@@ -515,14 +515,11 @@ define([
 				switch(durm.uparam) {
 					case 1:
 						//durm.cityportal.authMode = "anonymous";
-						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
+						durm.map.remove(durm.waterlayer);
+
+						durm.sewerlayer.visible = false;							
 						durm.map.remove(durm.sewerlayer);	
-			  			durm.sewerlayer.visible = false;						
-						//durm.map.remove(durm.stormsewersheds);
-						//durm.stormsewersheds.visible = false;
-						//durm.map.remove(durm.stormwatergroup);
-						//durm.stormwatergroup.visible = false;
 						
 						durm.uparam = 0
 						push_new_url()
@@ -533,23 +530,16 @@ define([
 						durm.waterlayer.visible = true;
 						durm.map.add(durm.sewerlayer);	
 			  			durm.sewerlayer.visible = true;
-						//durm.map.add(durm.stormsewersheds);
-						//durm.stormsewersheds.visible = true;
-						//durm.map.add(durm.stormwatergroup);
-						//durm.stormwatergroup.visible = true;
 						durm.uparam = 1
 						push_new_url()
 						break;
 					default: 
-						//durm.cityportal.authMode = "anonymous";
-						durm.map.remove(durm.waterlayer);
 						durm.waterlayer.visible = false;
+						durm.map.remove(durm.waterlayer);
+
+						durm.sewerlayer.visible = false;							
 						durm.map.remove(durm.sewerlayer);	
-						durm.sewerlayer.visible = false;	
-						//durm.map.remove(durm.stormsewersheds);
-						//durm.stormsewersheds.visible = false;
-						//durm.map.remove(durm.stormwatergroup);
-						//durm.stormwatergroup.visible = false;
+						
 						durm.uparam = 0
 						push_new_url()
 						break;

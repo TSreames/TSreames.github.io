@@ -14,6 +14,36 @@ This module handles the logic of the advanced parcel popup
 	geometryEngine
     ) {
     return {
+		print_VAD_results: function(results,rtitle,popup_ul,popup_ul_nonoverlaps) {
+			try {
+
+				if (results.features && results.features.length > 0) {
+					console.log("The FeatureSet has features:", results.features);
+					let finalresult = [
+						{ keycode: "Within a half mile" }
+					  ];
+					drillscope.add_results_to_popup_tablestyle(rtitle,finalresult,popup_ul);
+				  } 
+				else {
+					console.log("The FeatureSet is empty.");
+					drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);
+				}
+			} catch (e) { console.log(e); }
+		},
+		print_VAD_resultsold: function(results,rtitle,popup_ul,popup_ul_nonoverlaps) {
+			try {
+				if (results.length == 0) {drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);}
+				else {		
+					console.log(results)	
+															
+					let finalresult = [
+						{ keycode: "Within a half mile" }
+					  ];
+					if (finalresult.length == 0) { drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);	}
+					else {drillscope.add_results_to_popup_tablestyle(rtitle,finalresult,popup_ul);	}
+				}			
+			} catch (e) { console.log(e); }
+		},
 		print_pct_results: function(results,rtitle,single_keycode,popup_ul,popup_ul_nonoverlaps) {
 			try {
 				if (results.length == 0) {drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);}
@@ -43,6 +73,7 @@ This module handles the logic of the advanced parcel popup
 			popup_ul_nonoverlaps.appendChild(popup_li_nonoverlapitem)
 			} catch (e) { console.log(e); }
 		},
+
 
 		// Style 1 --  Add item as a bunch of <tr></tr> ,  with no acreage or % listed.
 		add_results_to_popup_tablestyle: function(rtitle,finalresult,popup_ul){
@@ -180,6 +211,13 @@ This module handles the logic of the advanced parcel popup
 					try {	
 						advquery.parcel_acres = geometryEngine.geodesicArea(advquery.OTLG, 109402);		  
 					} catch (e) { console.log(e); }
+
+					advquery.PARCEL_INTERSECT_QUERY_VAD = new Query({ 
+						geometry: advquery.OTLG, 
+						outFields: ["*"], 
+						returnGeometry: false, 
+						spatialRelationship: "intersects" 
+					});
 	
 					advquery.PARCEL_INTERSECT_QUERY_WGEOMETRY = new Query({ 
 						geometry: advquery.OTLG, 
@@ -630,6 +668,13 @@ This module handles the logic of the advanced parcel popup
 					.then(function(results) {
 						try {
 						drillscope.print_pct_results(results,"Major Transportation Corridor","MTC",popup_ul,popup_ul_nonoverlaps);
+						} catch (e) { console.log(e); }
+						return query.executeQueryJSON(SWM_VAD,advquery.PARCEL_INTERSECT_QUERY_VAD);		
+						})	
+					//Voluntary Agricultural Districts
+					.then(function(results) {
+						try {
+						drillscope.print_VAD_results(results,"Proximity to a Voluntary Agricultural District",popup_ul,popup_ul_nonoverlaps);
 						} catch (e) { console.log(e); }
 						return query.executeQueryJSON(TRANSITIONAL_OFFICE_OVERLAY_URL_SUBLAYER,advquery.PARCEL_INTERSECT_QUERY_WGEOMETRY);		
 						})	

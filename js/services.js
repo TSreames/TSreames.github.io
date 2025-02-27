@@ -226,3 +226,5 @@ const SOILS1983_URL = "https://webgis2.durhamnc.gov/server/rest/services/Rasters
 
 //PublicWorksServices
 const STORMSEWERSHED_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/PublicWorksServices/StormwaterSystem/MapServer/10"
+
+const SWM_VAD = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/SWM_VADs/MapServer/0"

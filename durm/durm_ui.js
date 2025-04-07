@@ -95,6 +95,15 @@ define([
 				const nav_mdclist4 = new mdc.list.MDCList(document.getElementById('nav_mdclist4'));
 				nav_mdclist4.singleSelection = false;
 
+				// We want the user to have a simpler default viewport setting.  Only later when it's necessary do we have Esri take over the scalability.
+				let viewportMeta = document.querySelector('meta[name="viewport"]');
+				if (!viewportMeta) {
+				  viewportMeta = document.createElement('meta');
+				  viewportMeta.name = "viewport";
+				  document.head.appendChild(viewportMeta);
+				}			  
+				viewportMeta.content = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
+
 			} catch (e) { console.log(e); }	
 		},
 

@@ -641,6 +641,19 @@ define([
 			});
 			pplt.add_to_map(durm.airportoverlay);	
 
+			
+			durm.ruralvillages = new FeatureLayer({
+				id: "ruralvillages",
+				title: "Rural Villages",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:8,
+				url: RURAL_VILLAGES_URL,
+				icon: "DUR",
+				visible: false
+			});
+			pplt.add_to_map(durm.ruralvillages);	
 
 			durm.EDOSPgroup = new GroupLayer({
 				id: "EDOSP",
@@ -683,6 +696,8 @@ define([
 				visible: true
 			});
 			durm.EDOSPgroup.add(durm.EDOSPWC);
+
+
 
 
 		},

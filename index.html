@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="googlebot" content="index" />
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="initial-scale=1">
 <meta name="description" content="Look up property information, infrastructure, zoning, land use, inspections, permits, development cases, boundaries, zones, districts, soils, flooding, elevation, and hazards in Durham, NC, USA." />
 <meta http-equiv='expires' content='0'>
 <link rel="shortcut icon" href="/img/favicon.ico">
@@ -347,12 +347,15 @@ try {
 					<div id="default_search_container"></div>
 				</section>
 				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end buttonbar">
-					<button id="layerlistbutton1">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">layers</i>
+					<button id="layerlistbutton1" aria-label="Layer List Button">
+						<i class="material-icons mdc-list-item__graphic" aria-hidden="true">layers</i>
 					</button>					
 				</section>
 			</div>
 		</header>
+
+
+
 
 		<div id="independent_case_popup" style="visibility:hidden;" class="esri-widget esri-popup--shadow">
 			<span id="independent-popup-header"></span>	
@@ -464,8 +467,8 @@ try {
 		<label class="disclaimertext">
 			<p>Maps, tabular data, and applications presented are developed from public records. While efforts have been made to use the most current and accurate public record data, <b>no warranties</b> as to the accuracy of the data provided are being made by the City of Durham, Durham County, and the mapping and software companies involved. Users of this content should consult public information sources to verify the accuracy of the data provided.</p>                
 		</label>
-		<span class="approval"><input type="checkbox" id="agreeCheckbox">I agree to the terms.</span>
-
+		<span class="approval">		
+			<input type="checkbox" id="agreeCheckbox"><label for="agreeCheckbox">I agree to the terms.</label></span>
 		<br><br>
 		<button id="agreeButton" class="esri-button">Submit</button>
 	</div>

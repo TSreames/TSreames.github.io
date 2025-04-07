@@ -123,8 +123,13 @@ const CROSS_CONNECT_PERMITS_URL = "https://webgis2.durhamnc.gov/server/rest/serv
 
 
 //Transportation
-const BUS_STOPS = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/3"
-const BUS_ROUTES = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/2"
+//const BUS_STOPS = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/3"
+//const BUS_ROUTES = "https://gis.dchcmpo.org/arcgis/rest/services/Core/TransitBusStopsRoutes/MapServer/2"
+
+const BUS_STOPS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/GoDurham_Bus_Stops_and_Routes/FeatureServer/0"
+const BUS_ROUTES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/GoDurham_Bus_Stops_and_Routes/FeatureServer/1"
+
+
 
 //const POLES_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/8"
 //const SIGNALS_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Transportation/MapServer/11"
@@ -171,6 +176,7 @@ const ALL_DEV_CASES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest
 const TRANSITIONAL_OFFICE_OVERLAY_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/18"
 const TRANSITIONAL_OFFICE_OVERLAY_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/18"
 const ALL_DEV_CASES_POLY = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Planning/FeatureServer/19"
+const RURAL_VILLAGES_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Planning/FeatureServer/7"
 
 const ALL_BI_TRADE_PERMITS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Tables/MapServer/1"
 const ALL_BLDG_PERMITS = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Tables/MapServer/2"

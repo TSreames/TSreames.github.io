@@ -20,7 +20,7 @@ This module handles the logic of the advanced parcel popup
 				if (results.features && results.features.length > 0) {
 					console.log("The FeatureSet has features:", results.features);
 					let finalresult = [
-						{ keycode: "Within a half mile" }
+						{ keycode: "Within a half mile of a <a target='new' href='https://live-durhamnc.opendata.arcgis.com/datasets/DurhamNC::vad-participating-farms/about'>Voluntary Agricultural District</a>" }
 					  ];
 					drillscope.add_results_to_popup_tablestyle(rtitle,finalresult,popup_ul);
 				  } 
@@ -28,20 +28,6 @@ This module handles the logic of the advanced parcel popup
 					console.log("The FeatureSet is empty.");
 					drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);
 				}
-			} catch (e) { console.log(e); }
-		},
-		print_VAD_resultsold: function(results,rtitle,popup_ul,popup_ul_nonoverlaps) {
-			try {
-				if (results.length == 0) {drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);}
-				else {		
-					console.log(results)	
-															
-					let finalresult = [
-						{ keycode: "Within a half mile" }
-					  ];
-					if (finalresult.length == 0) { drillscope.add_nonoverlapping_item(rtitle,popup_ul_nonoverlaps);	}
-					else {drillscope.add_results_to_popup_tablestyle(rtitle,finalresult,popup_ul);	}
-				}			
 			} catch (e) { console.log(e); }
 		},
 		print_pct_results: function(results,rtitle,single_keycode,popup_ul,popup_ul_nonoverlaps) {

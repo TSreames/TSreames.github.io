@@ -26,7 +26,10 @@ const GRAYBASE_IMG = "https://www.arcgis.com/sharing/rest/content/items/a52ab987
 const CLARITY_URL = "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer"
 const USGS_URL = "https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer"
 //const NEARMAP_URL = "https://utility.arcgis.com/usrsvcs/servers/df77582554224f329e55d7147854294c/rest/services/nearmap_us/ImageServer"
+//const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/71665c6734234c6fb13cd4829fed7239/rest/services/nearmap_us/ImageServer"
 const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/71665c6734234c6fb13cd4829fed7239/rest/services/nearmap_us/ImageServer"
+
+const NEARMAP_URL = "hhttps://webgis2.durhamnc.gov/portal/sharing/servers/71665c6734234c6fb13cd4829fed7239/rest/services/nearmap_us/ImageServer"
 
 const HILLSHADE_URL = "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer"
 const ADDRESS_FS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Active_Addresses/FeatureServer/0"
@@ -232,5 +235,6 @@ const SOILS1983_URL = "https://webgis2.durhamnc.gov/server/rest/services/Rasters
 
 //PublicWorksServices
 const STORMSEWERSHED_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/services/PublicWorksServices/StormwaterSystem/MapServer/10"
+
 
 const SWM_VAD = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/SWM_VADs/MapServer/0"

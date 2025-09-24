@@ -27,7 +27,7 @@ const CLARITY_URL = "https://clarity.maptiles.arcgis.com/arcgis/rest/services/Wo
 const USGS_URL = "https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer"
 //const NEARMAP_URL = "https://utility.arcgis.com/usrsvcs/servers/df77582554224f329e55d7147854294c/rest/services/nearmap_us/ImageServer"
 //const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/71665c6734234c6fb13cd4829fed7239/rest/services/nearmap_us/ImageServer"
-const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/71665c6734234c6fb13cd4829fed7239/rest/services/nearmap_us/ImageServer"
+const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/3f332bf6ee90490a9ec125f138322aa7/rest/services/nearmap_us/ImageServer"
 
 
 const HILLSHADE_URL = "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer"
@@ -237,4 +237,5 @@ const STORMSEWERSHED_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/se
 
 
 const SWM_VAD = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/SWM_VADs/MapServer/0"
+
 

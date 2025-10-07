@@ -352,6 +352,7 @@ This module handles the logic of the advanced parcel popup
 						{url:PARKS_IMPACT_FEE_ZONES, genericfield:["Parks and Recreation Facility Impact Fee Zone","ZONENAME"]},
 						{url:OPENSPACEIMPACTFEEZONE_URL, genericfield:["Open Space Land Impact Fee Zone","REC_PAYMENT_ZONE"]},
 						{url:SOILS_URL_SUBLAYER, genericfield:["Soils","DSL_NAME"]},
+						{url:TOWNSHIPS_URL, genericfield:["Township","Name"]},
 					]
 					for(var i = 0; i < durm.generic_items.length; i++){
 						let n = durm.generic_items[i]
@@ -1078,44 +1079,7 @@ This module handles the logic of the advanced parcel popup
 								} catch (e) { console.log(e); }		
 							}						
 						} catch (e) { console.log(e); }	
-						return query.executeQueryJSON(CROSS_CONNECT_PERMITS_URL,advquery.PARCEL_INTERSECT_QUERY_CROSSCONNECT);
-				}).catch(function(error){
-					if(error.name="request:server") {
-						console.log("Server Error")
-						permitscope.create_and_write_error_PLI("Cross Connection Permits",drill_popup_ul)
-						console.log(error)
-					}
-					else {
-						console.log("Error message: ", error.message);
-						console.log(error)
-					}
-				}).then(function(results) {
-						if (typeof results !== 'undefined'){
-						try {
-							let title = "Cross Connection Permits";
-							let list_of_results = [];
-							let PLI = document.createElement("li");
-							drill_popup_ul.appendChild(PLI)
-							permitscope.write_PLI(PLI,title);
-							if (results.features.length == 0) {	permitscope.write_nopermit(PLI); }
-							else {
-								try {
-									/*results.features.forEach(function(item) {
-										var trow = '<td>'+item.attributes.A_NUMBER+'</td><td>'+moment(item.attributes.A_DATE).format('MM/DD/YYYY')+'</td>';
-										list_of_results.push({trow:trow});
-									});*/
-									results.features.forEach(function(item) {
-										let trow = '<td class="grow"><a href="#" onclick="durm.fire_ccpermit_popup(&quot;'+item.attributes.A_NUMBER+'&quot;);return false;">'+item.attributes.A_NUMBER+'</a></td>'+
-										'<td class="grow"><ul>'+
-										'<li>'+ moment(item.attributes.A_DATE).format('YYYY') +'</li><li>'+item.attributes.A_DESCRIPTION+'</li></ul></td>';
-										list_of_results.push({trow:trow});
-									});
-									permitscope.write_permitresults(list_of_results,PLI);
-								} catch (e) { console.log(e); }		
-							}
-						} catch (e) { console.log(e); }
-						}
-						return	
+						return
 				});
 				document.getElementById("bodycontainer").style.cursor = "default";
 				document.getElementById("mapViewDiv").style.cursor = "default";

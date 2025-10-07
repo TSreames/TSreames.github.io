@@ -13,7 +13,7 @@ define([
 		return {
 			pre_init: function(){
 				try{ 
-					pt = this							
+					pt = this					
 					parcelNotificationToolAction = {
 						title: "Mailing List Tool",
 						id: "open-buffer-tool",

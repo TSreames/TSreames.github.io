@@ -264,11 +264,11 @@
   }
   /* 545-768 */
   .esri-view-width-small .esri-popup__main-container {
-	  width:70%;
+	  width:75%;
   }
   /* 769-992 */
   .esri-view-width-medium .esri-popup__main-container {
-	  width:55%;
+	  width:65%;
   }
   /* 993-1200 */
   .esri-view-width-large .esri-popup__main-container {

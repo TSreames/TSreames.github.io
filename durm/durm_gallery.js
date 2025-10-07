@@ -27,13 +27,17 @@ define([
 				aerial_hybrid_item = new PortalItem({ id: "28f49811a6974659988fd279de5ce39f" });	  
 				aerial_hybrid_basemap = new Basemap({ param:"1", title:"ESRI Aerials", parcelColor:"green", portalItem:aerial_hybrid_item });
 				durm.basemaparray[1] = aerial_hybrid_basemap;	
+			
+				aerial_hybrid_item2 = new PortalItem({ id: "28f49811a6974659988fd279de5ce39f" });	  
+				aerial_hybrid_basemap2 = new Basemap({ param:"2", title:"ESRI Aerials", parcelColor:"green", portalItem:aerial_hybrid_item2 });
+				durm.basemaparray[2] = aerial_hybrid_basemap2;	
 
-				nearmap = new ImageryLayer({ 
-					url:NEARMAP_URL,
-					popupEnabled:false
-				});				
-				nearmapb = new Basemap({ param:"2", parcelColor:"green", title:"Nearmap Aerials ("+yearnum+")", baseLayers:[nearmap,streetlabelVT], thumbnailUrl: AERIAL_IMG });
-				durm.basemaparray[2] = nearmapb;
+				// nearmap = new ImageryLayer({ 
+				// 	url:NEARMAP_URL,
+				// 	popupEnabled:false
+				// });				
+				// nearmapb = new Basemap({ param:"2", parcelColor:"green", title:"Nearmap Aerials ("+yearnum+")", baseLayers:[nearmap,streetlabelVT], thumbnailUrl: AERIAL_IMG });
+				// durm.basemaparray[2] = nearmapb;
 
 				dark_grey_item = new PortalItem({ id: "358ec1e175ea41c3bf5c68f0da11ae2b" });	  
 				dark_grey_basemap = new Basemap({ param:"3", portalItem:dark_grey_item, parcelColor:"gray" });

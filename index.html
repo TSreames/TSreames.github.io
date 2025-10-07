@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="googlebot" content="index" />
-<meta name="viewport" content="initial-scale=1">
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="description" content="Look up property information, infrastructure, zoning, land use, inspections, permits, development cases, boundaries, zones, districts, soils, flooding, elevation, and hazards in Durham, NC, USA." />
 <meta http-equiv='expires' content='0'>
 <link rel="shortcut icon" href="/img/favicon.ico">
@@ -212,13 +212,6 @@ try {
 				durm_main.init();
 			} catch (error) { 
 				console.log("Error in init"); 
-				console.log(error); 
-			}
-
-			try {
-			durm_main.whenLoaded();
-			} catch (error) { 
-				console.log("Error in whenLoaded");
 				console.log(error); 
 			}
 			currentyear = new Date().getFullYear()

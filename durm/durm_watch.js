@@ -166,9 +166,13 @@ define([
             cb1.addEventListener("click", function(){
               document.getElementById("layerpanel").classList.remove("is-visible")
             });
+
+            //This only handles the clicking of the button;  onload is handled elsewhere.
             let t0gg = document.getElementById("maptoggle")
             t0gg.addEventListener("click", () => {
+              console.log("durm.aparam: " + durm.aparam);
               if(durm.aparam==-1) {
+                console.log("durm_watch enabled aerial mode")
                 durm_ui.enable_aerials_mode(durm.defaultaerialid);
               } else {
                 durm_ui.disable_aerials_mode();

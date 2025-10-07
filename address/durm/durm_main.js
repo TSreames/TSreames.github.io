@@ -16,13 +16,13 @@ define([
       try {
         /* This block of code gets updated annually each summer */
         /* You also need to update a block of code in durm_schools.js, for the services */
-        now = "24_25"
-        nowstring = "View Current Year's Assignment (2024-25)"
-        nowprefix = "2024-2025"
+        now = "25_26"
+        nowstring = "View Current Year's Assignment (2025-26)"
+        nowprefix = "2025-2026"
 
-        nextyear = "25_26"  //used in the link back to Durham Maps
-        nextstring = "View Next Year's Assignment (2025-26)"  //used in the button
-        nextprefix = "2025-2026" //used in results table
+        nextyear = "26_27"  //used in the link back to Durham Maps
+        nextstring = "View Next Year's Assignment (2026-27)"  //used in the button
+        nextprefix = "2026-2027" //used in results table
 
         /* end */
 
@@ -96,7 +96,7 @@ define([
         durm.parcelboundaryLayer = new FeatureLayer({
           id: "parcels",
           title: "Parcels",
-          url: PARCELS,
+          url: PARCELS_AGOL,
           visible: true,
           outFields: ["REID","PIN"]
         });

@@ -68,18 +68,46 @@ define([], function() {
           // zoom on init
           if (durm.yparam && durm.xparam && durm.zparam && durm.rparam) { durm.all_initial_view_parameters_passed = true; }
 
-          // load basemap id on init
-          if (durm.aparam) {   
+          // // load basemap id on init
+          // if (durm.aparam) {   
+          //   durm.aerials_passed = true;
+          // } else {}
+
+
+
+          //console.log(durm.aparam)
+          durm.aparam = durm.aparam !== undefined && durm.aparam !== null ? Number(durm.aparam) : null;
+          //console.log(durm.aparam)
+
+          if (durm.aparam == null) {
+            durm.aerials_passed = false;
+            console.log("durm.aparam is null, setting durm.aerials_passed to false");
+          } else if (typeof durm.aparam !== 'number') {
+            console.log("durm.aparam is not a number, setting durm.aerials_passed to false");
+            durm.aerials_passed = false;
+          } else if (!Number.isInteger(durm.aparam)) {
+            console.log("durm.aparam is not an integer, setting durm.aerials_passed to false");
+            durm.aerials_passed = false;
+          } else if (durm.aparam === 0) {
+            console.log("durm.aparam is 0, setting durm.aerials_passed to false");
+            durm.aerials_passed = false;
+          } else if (durm.aparam === -1) {
+            console.log("durm.aparam is -1, setting durm.aerials_passed to true");
+            durm.aerials_passed = false;
+          } else if (durm.aparam > 0) {
+            console.log("durm.aparam is greater than 0, setting durm.aerials_passed to true");
             durm.aerials_passed = true;
-          } else {}
+          } else {
+            console.log("durm.aparam is some other thing, so setting durm.aerials_passed to false");
+            durm.aerials_passed = false;
+          }
+
 
           if (durm.uparam) {   
             durm.utilities_passed = true;
           }
 
         } catch (e) { console.log(e); }
-
-
 
       },
       zoom_to_pid: function() {

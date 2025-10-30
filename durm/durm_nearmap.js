@@ -76,12 +76,13 @@ define([
 								const m = text.match(dateRegex);
 								if (m) {
 										// Zero-pad month and day for consistent ISO format
-										datelist += " "
-										datelist += sl.title
 										const year = m[1];
 										const month = m[2].padStart(2, '0');
 										const day = m[3].padStart(2, '0');
 										const iso = `${year}-${month}-${day}`; // YYYY-MM-DD
+
+										datelist += " "
+										datelist += iso
 
 										// Store multiple sublayers per date (handles duplicates like "Raleigh 2")
 										if (!rawDateIndex.has(iso)) {

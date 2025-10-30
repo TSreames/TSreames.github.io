@@ -867,7 +867,7 @@ define([
 				id: "restrictedcovenants",
 				title: "Preservation Durham Restricted Covenants",
 				listMode: "show",
-				listcategory: "Planning",
+				listcategory: "Historic",
 				layer_order:0,
 				lyr_zindex:8,
 				url: PDRC_URL,

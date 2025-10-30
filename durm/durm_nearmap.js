@@ -69,8 +69,6 @@ define([
 						// Accept single-digit months/days and common Unicode hyphens (\u2010-\u2015)
 						const dateRegex = /\b(20\d{2})[\-\/\u2010-\u2015](\d{1,2})[\-\/\u2010-\u2015](\d{1,2})\b/;
 
-						datelist = ""
-
 						nearmapBaseLayer.allSublayers.forEach(sl => {
 								const text = `${sl.name} ${sl.title}`;
 								const m = text.match(dateRegex);
@@ -81,10 +79,14 @@ define([
 										const day = m[3].padStart(2, '0');
 										const iso = `${year}-${month}-${day}`; // YYYY-MM-DD
 
-										datelist += " "
-										datelist += iso
+										// Filter out blocked months (known bad imagery)
+										const broken_and_fragmented_months = ['2017-09', '2020-11', '2025-08', '2024-08', '2023-09'];
+										const yearMonth = `${year}-${month}`;
+										if (broken_and_fragmented_months.includes(yearMonth)) {
+												return;
+										}
 
-										// Store multiple sublayers per date (handles duplicates like "Raleigh 2")
+										// Store multiple sublayers per date
 										if (!rawDateIndex.has(iso)) {
 												rawDateIndex.set(iso, []);
 										}
@@ -92,13 +94,10 @@ define([
 								}
 						});
 
-						alert(`Found ${rawDateIndex.size} unique dates with sublayers
-							${datelist}
-							
-							`);
+						console.log(`Found ${rawDateIndex.size} unique dates with sublayers`);
 
 						// Group dates within 14-day windows
-						dateIndex = this.groupDatesByProximity(rawDateIndex, 14);
+						dateIndex = this.groupDatesByProximity(rawDateIndex, 29);
 
 						console.log(`Grouped into ${dateIndex.size} aerial layer groups`);
 						return true;
@@ -114,6 +113,7 @@ define([
 
 				// Sort all dates chronologically
 				const sortedDates = Array.from(rawDateIndex.keys()).sort();
+				console.log("Sorted dates received by groupDatesByProximity:", sortedDates);109 
 
 				let groupIndex = 0;
 				let currentGroup = null;
@@ -125,6 +125,9 @@ define([
 						const parts = isoDate.split('-').map(Number);
 						const currentDateMs = Date.UTC(parts[0], parts[1] - 1, parts[2]);
 						const sublayers = rawDateIndex.get(isoDate);
+
+						console.log(parts)
+						console.log("Checking date:", isoDate, "currentDateMs:", currentDateMs, "currentGroupEndMs:", currentGroupEndMs);
 
 						// Start a new group if we don't have one, or if current date is outside the window
 						if (!currentGroup || currentDateMs > currentGroupEndMs) {
@@ -143,6 +146,11 @@ define([
 								currentGroupEndMs = currentDateMs + windowMs;
 
 								grouped.set(groupKey, currentGroup);
+								console.log("  → Created NEW group:", groupKey);
+						} else {
+							console.log("  → Added to existing group, extended window to:", new Date(currentGroupEndMs).toISOString());
+							//Extend the window from the current date to keep the group growing
+							currentGroupEndMs = currentDateMs + windowMs;
 						}
 
 						// Add all sublayers from this date to the current group (merges duplicates)

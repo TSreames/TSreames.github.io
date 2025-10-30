@@ -217,59 +217,40 @@ define([
 			pplt.add_all_layers_to_map(aerials2load);
 			//console.log("Added all aerial layers to map");
 
-			// 5. Store nearmap metadata and map to WMS sublayers
-			durm.nearmap_virtual_layers = [];
-			if (durm.use_nearmap) {
-				for (const metadata of AERIAL_METADATA.nearmap) {
-					const virtualLayer = this.create_nearmap_virtual_layer_for_WMSLAYER(metadata);
-					if (virtualLayer) {
-						durm.nearmap_virtual_layers.push(virtualLayer);
-						// Also store in durm object for consistency
-						durm[metadata.id] = virtualLayer;
-					}
-				}
-				console.log(`Created ${durm.nearmap_virtual_layers.length} nearmap layers`);
-			}
-
-			// 6. Build combined slider array
+			// 5. Build combined slider array (Nearmap groups are now auto-discovered in build_aerial_slider_HYBRID)
 			this.build_aerial_slider_HYBRID();
 		},
 
 		build_aerial_slider_HYBRID: function() {
 			const sliderItems = [];
 
-			//console.log("AERIAL_METADATA.webgis2 length:", AERIAL_METADATA.webgis2.length);
-			//console.log("durm.nearmap_virtual_layers length:", durm.nearmap_virtual_layers ? durm.nearmap_virtual_layers.length : 0);
+			// 1. Add all enterprise (non-Nearmap) layers from webgis2 metadata
+			for (const metadata of AERIAL_METADATA.webgis2) {
+				const layer = durm[metadata.id];
+				if (layer && layer.visible !== undefined) {
+					sliderItems.push({
+						type: "standard",
+						id: layer.id,
+						title: layer.title,
+						sortDate: layer.sortDate,
+						layer: layer // Direct reference to layer
+					});
+				}
+			}
 
-			// Combine both metadata arrays and process based on loadingtype
-			const allMetadata = [...AERIAL_METADATA.webgis2, ...AERIAL_METADATA.nearmap];
-
-			for (const metadata of allMetadata) {
-				// Skip nearmap if unavailable
-				if (metadata.loadingtype === "nearmap" && !durm.use_nearmap) continue;
-
-				if (metadata.loadingtype === "nearmap") {
-					// Nearmap virtual layer (WMS-based)
-					const virtualLayer = durm.nearmap_virtual_layers.find(v => v.id === metadata.id);
-					if (virtualLayer) {
+			// 2. Add Nearmap groups directly from dateIndex (auto-discovery)
+			if (durm.use_nearmap) {
+				const dateIndex = durm_nearmap.getDateIndex();
+				if (dateIndex) {
+					let groupIndex = 0;
+					for (const [groupStartDate, groupData] of dateIndex.entries()) {
+						groupIndex++;
 						sliderItems.push({
 							type: "nearmap-virtual",
-							id: virtualLayer.id,
-							title: virtualLayer.title,
-							sortDate: virtualLayer.sortDate,
-							sublayers: virtualLayer.sublayers // WMS sublayer info, not definitionExpression
-						});
-					}
-				} else {
-					// Enterprise tile layer (standard)
-					const layer = durm[metadata.id];
-					if (layer && layer.visible !== undefined) {
-						sliderItems.push({
-							type: "standard",
-							id: layer.id,
-							title: layer.title,
-							sortDate: layer.sortDate,
-							layer: layer // Direct reference to layer
+							id: `nearmap_group_${groupIndex}`,
+							title: groupData.title,
+							sortDate: groupData.startDate,
+							sublayers: groupData.sublayers
 						});
 					}
 				}

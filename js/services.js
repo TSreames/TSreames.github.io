@@ -25,6 +25,8 @@ const GRAYBASE_IMG = "https://www.arcgis.com/sharing/rest/content/items/a52ab987
 const CLARITY_URL = "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer"
 const USGS_URL = "https://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer"
 const NEARMAP_URL = "https://webgis2.durhamnc.gov/portal/sharing/servers/ae11052a7f7a4d42a5c236a9fb8a445e/rest/services/nearmap_us/ImageServer"
+const NEARMAP_WMS_URL = "https://api.nearmap.com/wms/v1/places/c79ccce8-5fa0-4b9d-ac9e-e0795af59217/apikey/MTM4ZmFlZmUtNmVkYS00NzE1LWI0YjQtYjMxMzRlZWNhNDg4"
+const NEARMAP_WMS_GETCAPABILITIES_URL = "https://api.nearmap.com/wms/v1/places/c79ccce8-5fa0-4b9d-ac9e-e0795af59217/apikey/MTM4ZmFlZmUtNmVkYS00NzE1LWI0YjQtYjMxMzRlZWNhNDg4?service=WMS&request=GetCapabilities"
 
 const HILLSHADE_URL = "https://services.arcgisonline.com/arcgis/rest/services/Elevation/World_Hillshade/MapServer"
 const ADDRESS_FS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Active_Addresses/FeatureServer/0"
@@ -97,23 +99,42 @@ const VOTERPRECINCT_FEATURE_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E
 const VOTERPRECINCT_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Electoral/MapServer/"  //MAPIMAGELAYER --  NOT USED ANYMORE.
 
 //Inspections
-const UTA_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/7"
-const DEMO_PERMITS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/10"
-const CO_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/11"
 const BUILDING_PERMITS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/12"
 const BUILDING_PERMITS_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/12"
-const ACTV_BLDG_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/13"
-const ACTV_PLUMB_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/14"
-const ACTV_MECH_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/15"
-const ACTV_ELEC_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/16"
+const UTA_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/7"
+const CO_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Inspections/FeatureServer/11"
+
+//Permits
+const DEMO_PERMITS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Permits/FeatureServer/10"
+const ACTV_BLDG_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Permits/FeatureServer/13"
+const ACTV_PLUMB_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Permits/FeatureServer/14"
+const ACTV_MECH_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Permits/FeatureServer/15"
+const ACTV_ELEC_PERMITS_URL_SUBLAYER = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Permits/FeatureServer/16"
+
+// https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Permits/FeatureServer
+
+//     All Development Cases (20)
+//     Annexation Petitions (17)
+//     Board of Adjustment Cases (18)
+//     Comprehensive Plan Amendments (19)
+//     Common Signage Plan Review (21)
+//     Historic District Cases (25)
+//     Home Occupation Permits (24)
+//     Major Special Use Permits (23)
+//     Street Closings or Renamings (22)
+//     Site Plans and Preliminary Plats (29)
+//     Subdivisions (28)
+//     Variances (26)
+//     Zoning Map Changes (30)
+
 
 // No longer used
 const CROSS_CONNECT_PERMITS_URL = "https://webgis2.durhamnc.gov/server/rest/services/ProjectServices/BackflowCrossConnection/MapServer/3"
 
 
 //Transportation
-const BUS_STOPS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/PublicTransit/FeatureServer/0"
-const BUS_ROUTES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/PublicTransit/FeatureServer/1"
+const BUS_STOPS = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/GoDurham_Bus_Stops_and_Routes/FeatureServer/0"
+const BUS_ROUTES = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/GoDurham_Bus_Stops_and_Routes/FeatureServer/1"
 
 const POLES_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Transportation/FeatureServer/8"
 const SIGNALS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/arcgis/rest/services/Transportation/FeatureServer/11"
@@ -139,6 +160,7 @@ const TAX_DISTRICTS_URL_SUBLAYER = "https://webgis2.durhamnc.gov/server/rest/ser
 
 //Planning
 const EDSOP_URL = "https://webgis2.durhamnc.gov/server/rest/services/PublicServices/Planning/MapServer"  //Uses MapImageLayer
+const PDRC_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/PreservationDurhamRestrictedCovenants/FeatureServer/0"
 
 //these use FeatureLayer, so they use AGOL bc way faster
 const TOWNSHIPS_URL = "https://services2.arcgis.com/G5vR3cOjh6g2Ed8E/ArcGIS/rest/services/Planning/FeatureServer/4"

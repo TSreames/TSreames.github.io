@@ -73,12 +73,11 @@ define([
 
 						nearmapBaseLayer.allSublayers.forEach(sl => {
 								const text = `${sl.name} ${sl.title}`;
-								//console.log(sl.title)
-								datelist += " "
-								datelist += sl.title
 								const m = text.match(dateRegex);
 								if (m) {
 										// Zero-pad month and day for consistent ISO format
+										datelist += " "
+										datelist += sl.title
 										const year = m[1];
 										const month = m[2].padStart(2, '0');
 										const day = m[3].padStart(2, '0');

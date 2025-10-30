@@ -6,11 +6,11 @@ define([
 	//"esri/core/watchUtils",
 	"esri/core/reactiveUtils",
 	"esri/widgets/Print","esri/widgets/Expand","esri/widgets/BasemapGallery","esri/widgets/Legend","esri/widgets/Compass","esri/widgets/ScaleBar","esri/widgets/Sketch",
-	"esri/layers/GraphicsLayer", "../durm/durm_suppress_identity_modal.js"
+	"esri/layers/GraphicsLayer", "../durm/durm_suppress_identity_modal.js", "../durm/durm_aerials.js"
 	], function(//watchUtils,
 		reactiveUtils,
-		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch, 
-		GraphicsLayer, durm_suppress_identity_modal
+		Print, Expand, BasemapGallery, Legend, Compass, ScaleBar, Sketch,
+		GraphicsLayer, durm_suppress_identity_modal, durm_aerials
     ) {
   	return {
 		/*  init runs at the very beginning, before there is a 'mapview' and before there are layers.  */
@@ -139,17 +139,69 @@ define([
 			});
 		},
 
-		draw_initial_widgets: function() {
-			try {
-				
-				//durm.mapView.popup.collapseEnabled = false;
+		load_widgets_pre: function() {
+			//These widgets load relatively early because they 'look nice in the ui'and have no layer dependencies
+			//In the long run we may want to have this run in parallel ALONGSIDE populate, but it may be simpler in the short-run to run it BEFORE populate
 
-				//compass
+
+				//compass - note that this doesn't actually draw unti later, when it's added to durm.mapView.ui.add
 				durm.compassWidget = new Compass({
 					view: durm.mapView
 				});
-				
-							
+
+				//scalebar
+				let sd = document.createElement("div");
+				document.body.appendChild(sd);
+				sd.classList.add("scale_div") 
+				durm.scaleWidget = new ScaleBar({
+					view: durm.mapView,
+					unit:"imperial"
+				});
+				durm.scaleWidget.container = sd;
+
+
+
+				// Bindings for "Aerial" and "Map" buttons in mdc menu. 
+				durm.load_simple_basemap = document.getElementById("load_simple_basemap");
+				durm.load_simple_basemap.addEventListener("click", () => {
+					this.disable_aerials_mode();
+					durm.map.basemap = this.load_simple_basemap();
+				});
+				durm.enable_aerials_mode = document.getElementById("enable_aerials_mode");
+				durm.enable_aerials_mode.addEventListener("click",() => {
+					this.enable_aerials_mode(durm.defaultaerialid);
+				});
+
+
+				//Put the ui_panel / form_panel stuff inside esri ui
+				durm.devcase_form = document.getElementById("devcase_form_panel")				
+				durm.devcase_form.style.display == "none"
+				durm.mapView.ui.add(durm.devcase_form, "top-right");
+
+				durm.address_ui = document.getElementById('parceltool_form_panel')
+				durm.address_ui.style.display == "none"
+				durm.mapView.ui.add(durm.address_ui, "top-right");
+
+				durm.mtd = document.createElement("div");
+				durm.mts = document.createElement("span");
+				durm.mti = document.createElement("img");
+
+				durm.mtd.classList = "maptogglebutton"
+				durm.mtd.id = "maptoggle"
+				durm.mts.id = "maptogglebuttonphotocaption"
+				durm.mti.id = "maptogglebuttonphoto"
+
+				durm.mti.src = "./img/aerialmode.png"
+				durm.mts.innerHTML = "Aerials"
+				durm.mts.style.color = "#323232"
+
+				durm.mtd.appendChild(durm.mts)
+				durm.mtd.appendChild(durm.mti)
+				document.getElementById("mapViewDiv").appendChild(durm.mtd)
+		},
+
+		load_widgets_deferred: function() {
+			try {	
 				//basemap gallery widget and button
 				basemapGallery = new BasemapGallery({
 					view: durm.mapView,
@@ -163,9 +215,7 @@ define([
 					content: basemapGallery.container,
 					autoCollapse: true,
 					expandIconClass: "esri-icon-basemap"
-				});	
-				
-
+				});		
 				//print (pdf export) widget and button
 				durm.print = new Print({
 					view: durm.mapView,
@@ -180,31 +230,9 @@ define([
 					autoCollapse: true,
 					content: durm.print.domNode
 				});
-
 				//add the above buttons to the ui
-				durm.mapView.ui.add([ durm.compassWidget,durm.bgExpand, durm.printExpand ], "top-right");
+				durm.mapView.ui.add([ durm.compassWidget,durm.bgExpand,durm.printExpand ], "top-right");
 
-				//scalebar
-				let sd = document.createElement("div");
-				document.body.appendChild(sd);
-				sd.classList.add("scale_div") 
-				durm.scaleWidget = new ScaleBar({
-					view: durm.mapView,
-					unit:"imperial"
-				});
-				durm.scaleWidget.container = sd;
-
-				// Bindings for "Aerial" and "Map" buttons in mdc menu. 
-				durm.load_simple_basemap = document.getElementById("load_simple_basemap");
-				durm.load_simple_basemap.addEventListener("click", () => {
-					this.disable_aerials_mode();
-					durm.map.basemap = this.load_simple_basemap();
-				});
-				durm.enable_aerials_mode = document.getElementById("enable_aerials_mode");
-				durm.enable_aerials_mode.addEventListener("click",() => {
-					console.log("durm_ui enabled aerial mode via durm.enable_aerials_mode")
-					this.enable_aerials_mode(durm.defaultaerialid);
-				});
 
 				//Bindings for "Print" button in mdc menu
 				durm.toggle_print = document.getElementById("toggle_print");
@@ -240,33 +268,6 @@ define([
 					container:"sketch_button_container"
 				});
 				durm.mapView.ui.add(durm.sketch, "top-right");
-
-
-				//Put the ui_panel / form_panel stuff inside esri ui
-				durm.devcase_form = document.getElementById("devcase_form_panel")				
-				durm.devcase_form.style.display == "none"
-				durm.mapView.ui.add(durm.devcase_form, "top-right");
-
-				durm.address_ui = document.getElementById('parceltool_form_panel')
-				durm.address_ui.style.display == "none"
-				durm.mapView.ui.add(durm.address_ui, "top-right");
-
-				durm.mtd = document.createElement("div");
-				durm.mts = document.createElement("span");
-				durm.mti = document.createElement("img");
-
-				durm.mtd.classList = "maptogglebutton"
-				durm.mtd.id = "maptoggle"
-				durm.mts.id = "maptogglebuttonphotocaption"
-				durm.mti.id = "maptogglebuttonphoto"
-
-				durm.mti.src = "./img/aerialmode.png"
-				durm.mts.innerHTML = "Aerials"
-				durm.mts.style.color = "#323232"
-
-				durm.mtd.appendChild(durm.mts)
-				durm.mtd.appendChild(durm.mti)
-				document.getElementById("mapViewDiv").appendChild(durm.mtd)
 
 			} catch (e) { console.log(e); }	
 
@@ -830,9 +831,17 @@ define([
 					this.disable_aerials_mode()
 				}
 				else {
+					// Bounds check: if aerialid is out of range, use default
+					if (aerialid < 0 || aerialid >= durm.aeriallist.length) {
+						console.log(`Aerial ID ${aerialid} out of bounds (0-${durm.aeriallist.length - 1}), using default: ${durm.defaultaerialid}`);
+						aerialid = durm.defaultaerialid;
+					}
 					durm.sliderinput.value = aerialid
 					durm.aoutput.innerHTML = durm.aeriallist[aerialid].title;
-					durm.aeriallist[aerialid].visible = true;					
+
+					console.log("enable_aerials_mode calling show_aerial_by_index with:", aerialid);
+					durm_aerials.show_aerial_by_index(aerialid);
+
 					durm.aparam = aerialid
 					durm.aeriallabelsVT.visible = true; // Make labels visible
 					durm.map.basemap = durm.basemaparray[4]; //Set to Hillshade basemap		
@@ -878,11 +887,8 @@ define([
 		},
 
 		ensure_aerials_are_nonvisible: function() {
-			// This is just a helper function that ensures aerials are all nonvisible, without affecting URL parameters, UI, etc.
 			try {
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					durm.aeriallist[i].visible = false;  //Make all aerials nonvisible
-				}
+				durm_aerials.hide_all_aerials();
 			} catch (e) { console.log(e); }
 		},
 
@@ -895,6 +901,15 @@ define([
 		// Don't try and get cute and re-work this to be a dynamic re-ordering situation unless you already understand the ramifications of calling the hellish reorder() function
 		reorder_all_layers_to_default: function() {
 			console.log("re-ordering layers")
+
+			// Log nearmap master layer before sorting
+			const nearmapLayer = durm.map.layers.find(l => l.id === "nearmap_master");
+			if (nearmapLayer) {
+				console.log("  Nearmap master before sort: lyr_zindex=", nearmapLayer.lyr_zindex, "layer_order=", nearmapLayer.layer_order, "visible=", nearmapLayer.visible);
+			} else {
+				console.log("  WARNING: nearmap_master not found in durm.map.layers!");
+			}
+
 			durm.map.layers.sort(function(a, b){
 				if(a.lyr_zindex < b.lyr_zindex) return -1;
 				if(a.lyr_zindex > b.lyr_zindex) return 1;
@@ -904,12 +919,17 @@ define([
 			let count = 0;
 			durm.map.layers.forEach(function(lyr) {
 				lyr.layer_order = count;
-				count++;	
+				count++;
 			});
 
 			durm.map.layers.forEach(function(lyr) {
-				durm.map.reorder(lyr.id,lyr.layer_order);	
+				durm.map.reorder(lyr.id,lyr.layer_order);
 			});
+
+			// Log nearmap master layer after reordering
+			if (nearmapLayer) {
+				console.log("  Nearmap master after reorder: layer_order=", nearmapLayer.layer_order, "visible=", nearmapLayer.visible);
+			}
 		}
 
   };

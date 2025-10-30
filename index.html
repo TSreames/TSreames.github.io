@@ -199,7 +199,6 @@ try {
     }
 }
 
-
 	function init_application() {
 		require([
 	"esri/layers/FeatureLayer",
@@ -218,11 +217,7 @@ try {
 			document.getElementById("startdate").value = currentyear + "-01-01"
 			document.getElementById("enddate").value = currentyear + "-12-31"		
 	});
-	}
-
-
-
-	
+	}	
 } catch (error) { 
 	console.log("Error in index");
 	console.log(error); 
@@ -311,24 +306,22 @@ try {
 
 	<div class="mdc-drawer-scrim" id="scrim1"></div>
 
-
-		<div class="mdc-menu mdc-menu-surface" tabindex="-1">
-			<ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-				<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="distanceButton">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">timeline</i>
-					<span class="mdc-list-item__text">Measure Distance</span>
-				</li>
-				<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="areaButton">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">crop_square</i>
-					<span class="mdc-list-item__text">Measure Area</span>
-				</li>
-				<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="parcelbufferButton">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">select_all</i>
-					<span class="mdc-list-item__text">Mailing List Tool</span>
-				</li>
-			</ul>
-		</div>
-
+	<div class="mdc-menu mdc-menu-surface" tabindex="-1">
+		<ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
+			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="distanceButton">
+				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">timeline</i>
+				<span class="mdc-list-item__text">Measure Distance</span>
+			</li>
+			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="areaButton">
+				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">crop_square</i>
+				<span class="mdc-list-item__text">Measure Area</span>
+			</li>
+			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="parcelbufferButton">
+				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">select_all</i>
+				<span class="mdc-list-item__text">Mailing List Tool</span>
+			</li>
+		</ul>
+	</div>
 
 	<div id="bodycontainer">
 		<header class="mdc-top-app-bar mdc-top-app-bar--short mdc-top-app-bar--short-collapsed" id="app-bar">
@@ -435,37 +428,66 @@ try {
 
 		<div class="cd-main-content do-not-print"></div>
 	
-</div>
-
-<!--slider for layerlist-->
-<div id="layerpanel" class="cd-panel from-right do-not-print">
-	<header class="cd-panel-header shortcontainer">
-		<h1>Layers</h1>
-		<a href="#0" class="cd-panel-close">Close</a>
-	</header>
-
-	<div class="cd-panel-container shortcontainer">	
-		<div id="closebar1"></div>		<!-- binding? -->
-		<div class="cd-panel-content">
-			<button class="esri-button" id="reset_button">Reset</button>
-			<div id="accordion" style="border: 1px solid #bbb; border-radius: 20px; padding:0.65em; margin:0.25em;">
-				<ul id="ul_layers"></ul>
-			</div>
-		</div> <!-- cd-panel-content -->
-	</div> <!-- cd-panel-container -->
-</div> <!-- cd-panel -->
-
-<div id="termsModal" class="modal">
-	<div class="modal-content">
-		<label class="disclaimertext">
-			<p>Maps, tabular data, and applications presented are developed from public records. While efforts have been made to use the most current and accurate public record data, <b>no warranties</b> as to the accuracy of the data provided are being made by the City of Durham, Durham County, and the mapping and software companies involved. Users of this content should consult public information sources to verify the accuracy of the data provided.</p>                
-		</label>
-		<span class="approval">		
-			<input type="checkbox" id="agreeCheckbox"><label for="agreeCheckbox">I agree to the terms.</label></span>
-		<br><br>
-		<button id="agreeButton" class="esri-button">Submit</button>
 	</div>
+
+	<!--slider for layerlist-->
+	<div id="layerpanel" class="cd-panel from-right do-not-print">
+		<header class="cd-panel-header shortcontainer">
+			<h1>Layers</h1>
+			<a href="#0" class="cd-panel-close">Close</a>
+		</header>
+
+		<div class="cd-panel-container shortcontainer">	
+			<div id="closebar1"></div>		<!-- binding? -->
+			<div class="cd-panel-content">
+				<button class="esri-button" id="reset_button">Reset</button>
+				<div id="accordion" style="border: 1px solid #bbb; border-radius: 20px; padding:0.65em; margin:0.25em;">
+					<ul id="ul_layers"></ul>
+				</div>
+			</div> <!-- cd-panel-content -->
+		</div> <!-- cd-panel-container -->
+	</div> <!-- cd-panel -->
+
+	<div id="termsModal" class="modal">
+		<div class="modal-content">
+			<label class="disclaimertext">
+				<p>Maps, tabular data, and applications presented are developed from public records. While efforts have been made to use the most current and accurate public record data, <b>no warranties</b> as to the accuracy of the data provided are being made by the City of Durham, Durham County, and the mapping and software companies involved. Users of this content should consult public information sources to verify the accuracy of the data provided.</p>                
+			</label>
+			<span class="approval">		
+				<input type="checkbox" id="agreeCheckbox"><label for="agreeCheckbox">I agree to the terms.</label></span>
+			<br><br>
+			<button id="agreeButton" class="esri-button">Submit</button>
+		</div>
+	</div>
+
+<!-- Add to your DOM once -->
+<div class="mdc-snackbar">
+  <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+    <div class="mdc-snackbar__label" aria-atomic="false">
+      Layer failed to load. Try again later.
+    </div>
+    <div class="mdc-snackbar__actions" aria-atomic="true">
+      <button type="button" class="mdc-button mdc-snackbar__action">Dismiss</button>
+    </div>
+  </div>
 </div>
+
+<script>
+  // Initialize once at app start
+  const snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
+
+  generic_nearmap_error_message = "Error loading NearMap Aerials"
+
+  // Trigger whenever something fails
+  function showToast(msg) {
+    snackbar.labelText = msg;
+    snackbar.timeoutMs = 8000;
+    snackbar.open();
+  } 
+</script>
+
+
+
 </body>
 
 <style>

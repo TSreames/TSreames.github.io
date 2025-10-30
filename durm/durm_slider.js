@@ -4,10 +4,12 @@ Handles the slider widget for navigating through historical aerial imagery
 */
 
 define([
-], function() {
+	"esri/layers/support/WMSSublayer"
+], function(WMSSublayer) {
 	return {
 		//Note: This is the ORIGINAL function we moved FROM DURM_LAYERS
 		init_aerial_slider: function(){
+			sliderscope = this;
 			// Critical that this runs AFTER aerials have been added to map.
 			// durm.aeriallist should already be populated by add_aerials()
 			if (!durm.aeriallist || durm.aeriallist.length === 0) {
@@ -53,13 +55,7 @@ define([
 				// commit selected index and update map layers
 				durm.aparam = value;
 				push_new_url();
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					if (i == value) {
-						durm.aeriallist[i].visible = true;
-					} else {
-						durm.aeriallist[i].visible = false;
-					}
-				}
+				sliderscope.switch_to_aerial(value);
 			}, 1000);
 
 			// immediate UI feedback on input; heavy work deferred by debounce
@@ -75,174 +71,87 @@ define([
 				if (durm._debouncedAerialChange && durm._debouncedAerialChange.cancel) durm._debouncedAerialChange.cancel();
 				durm.aparam = v;
 				push_new_url();
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					if (i == v) {
-						durm.aeriallist[i].visible = true;
-					} else {
-						durm.aeriallist[i].visible = false;
-					}
-				}
+				sliderscope.switch_to_aerial(v);
 			});
 		},
+		switch_to_aerial: function(index) {
+			const item = durm.aeriallist[index];
 
-		//Note: This is the NEW function we're going to use when we start splitting NearMap and non-Nearmap aerials up.
-		init_aerial_slider_NEW: function(){
-			// Critical that this runs AFTER aerials have been added to map.
-			//Slider
-			durm.defaultaerialid = 39; //This is used to specify which aerial is the default, as defined by its place in aeriallist[]
-
-			// Build aeriallist based on whether nearmap is available
-			durm.aeriallist = this.build_aerial_list();
-
-			durm.aeriallist_ids = []
-			for (i = 0; i < durm.aeriallist.length; i++) {
-				durm.aeriallist_ids.push(durm.aeriallist[i].id)
+			if (!item) {
+				console.error("No item at index", index);
+				return;
 			}
 
-			let sliderholder = document.createElement('div')
-			sliderholder.id = "sliderDiv"
-			sliderholder.className = "sliderholder"
-			sliderholder.style.visibility = "hidden";
-			document.getElementById("bodycontainer").appendChild(sliderholder);
+			console.log("Switching to aerial index", index, "type:", item.type, "title:", item.title);
 
-			durm.sliderinput = document.createElement("input") //note :input elements for sliders styled globally.
-			durm.sliderinput.id = "rangeinput"
-			durm.sliderinput.type = "range"
+			if (item.type === "standard") {
+				// Traditional: Hide all layers, show selected one
+				console.log("  Type is STANDARD, hiding all enterprise aerials");
+				this.hide_all_enterprise_aerials();
 
+				// Hide nearmap if it was showing
+				if (durm.nearmap_master_layer) {
+					console.log("  Hiding nearmap master layer");
+					durm.nearmap_master_layer.visible = false;
+				}
 
-			durm.sliderinput.min = 0;
-			durm.sliderinput.max = durm.aeriallist.length-1;
-			sliderholder.appendChild(durm.sliderinput)
+				// Show selected standard layer
+				if (item.layer) {
+					//console.log("  Setting layer visible:", item.layer.id);
+					item.layer.visible = true;
+					//console.log("  Layer visible is now:", item.layer.visible);
+				} else {
+					console.error("  ERROR: item.layer is null/undefined!");
+				}
 
-			let sliderlabel = document.createElement('div')
-			sliderlabel.id = "outputlabel"
-			sliderholder.appendChild(sliderlabel)
+			} else if (item.type === "nearmap-virtual") {
+				// Nearmap WMS: Update which sublayers are visible on master layer
+				//console.log("  Type is NEARMAP-VIRTUAL, hiding all enterprise aerials");
+				this.hide_all_enterprise_aerials();
 
-			durm.ainput = document.getElementById('rangeinput');
-			durm.aoutput = document.getElementById('outputlabel');
+				if (durm.nearmap_master_layer) {
+					//console.log("  Nearmap master layer exists, updating sublayers");
+					//console.log("  Item has", item.sublayers?.length || 0, "sublayers");
 
-			// create a debounced handler that will do the heavy work (push_new_url + toggling)
-			// label updates are cheap and done immediately for UI feedback
-			durm._debouncedAerialChange = this.slider_debounce(function (value) {
-				// commit selected index and update map layers
-				durm.aparam = value;
-				push_new_url();
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					if (i == value) {
+					// Update title
+					durm.nearmap_master_layer.title = item.title;
+
+					// Replace the sublayers array with new WMSSublayer instances
+					if (item.sublayers && item.sublayers.length > 0) {
+						const newSublayers = item.sublayers.map(targetSublayer => {
+							return new WMSSublayer({
+								name: targetSublayer.name,
+								title: targetSublayer.title,
+								visible: true
+							});
+						});
+						durm.nearmap_master_layer.sublayers = newSublayers;
+						//console.log("  Replaced sublayers with", newSublayers.length, "new sublayers");
+					}
+
+					durm.nearmap_master_layer.visible = true;
+					//console.log("  Nearmap master layer visible:", durm.nearmap_master_layer.visible);
+				} else {
+					console.error("  ERROR: durm.nearmap_master_layer is null/undefined!");
+				}
+			} else {
+				// Legacy compatibility: assume it's a layer object with .visible property
+				for (var i = 0; i < durm.aeriallist.length; i++) {
+					if (i == index) {
 						durm.aeriallist[i].visible = true;
 					} else {
 						durm.aeriallist[i].visible = false;
 					}
 				}
-			}, 1000);
-
-			// immediate UI feedback on input; heavy work deferred by debounce
-			durm.ainput.addEventListener('input', function (evt) {
-				var v = parseInt(this.value, 10);
-				durm.aoutput.innerHTML = durm.aeriallist[v].title;
-				durm._debouncedAerialChange(v);
-			});
-
-			// on change (user finished interaction) cancel pending debounce and commit immediately
-			durm.ainput.addEventListener('change', function (evt) {
-				var v = parseInt(this.value, 10);
-				if (durm._debouncedAerialChange && durm._debouncedAerialChange.cancel) durm._debouncedAerialChange.cancel();
-				durm.aparam = v;
-				push_new_url();
-				for (i = 0; i < durm.aeriallist.length; i++) {
-					if (i == v) {
-						durm.aeriallist[i].visible = true;
-					} else {
-						durm.aeriallist[i].visible = false;
-					}
-				}
-			});
+			}
 		},
 
-		build_aerial_list: function() {
-			// Conditionally build the list based on whether nearmap is available
-			if (durm.use_nearmap) {
-				// Full list with nearmap
-				return [
-					durm.aerials1940,
-					durm.soils1983,
-					durm.aerials1988,
-					durm.aerials1994,
-					durm.aerials1999,
-					durm.aerials2002,
-					durm.aerials2005,
-					durm.satellite2007,
-					durm.satellite2008,
-					durm.aerials2008,
-					durm.satellite2009,
-					durm.satellite2010,
-					durm.aerials2010,
-					durm.satellite2011,
-					durm.satellite2012,
-					durm.satellite2013,
-					durm.aerials2013,
-					durm.satellite2014,
-					durm.nearmap2014,
-					durm.satellite2015,
-					durm.nearmap2015_spring,
-					durm.nearmap2015_fall,
-					durm.satellite2016,
-					durm.nearmap2016_spring,
-					durm.nearmap2016_fall,
-					durm.aerials2017,
-					durm.nearmap2017_spring1,
-					durm.nearmap2017_spring2,
-					durm.nearmap2017_fall,
-					durm.nearmap2018_spring,
-					durm.nearmap2018_fall,
-					durm.aerials2019,
-					durm.nearmap2019_spring1,
-					durm.nearmap2019_spring2,
-					durm.nearmap2019_fall,
-					durm.nearmap2020_spring1,
-					durm.nearmap2020_spring2,
-					durm.nearmap2020_fall,
-					durm.nearmap2021_spring1,
-					durm.aerials2021,
-					durm.nearmap2021_fall,
-					durm.nearmap2022_spring1,
-					durm.nearmap2022_spring2,
-					durm.nearmap2022_fall,
-					durm.nearmap2023_winter,
-					durm.nearmap2023_spring,
-					durm.nearmap2023_fall,
-					durm.nearmap2024_spring,
-					durm.nearmap2024_summer,
-					durm.nearmap2024_fall,
-					durm.nearmap2025_winter
-				];
-			} else {
-				// List without nearmap entries
-				return [
-					durm.aerials1940,
-					durm.soils1983,
-					durm.aerials1988,
-					durm.aerials1994,
-					durm.aerials1999,
-					durm.aerials2002,
-					durm.aerials2005,
-					durm.satellite2007,
-					durm.satellite2008,
-					durm.aerials2008,
-					durm.satellite2009,
-					durm.satellite2010,
-					durm.aerials2010,
-					durm.satellite2011,
-					durm.satellite2012,
-					durm.satellite2013,
-					durm.aerials2013,
-					durm.satellite2014,
-					durm.satellite2015,
-					durm.satellite2016,
-					durm.aerials2017,
-					durm.aerials2019,
-					durm.aerials2021
-				];
+		hide_all_enterprise_aerials: function() {
+			for (var i = 0; i < durm.aeriallist.length; i++) {
+				const item = durm.aeriallist[i];
+				if (item.type === "standard" && item.layer) {
+					item.layer.visible = false;
+				}
 			}
 		},
 

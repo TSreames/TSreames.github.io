@@ -57,7 +57,7 @@ define([
 
 				this.add_defaults();
 				try {
-					await durm_aerials.add_aerials();
+					await durm_aerials.add_aerials_HYBRID();
 				} catch (error) {
 					console.error("add_aerials failed:", error);
 				}
@@ -863,6 +863,20 @@ define([
 
 
 
+			durm.restrictedcovenants = new FeatureLayer({
+				id: "restrictedcovenants",
+				title: "Preservation Durham Restricted Covenants",
+				listMode: "show",
+				listcategory: "Planning",
+				layer_order:0,
+				lyr_zindex:8,
+				url: PDRC_URL,
+				icon: "DUR",
+				visible: false
+			});
+			pplt.add_to_map(durm.restrictedcovenants);	
+
+
 
 		},
 		add_permits: async function(){
@@ -1435,6 +1449,7 @@ define([
 			pplt.add_to_map(durm.councilwardslayer);	
 		},
 		add_nconemap: async function(){
+			
 			// Hazards		
 			durm.brownfields = new FeatureLayer({
 				id: "brownfields",
@@ -1795,41 +1810,60 @@ define([
 				pplt.add_to_map(durm.stormwatergroup);
 
 				if (durm.cityportal_available) {
-				durm.securedLayers = []
-				durm.waterlayer = new MapImageLayer({
-					id: "waterlayer",
-					title: "Water Infrastructure (City)",
+					durm.securedLayers = []
+					durm.waterlayer = new MapImageLayer({
+						id: "waterlayer",
+						title: "Water Infrastructure (City)",
+						listMode: "show",
+						layer_order:0,
+						lyr_zindex:8,
+						listcategory: "Utilities",
+						opacity: 0.9,
+						icon: "DUR",
+						visible: false,
+						portalItem: { 
+							id: "8aaffdcf38fa4d91afe3519459f776ab",
+							portal:durm.cityportal
+						}
+					});
+					durm.securedLayers.push(durm.waterlayer);  // ADD AS SECURED
+
+
+					durm.sewerlayer = new MapImageLayer({
+					id: "sewerlayer",
+					title: "Sewer Infrastructure (City)",
+					visible: false,
 					listMode: "show",
+					listcategory: "Utilities",
 					layer_order:0,
 					lyr_zindex:8,
-					listcategory: "Utilities",
-					opacity: 0.9,
 					icon: "DUR",
-					visible: false,
 					portalItem: { 
-						id: "8aaffdcf38fa4d91afe3519459f776ab",
-						portal:durm.cityportal
-					}
-				});
-				durm.securedLayers.push(durm.waterlayer);  // ADD AS SECURED
+							id: "34ebafea5d6745a38e75cb1ccafac279",
+							portal:durm.cityportal
+						},
+					opacity: 0.9
+					});
+					durm.securedLayers.push(durm.sewerlayer); // ADD AS SECURED
 
 
-				durm.sewerlayer = new MapImageLayer({
-				  id: "sewerlayer",
-				  title: "Sewer Infrastructure (City)",
-				  visible: false,
-				  listMode: "show",
-				  listcategory: "Utilities",
-				  layer_order:0,
-				  lyr_zindex:8,
-				  icon: "DUR",
-				  portalItem: { 
-						id: "34ebafea5d6745a38e75cb1ccafac279",
-						portal:durm.cityportal
-					},
-				  opacity: 0.9
-				});
-				durm.securedLayers.push(durm.sewerlayer); // ADD AS SECURED
+					durm.countysewerlayer = new MapImageLayer({
+					id: "countysewerlayer",
+					title: "Sewer Infrastructure (County)",
+					visible: false,
+					listMode: "show",
+					listcategory: "Utilities",
+					layer_order:0,
+					lyr_zindex:8,
+					icon: "DUR",
+					portalItem: { 
+							id: "6edab51d4d1f46f1b89042a8fe2ecf7b",
+							portal:durm.cityportal
+						},
+					opacity: 0.9
+					});
+					durm.securedLayers.push(durm.countysewerlayer); // ADD AS SECURED
+
 				} else {
 					console.log("City Portal not available, Utilities not loaded.")
 				}

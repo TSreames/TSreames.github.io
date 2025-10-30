@@ -1,23 +1,12 @@
 /*
-Matt Reames, 2019
 This module loads the Map and MapView, and begins a cascade of related functions
 */
 
 define([
-    "esri/Map","esri/views/MapView",
-    //"esri/config",
-    "esri/widgets/Popup", "esri/widgets/Popup/PopupViewModel",//"esri/rest/geometryService",
-    "../durm/durm_popups.js",
-    "../durm/durm_gallery.js","../durm/durm_watch.js",
-    "../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js",
-    "../durm/durm_ui.js"
-  ], function(Map, MapView, 
-    //esriConfig,
-    Popup, PopupViewModel, //geometryService,
-    durm_popups,
-    durm_gallery,durm_watch,
-    durm_layers, durm_url, durm_addresstool,
-    durm_ui
+    "esri/Map","esri/views/MapView","esri/widgets/Popup","esri/widgets/Popup/PopupViewModel",
+    "../durm/durm_popups.js","../durm/durm_gallery.js","../durm/durm_watch.js","../durm/durm_layers.js", "../durm/durm_url.js", "../durm/durm_addresstool.js","../durm/durm_ui.js"
+  ], function(Map,MapView,Popup,PopupViewModel,
+    durm_popups,durm_gallery,durm_watch,durm_layers,durm_url,durm_addresstool,durm_ui
   ) {
   return {
     init: function(){
@@ -86,6 +75,8 @@ define([
             await durm_layers.connect_to_portals();
             durm_ui.init();
 
+            durm_ui.load_widgets_pre();
+
             // WAIT for populate to complete
             await durm_layers.populate();
             console.log("✓ All layers ready");
@@ -93,8 +84,8 @@ define([
             // Build layer list UI - CRITICAL: Must run BEFORE URL params
             durm_ui.init_layer_control();
 
-            // Create widgets
-            durm_ui.draw_initial_widgets();
+            // Load widgets after layers populate - generally safer option.
+            durm_ui.load_widgets_deferred();
 
             // Process URL params (moved from whenLoaded)
             this.checkPIDpassed();

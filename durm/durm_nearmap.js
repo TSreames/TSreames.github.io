@@ -4,624 +4,199 @@ Handles checking if Nearmap is accessible and triggering appropriate initializat
 */
 
 define([
-], function() {
+	"esri/layers/WMSLayer",
+	"esri/layers/support/WMSSublayer",
+	"../durm/durm_ui.js",
+	// ARCHIVED: These imports are for ImageLayer approach (kept for future use)
+	// "esri/portal/PortalItem","esri/portal/Portal","esri/layers/Layer",
+	// "esri/layers/VectorTileLayer",
+	// "esri/portal/PortalItem"
+], function(
+	WMSLayer,
+	WMSSublayer,
+	durm_ui
+) {
+	// Module-scoped variables
+	let dateIndex = null;
+	let nearmapBaseLayer = null;
+	let capabilitiesCache = null; // Cached layer data from GetCapabilities XML
+
+	// NEARMAP_WMS_URL = base URL for creating WMS layers (defined in services.js)
+	// NEARMAP_WMS_GETCAPABILITIES_URL = GetCapabilities URL for checking availability (defined in services.js)
 	return {
-		checkNearmap: async function () {
-			console.log("Checking Nearmap URL accessibility...");
-			const controller = new AbortController();
-			const timeout = setTimeout(() => controller.abort(), 4000);
+		// ==========================================
+		// ACTIVE WMS FUNCTIONS
+		// These functions are currently in use for the WMS-based Nearmap system
+		// ==========================================
+
+		// Load and verify Nearmap WMS Layer accessibility
+		// Called by add_aerials_HYBRID in durm_aerials.js
+		load_nearmap_for_WMSLAYER: async function () {
+			//console.log("Creating Nearmap WMS Layer...");
 
 			try {
-				const response = await fetch(`${NEARMAP_URL}?f=pjson`, {
-					method: "GET",
-					mode: "cors",
-					signal: controller.signal
+				nearmapBaseLayer = new WMSLayer({
+					url: NEARMAP_WMS_URL,  // Base URL - ESRI adds WMS params automatically
+					version: "1.1.1",   // Nearmap WMS 2.0 is based on 1.1.1
+					imageFormat: "image/png",
+					transparent: true
 				});
 
-				clearTimeout(timeout);
+				await nearmapBaseLayer.load();
 
-				if (!response.ok) {
-					console.log("Nearmap server returned non-OK status:", response.status);
-					durm.use_nearmap = false;
-				} else {
-					const json = await response.json();
+				//console.log("Nearmap WMS item loaded successfully.");
+				//console.log("  Total sublayers:", nearmapBaseLayer.allSublayers.length);
+				//console.log("  Sublayers initially visible:", nearmapBaseLayer.allSublayers.filter(sl => sl.visible).length);
 
-					if (json.error?.code === 498 || json.error) {
-						console.log("Nearmap error:", json.error);
-						durm.use_nearmap = false;
-					} else {
-						console.log("Nearmap is accessible.");
-						durm.use_nearmap = true;
-					}
-				}
+				durm.use_nearmap = true;
+
+				// Return the loaded WMS layer
+				return {
+					wmsLayer: nearmapBaseLayer
+				};
 
 			} catch (error) {
-				console.log("Nearmap fetch failed. Not adding aerials.");
-				console.log(error);
+				console.log("Nearmap WMS layer check failed:", error);
 				durm.use_nearmap = false;
+				return null;
 			}
+		},
+		// Initialize the base Nearmap layer and build date index with smart grouping
+		init: async function() {
+				try {
+						// Build an index of ALL sublayers by date
+						const rawDateIndex = new Map(); // Map<isoDate, Array<{name, title}>>
+						// Accept single-digit months/days and common Unicode hyphens (\u2010-\u2015)
+						const dateRegex = /\b(20\d{2})[\-\/\u2010-\u2015](\d{1,2})[\-\/\u2010-\u2015](\d{1,2})\b/;
 
+						datelist = ""
 
-			//durm_aerials.add_aerials();   //i don't think we want to run this here. It is an option, though.
+						nearmapBaseLayer.allSublayers.forEach(sl => {
+								const text = `${sl.name} ${sl.title}`;
+								//console.log(sl.title)
+								datelist += " "
+								datelist += sl.title
+								const m = text.match(dateRegex);
+								if (m) {
+										// Zero-pad month and day for consistent ISO format
+										const year = m[1];
+										const month = m[2].padStart(2, '0');
+										const day = m[3].padStart(2, '0');
+										const iso = `${year}-${month}-${day}`; // YYYY-MM-DD
 
-			durm._resolveNearmapCheck();
+										// Store multiple sublayers per date (handles duplicates like "Raleigh 2")
+										if (!rawDateIndex.has(iso)) {
+												rawDateIndex.set(iso, []);
+										}
+										rawDateIndex.get(iso).push({ name: sl.name, title: sl.title });
+								}
+						});
+
+						alert(`Found ${rawDateIndex.size} unique dates with sublayers
+							${datelist}
+							
+							`);
+
+						// Group dates within 14-day windows
+						dateIndex = this.groupDatesByProximity(rawDateIndex, 14);
+
+						console.log(`Grouped into ${dateIndex.size} aerial layer groups`);
+						return true;
+				} catch(e) {
+						console.log("Nearmap initialization failed:", e);
+						return false;
+				}
 		},
 
-		load_nearmap_into_aerial_list: async function(){
+		// Group dates within a proximity window and merge all sublayers
+		groupDatesByProximity: function(rawDateIndex, windowDays) {
+				const grouped = new Map(); // Map<groupKey, {sublayers: Array, startDate: Date, endDate: Date}>
 
-			//Feb 2024   1/28 - 2/15
+				// Sort all dates chronologically
+				const sortedDates = Array.from(rawDateIndex.keys()).sort();
 
-			//May 2024 -  5/27 to 6/1
+				let groupIndex = 0;
+				let currentGroup = null;
+				let currentGroupEndMs = null;
+				const windowMs = windowDays * 24 * 60 * 60 * 1000; // Convert days to milliseconds
 
+				sortedDates.forEach(isoDate => {
+						// Parse YYYY-MM-DD explicitly as UTC to avoid timezone interpretation
+						const parts = isoDate.split('-').map(Number);
+						const currentDateMs = Date.UTC(parts[0], parts[1] - 1, parts[2]);
+						const sublayers = rawDateIndex.get(isoDate);
 
-			durm.nearmap2025_winter = new ImageryLayer({
-				id: "nearmap2025_winter",
-				title: "2025 Nearmap Aerials, Jan",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2025-1-25 20:10:05' AND TIMESTAMP '2025-1-30 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2025_winter);
+						// Start a new group if we don't have one, or if current date is outside the window
+						if (!currentGroup || currentDateMs > currentGroupEndMs) {
+								groupIndex++;
+								const groupKey = `group_${groupIndex}`;
 
+								currentGroup = {
+										sublayers: [],
+										startDateMs: currentDateMs,
+										endDateMs: currentDateMs,
+										isoStart: isoDate,
+										isoEnd: isoDate
+								};
 
-			durm.nearmap2024_fall = new ImageryLayer({
-				id: "nearmap2024_fall",
-				title: "2024 Nearmap Aerials, Oct",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2024-10-20 20:10:05' AND TIMESTAMP '2024-11-10 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2024_fall);
+								// Set the window end to N days from start (in milliseconds)
+								currentGroupEndMs = currentDateMs + windowMs;
 
+								grouped.set(groupKey, currentGroup);
+						}
 
+						// Add all sublayers from this date to the current group (merges duplicates)
+						currentGroup.sublayers.push(...sublayers);
 
+						// Update end date
+						if (currentDateMs > currentGroup.endDateMs) {
+								currentGroup.endDateMs = currentDateMs;
+								currentGroup.isoEnd = isoDate;
+						}
+				});
 
+				// Convert grouped data to the format expected by create_nearmap_virtual_layer_for_WMSLAYER
+				// We'll use the isoStart as the map key for compatibility
+				const finalIndex = new Map();
 
+				grouped.forEach((group, key) => {
+						// Generate friendly title using UTC milliseconds
+						const title = this.generateGroupTitle(group.startDateMs, group.endDateMs);
 
-			durm.nearmap2024_summer = new ImageryLayer({
-				id: "nearmap2024_summer",
-				title: "2024 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2024-05-27 20:10:05' AND TIMESTAMP '2024-06-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2024_summer);
+						finalIndex.set(group.isoStart, {
+								sublayers: group.sublayers,
+								startDate: group.isoStart,
+								endDate: group.isoEnd,
+								title: title
+						});
+				});
 
-			durm.nearmap2024_spring = new ImageryLayer({
-				id: "nearmap2024_spring",
-				title: "2024 Nearmap Aerials, February",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2024-01-26 20:10:05' AND TIMESTAMP '2024-02-15 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2024_spring);
-
-			durm.nearmap2023_fall = new ImageryLayer({
-				id: "nearmap2023_fall",
-				title: "2023 Nearmap Aerials, October",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-10-01 20:10:05' AND TIMESTAMP '2023-10-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2023_fall);
+				return finalIndex;
+		},
 
 
-			durm.nearmap2023_spring = new ImageryLayer({
-				id: "nearmap2023_spring",
-				title: "2023 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-05-04 20:10:05' AND TIMESTAMP '2023-05-11 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2023_spring);
+		// Generate friendly title like "2022 Nearmap Aerials, Jan-Feb"
+		// Accepts UTC milliseconds (startDateMs, endDateMs) to avoid timezone issues
+		generateGroupTitle: function(startDateMs, endDateMs) {
+				const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-			durm.nearmap2023_winter = new ImageryLayer({
-				id: "nearmap2023_winter",
-				title: "2023 Nearmap Aerials, Jan",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2023-01-22 20:10:05' AND TIMESTAMP '2023-01-28 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2023_winter);
+				// Extract UTC year and month from milliseconds
+				const startDate = new Date(startDateMs);
+				const endDate = new Date(endDateMs);
+				const year = startDate.getUTCFullYear();
+				const startMonth = startDate.getUTCMonth();
+				const endMonth = endDate.getUTCMonth();
 
-
-			durm.nearmap2022_fall = new ImageryLayer({
-				id: "nearmap2022_fall",
-				title: "2022 Nearmap Aerials, Oct",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-10-16 20:10:05' AND TIMESTAMP '2022-10-19 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2022_fall);
-
-			durm.nearmap2022_spring2 = new ImageryLayer({
-				id: "nearmap2022_spring2",
-				title: "2022 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-05-01 20:10:05' AND TIMESTAMP '2022-07-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2022_spring2);
-
-			durm.nearmap2022_spring1 = new ImageryLayer({
-				id: "nearmap2022_spring1",
-				title: "2022 Nearmap Aerials, Feb",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2022-02-01 20:10:05' AND TIMESTAMP '2022-02-07 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2022_spring1);
-
-			durm.nearmap2021_fall = new ImageryLayer({
-				id: "nearmap2021_fall",
-				title: "2021 Nearmap Aerials, Nov",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-11-01 20:10:05' AND TIMESTAMP '2021-12-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2021_fall);
-
-
-			durm.nearmap2021_spring2 = new ImageryLayer({
-				id: "nearmap2021_spring2",
-				title: "2021 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-05-01 20:10:05' AND TIMESTAMP '2021-06-05 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2021_spring2);
-
-			durm.nearmap2021_spring1 = new ImageryLayer({
-				id: "nearmap2021_spring1",
-				title: "2021 Nearmap Aerials, Jan",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2021-01-01 20:10:05' AND TIMESTAMP '2021-02-05 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2021_spring1);
-			
-			durm.nearmap2020_fall = new ImageryLayer({
-				id: "nearmap2020_fall",
-				title: "2020 Nearmap Aerials, Sep",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-09-01 20:10:05' AND TIMESTAMP '2020-10-02 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2020_fall);	
-
-			durm.nearmap2020_spring2 = new ImageryLayer({
-				id: "nearmap2020_spring2",
-				title: "2020 Nearmap Aerials, May-Jun",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-05-01 20:10:05' AND TIMESTAMP '2020-07-02 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2020_spring2);	
-
-			durm.nearmap2020_spring1 = new ImageryLayer({
-				id: "nearmap2020_spring1",
-				title: "2020 Nearmap Aerials, Jan",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2020-01-01 20:10:05' AND TIMESTAMP '2020-02-02 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2020_spring1);	
-
-			durm.nearmap2019_fall = new ImageryLayer({
-				id: "nearmap2019_fall",
-				title: "2019 Nearmap Aerials, Oct-Nov",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-10-01 20:10:05' AND TIMESTAMP '2019-12-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2019_fall);	
-
-			durm.nearmap2019_spring2 = new ImageryLayer({
-				id: "nearmap2019_spring2",
-				title: "2019 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-05-01 20:10:05' AND TIMESTAMP '2019-06-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2019_spring2);	
-
-			durm.nearmap2019_spring1 = new ImageryLayer({
-				id: "nearmap2019_spring1",
-				title: "2019 Nearmap Aerials, Jan",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2019-01-01 20:10:05' AND TIMESTAMP '2019-02-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2019_spring1);	
-
-			durm.nearmap2018_fall = new ImageryLayer({
-				id: "nearmap2018_fall",
-				title: "2018 Nearmap Aerials, Sep-Oct",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-09-01 20:10:05' AND TIMESTAMP '2018-11-01 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2018_fall);	
-
-			durm.nearmap2018_spring = new ImageryLayer({
-				id: "nearmap2018_spring",
-				title: "2018 Nearmap Aerials, Jan-Feb",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2018-01-01 20:10:05' AND TIMESTAMP '2018-02-26 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2018_spring);	
-
-			durm.nearmap2017_fall = new ImageryLayer({
-				id: "nearmap2017_fall",
-				title: "2017 Nearmap Aerials, Sep-Nov",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-09-01 20:10:05' AND TIMESTAMP '2017-11-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2017_fall);	
-
-			durm.nearmap2017_spring2 = new ImageryLayer({
-				id: "nearmap2017_spring2",
-				title: "2017 Nearmap Aerials, May",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-05-01 20:10:05' AND TIMESTAMP '2017-05-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2017_spring2);			
-
-			durm.nearmap2017_spring1 = new ImageryLayer({
-				id: "nearmap2017_spring1",
-				title: "2017 Nearmap Aerials, Jan-Feb",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2017-01-01 20:10:05' AND TIMESTAMP '2017-03-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2017_spring1);					
-
-			durm.nearmap2016_fall = new ImageryLayer({
-				id: "nearmap2016_fall",
-				title: "2016 Nearmap Aerials, Sep",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-09-01 20:10:05' AND TIMESTAMP '2016-09-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2016_fall);							
-
-			durm.nearmap2016_spring = new ImageryLayer({
-				id: "nearmap2016_spring",
-				title: "2016 Nearmap Aerials, Feb-Mar",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2016-02-01 20:10:05' AND TIMESTAMP '2016-03-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2016_spring);				
-
-			durm.nearmap2015_fall = new ImageryLayer({
-				id: "nearmap2015_fall",
-				title: "2015 Nearmap Aerials, Nov",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-11-01 20:10:05' AND TIMESTAMP '2015-11-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2015_fall);
-
-			durm.nearmap2015_spring = new ImageryLayer({
-				id: "nearmap2015_spring",
-				title: "2015 Nearmap Aerials, Mar",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2015-03-01 20:10:05' AND TIMESTAMP '2015-03-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2015_spring);
-
-			durm.nearmap2014 = new ImageryLayer({
-				id: "nearmap2014",
-				title: "2014 Nearmap Aerials, Oct-Nov",
-				listMode: "hide",
-				listcategory: "Aerial Photos, Historical",
-				layer_order:0,
-				lyr_zindex:1,
-				url: NEARMAP_URL,
-				loadingtype: "nearmap",
-				icon: "DUR",
-				visible: false, legendEnabled: false, popupEnabled: false,
-				opacity:1,
-				minScale:0,
-				maxScale:564,
-				popupEnabled:false,
-				definitionExpression: "acquisitiondate BETWEEN TIMESTAMP '2014-10-01 20:10:05' AND TIMESTAMP '2014-11-29 20:20:20'"
-			});				
-			pplt.add_to_map(durm.nearmap2014);
-			//Nearmap items used to load here.
-
-			pplt.add_all_layers_to_map(aerials2load);
-
-			//durm_slider.init_aerial_slider();
-
-		
-			console.log("Aerials and Historical Imagery loaded");
+				if (startMonth === endMonth) {
+						// Same month
+						return `${year} Nearmap Aerials, ${monthNames[startMonth]}`;
+				} else {
+						// Spans months
+						return `${year} Nearmap Aerials, ${monthNames[startMonth]}-${monthNames[endMonth]}`;
+				}
+		},
+		getDateIndex: function() {
+			return dateIndex;
 		}
-		
 	};
 });

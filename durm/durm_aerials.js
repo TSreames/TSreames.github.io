@@ -8,19 +8,25 @@ define([
 	"esri/layers/TileLayer",
 	"esri/layers/VectorTileLayer",
 	"esri/layers/ImageryLayer",
+	"esri/portal/PortalItem","esri/portal/Portal","esri/layers/Layer",
+	"esri/layers/support/WMSSublayer",
 	"../durm/durm_slider.js","../durm/durm_nearmap.js",
 	"../js/durm_aerial_metadata.js",
-], function(PortalItem, TileLayer, VectorTileLayer, ImageryLayer, durm_slider,durm_nearmap, AERIAL_METADATA) {    //Maybe remove the durm_slider import?
+], function(PortalItem, TileLayer, VectorTileLayer, ImageryLayer,
+	PortalItem,Portal,Layer,
+	WMSSublayer,
+	durm_slider,durm_nearmap, AERIAL_METADATA) {    //Maybe remove the durm_slider import?
 	return {
-		// Helper function to create a layer from metadata
-		create_layer_from_metadata: function(metadata) {
+
+
+		// For traditional aerials - creates actual layers
+		create_standard_layer: function(metadata) {
 			// Replace placeholder URLs with actual values
 			let url = metadata.url;
 			if (url === "NEARMAP_URL") {
 				url = NEARMAP_URL;
 			}
 
-			// Build layer configuration object
 			const layerConfig = {
 				id: metadata.id,
 				title: metadata.title,
@@ -31,17 +37,20 @@ define([
 				url: url,
 				loadingtype: metadata.loadingtype,
 				icon: metadata.icon,
-				visible: metadata.visible,
+				visible: false, // Start hidden
 				legendEnabled: metadata.legendEnabled,
 				popupEnabled: metadata.popupEnabled
 			};
 
-			// Add nearmap-specific properties
-			if (metadata.isNearmap) {
+			// Add layer-type specific properties
+			if (metadata.opacity !== undefined) {
 				layerConfig.opacity = metadata.opacity;
+			}
+			if (metadata.minScale !== undefined) {
 				layerConfig.minScale = metadata.minScale;
+			}
+			if (metadata.maxScale !== undefined) {
 				layerConfig.maxScale = metadata.maxScale;
-				layerConfig.definitionExpression = metadata.definitionExpression;
 			}
 
 			// Create the appropriate layer type
@@ -55,161 +64,325 @@ define([
 			// Store metadata on the layer for sorting
 			if (layer) {
 				layer.sortDate = metadata.sortDate;
-				layer.sliderIndex = metadata.sliderIndex;
-				layer.isNearmap = metadata.isNearmap;
+				layer.layerType = "standard"; // Mark as standard
 			}
 
 			return layer;
 		},
 
-		add_aerials: async function(){
-			// Start the nearmap check
-			durm_nearmap.checkNearmap();
+		// For nearmap - returns metadata wrapper, not actual layer.  This only works for "Esri Imageserver" version of aerials, not "WMS version"
+		// We don't want to use this anymore, but we still want to keep it around, in case we ever decide to use ImageLayer again.
+		create_nearmap_virtual_layer_for_IMAGELAYER: function(metadata) {
+			return {
+				type: "nearmap-virtual",
+				id: metadata.id,
+				title: metadata.title,
+				sortDate: metadata.sortDate,
+				definitionExpression: metadata.definitionExpression,    //<<------  This isn't going to work with WMS, because WMS does not use definitionexpression at all!
+				metadata: metadata
+			};
+		},
+		// Creates a virtual layer for WMS by finding matching sublayers from dateIndex
+	create_nearmap_virtual_layer_for_WMSLAYER: function(metadata) {
+			// Blocked months in YYYY-MM format - add months here to exclude them
+			//const blockedMonths = ['2023-05','2021-11','2020-01'];  // Note: Some months have broken imagery
+			blockedMonths = []
 
-			// Wait for nearmap check to complete
-			await durm.nearmapCheckComplete;
+			// Parse the date range from definitionExpression
+			// Format: "acquisitiondate BETWEEN TIMESTAMP '2024-10-20 ...' AND TIMESTAMP '2024-11-10 ...'"
+			let match = metadata.definitionExpression?.match(/TIMESTAMP '(\d{4}-\d{1,2}-\d{1,2}).*?AND TIMESTAMP '(\d{4}-\d{1,2}-\d{1,2})/);
+			if (!match) {
+					console.warn(`Could not parse date range for ${metadata.id}`);
+					return null;
+			}
 
-			if (durm.use_nearmap) {
-				console.log("Adding aerials after Nearmap passed check.");
+			let startDate = match[1];
+			let endDate = match[2];
+
+			// Find matching groups from the dateIndex
+			let dateIndex = durm_nearmap.getDateIndex();
+			if (!dateIndex) {
+					console.warn("Date index not available yet");
+					return null;
+			}
+
+			let startD = new Date(startDate);
+			let endD = new Date(endDate);
+			let matchingSublayers = [];
+
+			for (let [groupStartDate, groupData] of dateIndex.entries()) {
+					const groupStart = new Date(groupData.startDate);
+					const groupEnd = new Date(groupData.endDate);
+
+					// Check if this group overlaps with the requested date range
+					if (groupStart <= endD && groupEnd >= startD) {
+							// Check if this group is in a blocked month
+							const year = groupStart.getFullYear();
+							const month = String(groupStart.getMonth() + 1).padStart(2, '0');
+							const yearMonth = `${year}-${month}`;
+
+							if (blockedMonths.includes(yearMonth)) {
+									console.log(`Blocking group starting ${groupStartDate} (falls in blocked month ${yearMonth})`);
+									continue; // Skip this group
+							}
+
+							// Add ALL sublayers from this group (includes merged duplicates)
+							matchingSublayers.push(...groupData.sublayers);
+					}
+			}
+
+			if (matchingSublayers.length === 0) {
+					console.warn(`No WMS sublayers found for ${metadata.id} (${startDate} to ${endDate})`);
+					return null;
+			}
+
+			// Use the title from the grouped data
+			let friendlyTitle = null;
+			for (let [groupStartDate, groupData] of dateIndex.entries()) {
+					const groupStart = new Date(groupData.startDate);
+					const groupEnd = new Date(groupData.endDate);
+					if (groupStart <= endD && groupEnd >= startD) {
+							friendlyTitle = groupData.title;
+							break;
+					}
+			}
+
+			// Fallback title if needed
+			if (!friendlyTitle) {
+					const firstDate = new Date(startDate);
+					const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+					friendlyTitle = `${firstDate.getFullYear()} Nearmap Aerials, ${monthNames[firstDate.getMonth()]}`;
+			}
+
+			return {
+					type: "nearmap-virtual",
+					id: metadata.id,
+					title: friendlyTitle,
+					sortDate: metadata.sortDate,
+					sublayers: matchingSublayers, // Now includes ALL merged sublayers
+					metadata: metadata
+			};
+	},
+
+		add_aerials_HYBRID: async function() {
+			// 1. Check nearmap WMS availability and load base layer
+			const nearmapData = await durm_nearmap.load_nearmap_for_WMSLAYER();
+
+			if (durm.use_nearmap && nearmapData) {
+				console.log("Nearmap WMS loaded successfully");
+
+				// 2. Store the master WMS layer and initialize date index
+				durm.nearmap_master_layer = nearmapData.wmsLayer;
+
+				// Set custom properties on the master layer
+				durm.nearmap_master_layer.id = "nearmap_master";
+				durm.nearmap_master_layer.title = "Nearmap Aerials";
+				durm.nearmap_master_layer.listMode = "hide";
+				durm.nearmap_master_layer.listcategory = "Aerial Photos, Historical";
+				durm.nearmap_master_layer.layer_order = 0;
+				durm.nearmap_master_layer.lyr_zindex = 1;
+				durm.nearmap_master_layer.visible = false; // Start hidden
+				durm.nearmap_master_layer.opacity = 1;
+				durm.nearmap_master_layer.minScale = 0;
+				durm.nearmap_master_layer.maxScale = 564;
+				durm.nearmap_master_layer.popupEnabled = false;
+				durm.nearmap_master_layer.legendEnabled = false;
+				durm.nearmap_master_layer.loadingtype = "nearmap";
+
+				// Add the master layer to map (initially hidden, sublayers will be managed dynamically)
+				pplt.add_to_map(durm.nearmap_master_layer);
+
+				// Wait for the WMS layer to load, then initialize date index
+				await durm.nearmap_master_layer.when();
+				await durm_nearmap.init(); // Build dateIndex from capabilities or sublayers
+				console.log("Created master Nearmap WMS layer");
 			} else {
-				console.log("Skipping Nearmap imagery due to failed check.");
+				console.log("Nearmap unavailable - using traditional aerials only");
+				showToast(generic_nearmap_error_message);
 			}
 
-			// Collect all layers from metadata
-			const allLayers = [];
-
-			// Process non-nearmap layers from webgis2 array
+			// 3. Create traditional layers (one per time period)
+			const traditionalLayers = [];
 			for (const metadata of AERIAL_METADATA.webgis2) {
-				const layer = this.create_layer_from_metadata(metadata);
+				const layer = this.create_standard_layer(metadata);
 				if (layer) {
 					durm[metadata.id] = layer;
-					allLayers.push(layer);
+					traditionalLayers.push(layer);
 					pplt.add_to_map(layer);
 				}
 			}
+			console.log(`Created ${traditionalLayers.length} enterprise aerial layers`);
 
-			// Process nearmap array - check if nearmap is available for nearmap layers
-			for (const metadata of AERIAL_METADATA.nearmap) {
-				// Skip nearmap layers if nearmap is not available
-				if (metadata.isNearmap && !durm.use_nearmap) {
-					continue;
+			// 4. Actually add all aerial layers to the map
+			pplt.add_all_layers_to_map(aerials2load);
+			//console.log("Added all aerial layers to map");
+
+			// 5. Store nearmap metadata and map to WMS sublayers
+			durm.nearmap_virtual_layers = [];
+			if (durm.use_nearmap) {
+				for (const metadata of AERIAL_METADATA.nearmap) {
+					const virtualLayer = this.create_nearmap_virtual_layer_for_WMSLAYER(metadata);
+					if (virtualLayer) {
+						durm.nearmap_virtual_layers.push(virtualLayer);
+						// Also store in durm object for consistency
+						durm[metadata.id] = virtualLayer;
+					}
 				}
+				console.log(`Created ${durm.nearmap_virtual_layers.length} nearmap layers`);
+			}
 
-				const layer = this.create_layer_from_metadata(metadata);
-				if (layer) {
-					durm[metadata.id] = layer;
-					allLayers.push(layer);
-					pplt.add_to_map(layer);
+			// 6. Build combined slider array
+			this.build_aerial_slider_HYBRID();
+		},
+
+		build_aerial_slider_HYBRID: function() {
+			const sliderItems = [];
+
+			//console.log("AERIAL_METADATA.webgis2 length:", AERIAL_METADATA.webgis2.length);
+			//console.log("durm.nearmap_virtual_layers length:", durm.nearmap_virtual_layers ? durm.nearmap_virtual_layers.length : 0);
+
+			// Combine both metadata arrays and process based on loadingtype
+			const allMetadata = [...AERIAL_METADATA.webgis2, ...AERIAL_METADATA.nearmap];
+
+			for (const metadata of allMetadata) {
+				// Skip nearmap if unavailable
+				if (metadata.loadingtype === "nearmap" && !durm.use_nearmap) continue;
+
+				if (metadata.loadingtype === "nearmap") {
+					// Nearmap virtual layer (WMS-based)
+					const virtualLayer = durm.nearmap_virtual_layers.find(v => v.id === metadata.id);
+					if (virtualLayer) {
+						sliderItems.push({
+							type: "nearmap-virtual",
+							id: virtualLayer.id,
+							title: virtualLayer.title,
+							sortDate: virtualLayer.sortDate,
+							sublayers: virtualLayer.sublayers // WMS sublayer info, not definitionExpression
+						});
+					}
+				} else {
+					// Enterprise tile layer (standard)
+					const layer = durm[metadata.id];
+					if (layer && layer.visible !== undefined) {
+						sliderItems.push({
+							type: "standard",
+							id: layer.id,
+							title: layer.title,
+							sortDate: layer.sortDate,
+							layer: layer // Direct reference to layer
+						});
+					}
 				}
 			}
 
-			// Sort layers by date chronologically
-			allLayers.sort((a, b) => {
+			// Sort by sortDate (chronological order)
+			sliderItems.sort((a, b) => {
 				const dateA = new Date(a.sortDate);
 				const dateB = new Date(b.sortDate);
 				return dateA - dateB;
 			});
 
-			// Add all layers to the map
-			pplt.add_all_layers_to_map(aerials2load);
+			// Assign sliderIndex based on array position
+			sliderItems.forEach((item, index) => {
+				item.sliderIndex = index;
+			});
 
-			// Build aeriallist for slider
-			durm.aeriallist = [];
+			// Store in durm.aeriallist for slider
+			durm.aeriallist = sliderItems;
 
-			// Combine both metadata arrays
-			const allMetadata = [...AERIAL_METADATA.webgis2, ...AERIAL_METADATA.nearmap];
-
-			// Filter and collect layers with valid sliderIndex
-			for (const metadata of allMetadata) {
-				// Skip if no sliderIndex defined
-				if (metadata.sliderIndex === null) {
-					continue;
-				}
-
-				// Skip nearmap layers if nearmap not available
-				if (metadata.isNearmap && !durm.use_nearmap) {
-					continue;
-				}
-
-				// Get the layer from durm object
-				const layer = durm[metadata.id];
-				if (layer) {
-					durm.aeriallist.push(layer);
-				}
-			}
-
-			// Sort by sliderIndex
-			durm.aeriallist.sort((a, b) => a.sliderIndex - b.sliderIndex);
-
-			// Default to newest available aerial (last in chronologically sorted list)
-			const nonNearmapAerials = durm.aeriallist.filter(layer => !layer.isNearmap);
-			if (nonNearmapAerials.length > 0) {
-				// Get the last non-nearmap aerial (newest)
-				const newestNonNearmap = nonNearmapAerials[nonNearmapAerials.length - 1];
-				durm.defaultaerialid = durm.aeriallist.indexOf(newestNonNearmap);
+			// Default to newest non-nearmap aerial
+			const nonNearmapItems = sliderItems.filter(item => item.type === "standard");
+			if (nonNearmapItems.length > 0) {
+				const newestNonNearmap = nonNearmapItems[nonNearmapItems.length - 1];
+				durm.defaultaerialid = sliderItems.indexOf(newestNonNearmap);
 			} else {
-				// No non-Nearmap aerials found, use newest overall
-				durm.defaultaerialid = durm.aeriallist.length - 1;
+				durm.defaultaerialid = sliderItems.length - 1;
 			}
-			console.log(`Built aeriallist with ${durm.aeriallist.length} layers, default: ${durm.defaultaerialid} (${durm.aeriallist[durm.defaultaerialid]?.title})`);
+
+			console.log(`Built slider with ${sliderItems.length} items (${nonNearmapItems.length} standard, ${sliderItems.length - nonNearmapItems.length} nearmap-virtual)`);
 
 			// Initialize the aerial slider
 			durm_slider.init_aerial_slider();
-
-			console.log("Aerials and Historical Imagery loaded");
 		},
 
-		//This is the stub for the NEW add_aerials function that we're going to use when we split NearMap and non-Nearmap
-		add_aerials_NEW: async function(){
-			console.log("add aerials")
-			/* This is used for labeling during Aerial Mode.  It is not turned on/off via layerlist. */
-			durm.aeriallabels_item = new PortalItem({ id: "eb214cb984ac42ad9156977c52c1bdb7" });
-			durm.aeriallabelsVT = new VectorTileLayer({
-				id: "aeriallabels",
-				title: "Road Labels for Aerial Photos",
-				listcategory: "Cartographic",
-				portalItem:durm.aeriallabels_item,
-				layer_order:0,
-				lyr_zindex:9,
-				listMode: "hide",
-				icon: "DUR",
-				visible: false
-			});
-			pplt.add_to_map(durm.aeriallabelsVT);
+		// Show a specific aerial by index - handles both standard and nearmap-virtual layers
+		// This will necessarily be fired as part of enabling aerials -- at the present moment it's part of the init chain for enabling aerials.
+		show_aerial_by_index: function(aerialid) {
+			console.log(`show_aerial_by_index called with ${aerialid}, aeriallist length: ${durm.aeriallist?.length}`);
 
-			// Non-nearmap aerials - always added
-			this.add_non_nearmap_aerials();
-
-			// Nearmap aerials - only add if use_nearmap is true
-			if (durm.use_nearmap) {
-				this.add_nearmap_aerials();
+			if (aerialid < 0 || aerialid >= durm.aeriallist.length) {
+				console.error(`Invalid aerial index: ${aerialid}`);
+				return false;
 			}
 
-			// Add all aerial layers to map
-			durm_layers.add_all_layers_to_map(aerials2load);
+			const item = durm.aeriallist[aerialid];
 
-			// Initialize slider
-			durm_slider.init_aerial_slider();
+			if (item.type === "standard" && item.layer) {
+				//console.log(`Showing standard layer: ${item.layer.id}`);
+				item.layer.visible = true;
+				return true;
+			} else if (item.type === "nearmap-virtual" && durm.nearmap_master_layer) {
+				//console.log(`Showing nearmap-virtual: ${item.title}`);
+				//console.log(`[VERIFY] durm.nearmap_master_layer in map: ${durm.map.layers.includes(durm.nearmap_master_layer)}, loaded: ${durm.nearmap_master_layer.loaded}, visible: ${durm.nearmap_master_layer.visible}`);
 
-			console.log("Aerials and Historical Imagery loaded");
+				// Update title first
+				durm.nearmap_master_layer.title = item.title;
+
+				// For WMS: Update the sublayers property to show only the desired sublayers
+				// instead of hiding all and then showing some
+				if (item.sublayers && item.sublayers.length > 0) {
+					// Create new WMSSublayer instances for the desired sublayers
+					const newSublayers = item.sublayers.map(targetSublayer => {
+						return new WMSSublayer({
+							name: targetSublayer.name,
+							title: targetSublayer.title,
+							visible: true
+						});
+					});
+
+					// Replace the sublayers array
+					durm.nearmap_master_layer.sublayers = newSublayers;
+				}
+
+				// Make layer visible
+				durm.nearmap_master_layer.visible = true;
+
+				// Handle async loading
+				durm.nearmap_master_layer.when(() => {
+					//console.log(`RESOLVED: Nearmap layer showing: ${item.title}`);
+				}, (error) => {
+					console.error(`Nearmap layer failed to load:`, error);
+				});
+
+				return true;
+			} else {
+				// Legacy: assume direct layer object
+				if (item.visible !== undefined) {
+					item.visible = true;
+					return true;
+				}
+			}
+
+			console.error(`Could not show aerial at index ${aerialid}`);
+			return false;
 		},
 
-		add_non_nearmap_aerials: function() {
-			// Satellite and historical aerials (not nearmap)
-			// These are always added regardless of nearmap status
+		// Hide all aerials - handles both standard and nearmap-virtual layers
+		hide_all_aerials: function() {
+			for (let i = 0; i < durm.aeriallist.length; i++) {
+				const item = durm.aeriallist[i];
+				if (item.type === "standard" && item.layer) {
+					item.layer.visible = false;
+				} else if (item.visible !== undefined) {
+					// Legacy: direct layer object
+					item.visible = false;
+				}
+			}
 
-			// Placeholder - will be filled with actual layer definitions
-			// from durm_layers.js add_aerials function
-			console.log("Adding non-nearmap aerials");
-		},
-
-		add_nearmap_aerials: function() {
-			// Nearmap-specific layers
-			// Only called if durm.use_nearmap is true
-
-			// Placeholder - will be filled with actual nearmap layer definitions
-			// from durm_layers.js add_aerials function
-			console.log("Adding nearmap aerials");
+			// Hide nearmap master layer if it exists
+			if (durm.nearmap_master_layer) {
+				durm.nearmap_master_layer.visible = false;
+			}
 		}
 	};
 });

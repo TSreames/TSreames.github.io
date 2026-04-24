@@ -1,0 +1,2 @@
+import{g_ as s,g$ as r,hd as n,h0 as u,N as i}from"./index-PHof08fv.js";import{execute as f,executeMany as m}from"./operatorIntersection-Chd2tWcY.js";function g(a,c){const t=s(a),e=t.getSpatialReference();return r(f(t.getGeometry(),n(c),e),e)}function y(a,c){const[t,e]=u(a);return m(t,n(c),e,7).map(o=>r(o,e)).filter(i)}export{g as execute,y as executeMany};
+//# sourceMappingURL=intersectionOperator-BEodFls9.js.map

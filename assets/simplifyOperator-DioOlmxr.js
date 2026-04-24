@@ -1,0 +1,2 @@
+import{t as c,s as f,o as i,u as p}from"./operatorSimplify-CWI8HbrX.js";import{dH as o,dI as u,dJ as r,dK as n}from"./index-PHof08fv.js";function l(t){const e=o(t);return u(c(n(t),r(e),!1),e)}function m(t){const e=t.map(n),s=o(t);return p(e,r(s),!1).map(a=>u(a,s))}function d(t){return i(n(t),r(o(t)),!1)}const _=f(),y=Object.freeze(Object.defineProperty({__proto__:null,execute:l,executeMany:m,isSimple:d,supportsCurves:_},Symbol.toStringTag,{value:"Module"}));export{d as c,y as f,l as u};
+//# sourceMappingURL=simplifyOperator-DioOlmxr.js.map

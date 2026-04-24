@@ -1,0 +1,2 @@
+import{cS as t,g as n,N as o}from"./index-PHof08fv.js";function i(e){if(!e)return[];let r=t(e)?[e]:n.isCollection(e)?e.toArray():Array.isArray(e)?e:[];return r=r==null?void 0:r.filter(o),((r==null?void 0:r.length)??0)===0?[]:r}function l(e){return!!(e&&typeof e=="object"&&"pixelRanges"in e&&e.pixelRanges)}function s(e){return Array.isArray(e.pixelRanges)&&e.pixelRanges.length===0}export{i,l as n,s as o};
+//# sourceMappingURL=highlightUtils-BbOHuY0U.js.map

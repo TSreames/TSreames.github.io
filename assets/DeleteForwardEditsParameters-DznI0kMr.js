@@ -1,0 +1,2 @@
+import{aF as n,bT as i,al as s,am as o,an as m}from"./index-PHof08fv.js";var r;let t=r=class extends n{static from(e){return i(r,e)}constructor(e){super(e),this.sessionId=void 0,this.moment=null}};s([o({type:String,json:{write:!0}})],t.prototype,"sessionId",void 0),s([o({type:Date,json:{type:Number,write:{writer:(e,a)=>{a.moment=e?e.getTime():null}}}})],t.prototype,"moment",void 0),t=r=s([m("esri.rest.versionManagement.gdbVersion.support.DeleteForwardEditsParameters")],t);const d=t;export{d as default};
+//# sourceMappingURL=DeleteForwardEditsParameters-DznI0kMr.js.map

@@ -1,0 +1,2 @@
+import{t as s,u as c,o as f}from"./operatorSimplify-CWI8HbrX.js";import{g_ as a,g$ as n,h0 as i}from"./index-PHof08fv.js";function p(t){const e=a(t),r=e.getSpatialReference();return n(s(e.getGeometry(),r,!1),r)}function g(t){const[e,r]=i(t);return c(e,r,!1).map(o=>n(o,r))}function l(t){const e=a(t);return f(e.getGeometry(),e.getSpatialReference(),!1)}export{p as execute,g as executeMany,l as isSimple};
+//# sourceMappingURL=simplifyOperator-dEPRDzi8.js.map

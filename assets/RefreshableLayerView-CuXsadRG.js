@@ -1,0 +1,2 @@
+import{al as i,an as c,cR as h,ai as d,v as l}from"./index-PHof08fv.js";const f=s=>{const r=s;let e=class extends r{initialize(){this.addHandles(h(()=>this.layer,"refresh",t=>{this.doRefresh(t.dataChanged).catch(a=>{d(a)||l.getLogger(this).error(a)})}),"RefreshableLayerView")}};return e=i([c("esri.views.layers.RefreshableLayerView")],e),e};export{f as i};
+//# sourceMappingURL=RefreshableLayerView-CuXsadRG.js.map

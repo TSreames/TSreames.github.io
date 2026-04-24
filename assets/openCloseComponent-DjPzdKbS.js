@@ -1,0 +1,2 @@
+import{ii as r}from"./index-PHof08fv.js";function a(i){return i[i.openProp||"open"]}async function f(i){await i.updateComplete,a(i)?i.onBeforeOpen():i.onBeforeClose(),await i.updateComplete;const e=s(i)?i.transitionRef.value:i.transitionEl;e&&await r(e,i.transitionProp),a(i)?i.onOpen():i.onClose()}function s(i){return!!i.transitionRef}export{f as t};
+//# sourceMappingURL=openCloseComponent-DjPzdKbS.js.map

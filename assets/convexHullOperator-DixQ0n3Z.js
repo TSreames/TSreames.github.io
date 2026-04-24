@@ -1,0 +1,2 @@
+import{w as c,_ as u,D as f}from"./operatorConvexHull-Da0FgqeQ.js";import{g_ as i,g$ as r,h0 as m,hd as p}from"./index-PHof08fv.js";function h(e){const t=i(e);return r(c(t.getGeometry()),t.getSpatialReference())}function l(e,t={}){const{merge:a=!1}=t,[n,o]=m(e);return u(n,a).map(s=>r(s,o))}function y(e){return f(p(e))}export{h as execute,l as executeMany,y as isConvex};
+//# sourceMappingURL=convexHullOperator-DixQ0n3Z.js.map

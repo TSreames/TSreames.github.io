@@ -1,0 +1,2 @@
+import{dK as s,dH as c,hj as a}from"./index-PHof08fv.js";function r(t,u={}){const{unit:o}=u;let e=s(t).calculateLength2D();if(e&&o){const l=c(t);e=a(e,l,o)}return e}const n=!0,i=Object.freeze(Object.defineProperty({__proto__:null,execute:r,supportsCurves:n},Symbol.toStringTag,{value:"Module"})),_=Object.freeze(Object.defineProperty({__proto__:null,execute:r,supportsCurves:n},Symbol.toStringTag,{value:"Module"}));export{_ as l,i as n,r};
+//# sourceMappingURL=lengthOperator-C8obJv7x.js.map

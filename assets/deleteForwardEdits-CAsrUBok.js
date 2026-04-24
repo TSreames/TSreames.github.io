@@ -1,0 +1,2 @@
+import{r as f,et as n,eu as c,ev as p,aq as $}from"./index-PHof08fv.js";async function w(e,s,r,i){if(!s)throw new f("post:missing-guid","guid for version is missing");const t=n(e),o=r.toJSON(),a=c(t.query,{query:p({...o,f:"json"}),...i,method:"post"});s.startsWith("{")&&(s=s.slice(1,-1));const d=`${t.path}/versions/${s}/deleteForwardEdits`,{data:u}=await $(d,a);return u}export{w as deleteForwardEdits};
+//# sourceMappingURL=deleteForwardEdits-CAsrUBok.js.map

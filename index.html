@@ -1,513 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="googlebot" content="index" />
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="description" content="Look up property information, infrastructure, zoning, land use, inspections, permits, development cases, boundaries, zones, districts, soils, flooding, elevation, and hazards in Durham, NC, USA." />
-<meta http-equiv='expires' content='0'>
-<link rel="shortcut icon" href="/img/favicon.ico">
-<title>Durham Maps | City of Durham and Durham County</title>
-<noscript>This application requires Javascript.</noscript>
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-115627848-5"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'UA-115627848-5');
-</script>
-<style>
-	.modal {
-		display: none;
-		position: fixed;
-		z-index: 90;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0,0,0,0.5);
-		justify-content: center;
-		align-items: center;
-	}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessible Map Starter (ArcGIS JS SDK 5 + Calcite)</title>
 
-	.modal-content {
-		background-color: white;
-		padding: 20px;
-		border-radius: 5px;
-		width: 300px;
-		text-align: center;
-		font-size:0.9rem;
-		font-weight:200;
-	}
+  <!--
+    ArcGIS SDK CSS is imported from node_modules via app.js so it's fingerprinted
+    in the Vite build. Calcite Components is now fully self-hosted: the CDN
+    bundle is copied from node_modules/@esri/calcite-components/dist/cdn/ into
+    /calcite-components/ at build+dev time by vite-plugin-static-copy.
+  -->
+  <link rel="icon" href="./new_logo.png" type="image/png" />
+  <link rel="stylesheet" href="./calcite-components/main.css" />
 
-	.show {
-		display: flex;
-	}
-
-	.disclaimertext {
-		text-align: left;
-	}
-
-	.approval {
-		font-size:1.2rem;
-		font-weight:500;
-	}
-	
-</style>
-<script>
-  window.dojoConfig = {
-	packages: [{
-        name: "dojo",
-        location: "//ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/"
-      },{
-        name: "dgrid",
-        location: "//unpkg.com/dgrid@1.1.0/"
-      }
-    ]
-  };
-</script>
-
-
-
-<link rel="stylesheet" href="/css/dgrid.css" type="text/css">
-<link rel="stylesheet" href="/lib/mdc/material-components-web.min12.css" type="text/css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" media="print" onload="this.media='all'; this.onload=null;">
-<link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/css/main.css" type="text/css" media="print" onload="this.media='all'; this.onload=null;">
-
-<link rel="stylesheet" href="/css/common-panel.css" type="text/css">
-<link rel="stylesheet" href="/css/common-container.css" type="text/css">
-
-<link rel="stylesheet" href="/css/overwrites-esri-defaults.css" type="text/css">
-<link rel="stylesheet" href="/css/overwrites-mdc-defaults.css" type="text/css">
-<link rel="stylesheet" href="/css/bootstrap-custom-buttons.css" type="text/css">
-
-<link rel="stylesheet" href="/css/responsive.css" type="text/css">
-<link rel="stylesheet" href="/css/phone.css" type="text/css">
-<link rel="stylesheet" href="/css/print.css" type="text/css" media="print" />
-
-
-<script src="/lib/mdc/material-components-web.min12.js"></script>
-<script type="text/javascript" charset="utf-8" src="/lib/moment.js"></script>
-<script type="text/javascript" charset="utf-8" src="/lib/Sortable.min.js"></script>
-<script src="https://js.arcgis.com/4.29/"></script>
-<script type="text/javascript" charset="utf-8" src="/js/services.js"></script>
-<script type="text/javascript" charset="utf-8" src="/js/markers.js"></script>
-<script type="text/javascript" charset="utf-8" src="/js/renderers.js"></script>
-<script type="text/javascript" charset="utf-8" src="/js/common-definitions.js"></script>
-
-<script>
-try {
-	var durm = {};
-	function push_new_url() {
-		history.pushState(
-			null, 
-			null, 
-			"/?x=" + durm.mapView.center.latitude + //auto update
-			"&y=" + durm.mapView.center.longitude + //auto update
-			"&z=" + durm.mapView.scale + //auto update
-			"&r=" + durm.mapView.rotation + //auto update
-			"&b=" + durm.map.basemap.param + //auto update
-			"&a=" + durm.aparam + //manual update
-			"&u=" + durm.uparam + //manual update
-			"&pid=" + durm.pidparam + //manual update
-			"&s=" + durm.app_state_string + //manual update
-			"&l=" + durm.layer_state_string + //manual update
-			"#"
-			);
-    }
-	var urlParam = function(name, w) {
-		w = w || window;
-		var rx = new RegExp('[\&|\?]'+name+'=([^\&\#]+)'),
-				val = w.location.search.match(rx);
-		return !val ? '':val[1];
-	}
-	function openTab(evt, cityName) {
-		var i, tabcontent, addrtablinks;
-		tabcontent = document.getElementsByClassName("tabcontent");
-		for (i = 0; i < tabcontent.length; i++) {
-			tabcontent[i].style.display = "none";
-		}
-		addrtablinks = document.getElementsByClassName("addrtablinks");
-		for (i = 0; i < addrtablinks.length; i++) {
-			addrtablinks[i].className = addrtablinks[i].className.replace(" active", "");
-		}
-		document.getElementById(cityName).style.display = "block";
-		evt.currentTarget.className += " active";
-	}
-
-	// Function to set a cookie
-	function setCookie(name, value, days) {
-		const d = new Date();
-		d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-		const expires = "expires=" + d.toUTCString();
-		document.cookie = name + "=" + value + ";" + expires + ";path=/";
-	}
-
-	// Function to get a cookie by name
-	function getCookie(name) {
-		const nameEQ = name + "=";
-		const ca = document.cookie.split(';');
-		for (let i = 0; i < ca.length; i++) {
-			let c = ca[i];
-			while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-			if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-		}
-		return null;
-	}
-
-	function checkAgreement() {
-    const cookname = "durham_maps_acknowledgement";
-    
-    // Normally we use getCookie to see if a cookie exists.
-    const agreedToTerms = getCookie(cookname);
-    // But until the language is finalized, we set agreedToTerms to true to skip this.
-    // const agreedToTerms = true;
-
-    const modal = document.getElementById('termsModal');
-    const agreeCheckbox = document.getElementById('agreeCheckbox');
-    const agreeButton = document.getElementById('agreeButton');
-
-    if (!agreedToTerms) {
-        // Show modal if terms are not agreed
-        modal.classList.add('show');
-
-        // Initially disable the agree button if the checkbox is not checked
-        agreeButton.disabled = true;
-
-        // Handle the checkbox click event to enable or disable the button
-        agreeCheckbox.addEventListener('change', function() {
-            if (agreeCheckbox.checked) {
-                agreeButton.disabled = false; // Enable button if checked
-            } else {
-                agreeButton.disabled = true; // Disable button if not checked
-            }
-        });
-
-        // Handle the submit button click event
-        agreeButton.addEventListener('click', function() {
-            if (agreeCheckbox.checked) {
-                setCookie(cookname, "true", 365); // Set cookie for 365 days
-                modal.classList.remove('show');
-                init_application(); // Initialize application after agreeing
-            } else {
-                alert("You must agree to the terms to proceed.");
-            }
-        });
-    } else {
-        // If terms are already agreed, initialize the application
-        init_application();
-    }
-}
-
-	function init_application() {
-		require([
-	"esri/layers/FeatureLayer",
-	"../durm/durm_main.js"
-	], function(
-		FeatureLayer,
-		durm_main
-		) {
-			try {
-				durm_main.init();
-			} catch (error) { 
-				console.log("Error in init"); 
-				console.log(error); 
-			}
-			currentyear = new Date().getFullYear()
-			document.getElementById("startdate").value = currentyear + "-01-01"
-			document.getElementById("enddate").value = currentyear + "-12-31"		
-	});
-	}	
-} catch (error) { 
-	console.log("Error in index");
-	console.log(error); 
-	}
-</script>
+  <script type="module" src="./calcite-components/index.js"></script>
+  <script type="module" crossorigin src="./assets/index-PHof08fv.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BPO4rxby.css">
 </head>
-
 <body>
-	<aside class="mdc-drawer mdc-drawer--modal mdc-elevation--z24">
-		<div class="mdc-drawer__header">
-			<span id="logobutton" class="mdc-drawer__title"></span>
-		</div>
-		<div class="mdc-drawer__content">
-			<!--Single Selection List-->
-			<div class="mdc-list" role="menu" id="nav_mdclist1">
-				<a class="mdc-list-item mdc-list-item--activated" role="option" href="#"  id="load_simple_basemap" aria-selected="true">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">map</i>
-				<span class="mdc-list-item__text">Map</span>
-				</a>
-				<a class="mdc-list-item" role="option" href="#" id="enable_aerials_mode">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">satellite</i>
-				<span class="mdc-list-item__text">Aerials</span>
-				</a>
-			</div>
-			
-			<hr class="mdc-list-divider">	
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#data-table-region">Skip to data table</a>
 
-			<!--Presets List-->
-			<div class="mdc-list" role="menu" id="nav_mdclist2">											
-				<a class="mdc-list-item" role="option" href="#" id="development_preset">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">business</i>
-				<span class="mdc-list-item__text">Development Cases</span>
-				</a>
+  <calcite-shell>
+    <calcite-navigation slot="header" label="Accessible Map Starter">
+      <calcite-action
+        id="nav-menu-btn"
+        slot="logo"
+        icon="hamburger"
+        text="Menu"
+        label="Open menu"
+        aria-controls="nav-sheet"
+        aria-expanded="false"
+        aria-haspopup="dialog"
+      ></calcite-action>
+      <calcite-navigation-logo
+        slot="logo"
+        heading="Accessible Map Starter"
+        description="Durham parcels &middot; Calcite UI"
+      ></calcite-navigation-logo>
 
-				<a class="mdc-list-item" role="option" href="#" id="zoning_preset">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">library_books</i>
-				<span class="mdc-list-item__text">Zoning</span>
-				</a>
-				<a class="mdc-list-item" role="option" href="#" id="drainage_preset">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">opacity</i>
-				<span class="mdc-list-item__text">Drainage</span>
-				</a>
-			</div>
+      <!--
+        role="search" makes the cluster a searchable landmark (SC 1.3.1).
+        The field-picker dropdown sets WHAT to search; the input provides
+        the text; the button submits. Enter inside the input also submits.
+      -->
+      <div slot="content-center" class="search-cluster" role="search">
+        <calcite-dropdown id="field-dropdown" placement="bottom-start" width-scale="m">
+          <calcite-button
+            id="field-trigger-btn"
+            slot="trigger"
+            appearance="outline"
+            kind="neutral"
+            icon-end="chevron-down"
+            aria-label="Search field: Address"
+          >
+            <calcite-chip id="field-trigger-chip" appearance="solid" kind="brand" scale="s">A</calcite-chip>
+            <span id="field-trigger-label">Address</span>
+          </calcite-button>
 
+          <!-- FieldPicker.js rebuilds the items inside this group from the
+               LayerRegistry's searchFields. Leave the group element here so
+               the custom element is registered before JS runs. -->
+          <calcite-dropdown-group group-title="Search by" selection-mode="single"></calcite-dropdown-group>
+        </calcite-dropdown>
 
+        <calcite-input
+          id="search-input"
+          class="search-input"
+          type="search"
+          placeholder="Search by address, e.g. 200 E Main St"
+          label="Search text"
+          aria-label="Search text"
+          scale="m"
+          clearable
+        ></calcite-input>
 
-			<!--Secure Layers Toggle-->
-			<div class="mdc-list" role="menu" id="nav_mdclist2b">
-				<hr class="mdc-list-divider">
-				<a class="mdc-list-item" href="#" id="toggle_utilities">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">lock</i>
-					<span class="mdc-list-item__text">Utilities</span>
-				</a>	
-			</div>
+        <calcite-button
+          id="search-submit-btn"
+          icon-start="magnifying-glass"
+          kind="brand"
+          scale="m"
+        >Search</calcite-button>
+      </div>
 
-			<!--Tool Toggle-->
-			<div class="mdc-list" role="menu" id="nav_mdclist3">
-				<hr class="mdc-list-divider">						
-				<a class="mdc-list-item" href="#" id="toggle_drawtool_item">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">category</i>
-				<span class="mdc-list-item__text">Drawing Tools</span>
-				</a>
-				<a class="mdc-list-item mdc-list-item--activated" href="#" id="toggle_legend_item">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">description</i>
-				<span class="mdc-list-item__text">Legend</span>
-				</a>
-				<a class="mdc-list-item" href="#" id="load_layertable">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">layers</i>
-				<span class="mdc-list-item__text">Layer List</span>
-				</a>
-			</div>
+      <calcite-action
+        id="toggle-layers-btn"
+        slot="content-end"
+        icon="layers"
+        text="Layers"
+        text-enabled
+        aria-controls="layers-panel"
+        aria-expanded="false"
+        aria-pressed="false"
+      ></calcite-action>
+      <calcite-action
+        id="toggle-query-btn"
+        slot="content-end"
+        icon="beaker"
+        text="Query builder"
+        text-enabled
+        aria-controls="query-panel"
+        aria-expanded="false"
+        aria-pressed="false"
+      ></calcite-action>
+      <calcite-action
+        id="toggle-table-btn"
+        slot="content-end"
+        icon="table"
+        text="Data table"
+        text-enabled
+        active
+        aria-controls="data-table-region"
+        aria-expanded="true"
+        aria-pressed="true"
+      ></calcite-action>
+      <calcite-action
+        id="help-btn"
+        slot="content-end"
+        icon="keyboard"
+        text="Keyboard help"
+        text-enabled
+      ></calcite-action>
+    </calcite-navigation>
 
-			<div class="mdc-list" role="menu" id="nav_mdclist4">
-				<hr class="mdc-list-divider">	
-				<a class="mdc-list-item" href="#" id="toggle_print">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">print</i>
-					<span class="mdc-list-item__text">Print</span>
-				</a>				
-				<a class="mdc-list-item" target="new" href="https://live-durhamnc.opendata.arcgis.com/pages/terms-of-use">
-					<i class="material-icons mdc-list-item__graphic" aria-hidden="true">description</i>
-					<span class="mdc-list-item__text">Terms of Use</span>
-				</a>
-			</div>
-		</div>
-	</aside>
+    <calcite-shell-panel slot="panel-start" position="start" display-mode="dock" width-scale="m" id="layers-panel" collapsed>
+      <calcite-panel heading="Layers">
+        <div id="layer-list-container"></div>
+      </calcite-panel>
+    </calcite-shell-panel>
 
-	<div class="mdc-drawer-scrim" id="scrim1"></div>
+    <calcite-shell-panel slot="panel-end" position="end" display-mode="dock" width-scale="l" id="query-panel" collapsed>
+      <calcite-panel heading="Query builder" id="query-panel-inner">
+        <div id="query-builder-host"></div>
+      </calcite-panel>
+    </calcite-shell-panel>
 
-	<div class="mdc-menu mdc-menu-surface" tabindex="-1">
-		<ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="distanceButton">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">timeline</i>
-				<span class="mdc-list-item__text">Measure Distance</span>
-			</li>
-			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="areaButton">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">crop_square</i>
-				<span class="mdc-list-item__text">Measure Area</span>
-			</li>
-			<li class="mdc-list-item mdc-ripple-upgraded" role="menuitem" id="parcelbufferButton">
-				<i class="material-icons mdc-list-item__graphic" aria-hidden="true">select_all</i>
-				<span class="mdc-list-item__text">Mailing List Tool</span>
-			</li>
-		</ul>
-	</div>
+    <main id="main-content">
+      <h1 class="visually-hidden">Accessible Map Starter &mdash; Durham parcels</h1>
+      <div id="view-wrapper">
+        <div id="viewDiv" role="application" aria-label="Loading map"></div>
+        <arcgis-legend id="legend-widget" class="map-widget bottom-left" aria-label="Legend"></arcgis-legend>
+      </div>
 
-	<div id="bodycontainer">
-		<header class="mdc-top-app-bar mdc-top-app-bar--short mdc-top-app-bar--short-collapsed" id="app-bar">
-			<div class="mdc-top-app-bar__row">
-				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-						<a href="#" class="demo-menu material-icons mdc-top-app-bar__navigation-icon" id="hamburgerbar">menu</a>
-				</section>
-				<section class="mdc-top-app-bar__section mdc-top-app-bar__section">
-					<div id="default_search_container"></div>
-				</section>
-				<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end buttonbar">
-					<button id="layerlistbutton1" aria-label="Layer List Button">
-						<i class="material-icons mdc-list-item__graphic" aria-hidden="true">layers</i>
-					</button>					
-				</section>
-			</div>
-		</header>
+      <section id="data-table-region" aria-labelledby="data-table-heading">
+        <h2 id="data-table-heading" class="data-table-heading">Data table</h2>
+        <div id="data-table-host"></div>
+      </section>
+    </main>
+  </calcite-shell>
 
+  <div id="aria-live-polite" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+  <div id="aria-live-assertive" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
 
+  <!--
+    Menu sheet (the "offcanvas drawer"). Calcite's <calcite-sheet> handles
+    focus trap, aria-modal, Esc-to-close, and inert-ing the background page.
+    Uses position="inline-start" so it slides in from the left regardless of
+    text direction. Contains a logo, a "Presets" nav group, and a
+    "Resources" nav group of external links.
+  -->
+  <calcite-sheet id="nav-sheet" position="inline-start" width-scale="s" label="Main menu" display-mode="overlay">
+    <calcite-panel heading="Menu" closable id="nav-sheet-panel">
+      <div class="nav-sheet-logo">
+        <img
+          src="./new_logo.png"
+          alt="City of Durham and Durham County"
+          width="165"
+          height="85"
+        />
+      </div>
 
+      <nav class="nav-sheet-group" aria-labelledby="nav-presets-heading">
+        <h3 id="nav-presets-heading" class="nav-sheet-group-heading">Presets</h3>
+        <ul class="nav-sheet-list" role="list">
+          <li>
+            <a href="#" class="nav-sheet-item" data-preset="devcases">
+              <calcite-icon icon="applications" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Development Cases</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-sheet-item" data-preset="zoning">
+              <calcite-icon icon="book" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Zoning</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-sheet-item" data-preset="drainage">
+              <calcite-icon icon="water-drop" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Drainage</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-		<div id="independent_case_popup" style="visibility:hidden;" class="esri-widget esri-popup--shadow">
-			<span id="independent-popup-header"></span>	
-			<span id="independent-popup-close" role="button" tabindex="0" aria-label="Close" title="Close">&#10006;</span>			
-			<span id="independent_case_popup_content"></span>	
-		</div>
+      <nav class="nav-sheet-group" aria-labelledby="nav-resources-heading">
+        <h3 id="nav-resources-heading" class="nav-sheet-group-heading">Resources</h3>
+        <ul class="nav-sheet-list" role="list">
+          <li>
+            <a
+              href="https://live-durhamnc.opendata.arcgis.com/pages/terms-of-use"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-sheet-item"
+            >
+              <calcite-icon icon="information" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Terms of Use</span>
+              <calcite-icon icon="launch" scale="s" aria-hidden="true" class="nav-sheet-item-trailing"></calcite-icon>
+              <span class="visually-hidden">(opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://live-durhamnc.opendata.arcgis.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-sheet-item"
+            >
+              <calcite-icon icon="data" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Durham Open Data</span>
+              <calcite-icon icon="launch" scale="s" aria-hidden="true" class="nav-sheet-item-trailing"></calcite-icon>
+              <span class="visually-hidden">(opens in a new tab)</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://maps.durhamnc.gov/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-sheet-item"
+            >
+              <calcite-icon icon="map" scale="s" aria-hidden="true"></calcite-icon>
+              <span>Durham Maps (production)</span>
+              <calcite-icon icon="launch" scale="s" aria-hidden="true" class="nav-sheet-item-trailing"></calcite-icon>
+              <span class="visually-hidden">(opens in a new tab)</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </calcite-panel>
+  </calcite-sheet>
 
-		<div id="tool_results_table" style="visibility:hidden;" class="esri-widget esri-popup--shadow">
-			<span class="address_tab">
-				<button class="addrtablinks" onclick="openTab(event, 'Owner_Addresses')" id="defaultOpen">Owner Addresses</button>
-				<button class="addrtablinks" onclick="openTab(event, 'Site_Addresses')">Site Addresses</button>
-			</span>
-
-			<span id="results-close" role="button" tabindex="0" aria-label="Close" title="Close">&#10006;</span>	
-
-			<div id="Owner_Addresses" class="tabcontent">
-				<span id="owner-results-header" class="resultsheader"></span>					
-				<span id="owner_results_table_content" class="resultstablecontent">
-					<span id="parcelnotification_recordcount" class="recordcount"></span>
-					<span id="export_owners_tocsvbutton" class="export_tocsvbutton">Save Owner Addresses to CSV</span>
-					<span id="export_parcels_tocsvbutton" class="export_tocsvbutton">Save Full Parcel Records to CSV</span>
-					<div id="ownergrid" class="grid"></div>
-				</span>	
-			</div>
-
-			<div id="Site_Addresses" class="tabcontent">
-				<span id="resident-results-header" class="resultsheader"></span>	
-				<span id="resident_results_table_content" class="resultstablecontent">
-					<span id="addressnotification_recordcount" class="recordcount"></span>
-					<span id="export_resident_tocsvbutton" class="export_tocsvbutton">Save Site Addresses to CSV</span>
-					<div id="residentgrid" class="grid"></div>
-				</span>	
-			</div>
-		</div>
-
-
-		<div id="mapViewDiv" class="mdc-top-app-bar--fixed-adjust">
-			<div id="sketch_button_container"></div>		
-			<div id="devcase_form_panel" class="ui_panel" style="display:none;visibility:hidden;">
-				<div id="devcase_search">
-					<label for="development_search_container" class="devsearchlabel">Search</label>
-					<div id="development_search_container"></div>
-				</div>
-				
-				<div id="devcase_type">
-					<label for="case-type">Case Type</label>
-					<select id="case-type" class="esri-input esri-select"></select>					
-				</div>
-
-				<div id="devcase_status">
-					<label for="case-status">Case Status</label>
-					<select id="case-status" class="esri-input esri-select"></select>					
-				</div>
-
-				<div class="datediv">
-					<label class="datelabel" for="start">Start Date</label>
-					<input type="date" id="startdate" name="trip-start"
-								value="2020-01-01"
-								min="2000-01-01" max="3000-12-31">
-				</div>
-
-				<div class="datediv">									
-					<label class="datelabel" for="end">End Date</label>
-					<input type="date" id="enddate" name="trip-end"
-								value="2050-07-01"
-								min="2000-01-01" max="3000-12-31">
-				</div>
-
-				<div id="buttonBoxes">
-					<button class="esri-button" id="draw_button">Load Development Cases</button>
-				</div>			  
-			</div>
-			<div id="parceltool_form_panel" class="ui_panel" style="display:none;">
-				<span id="parcelbufferpanelclosebutton" class="esri-icon-close" style="float:right;"></span>
-				<span id="GAL_header">Mailing List Tool</span>
-				<div id="bufferinputbox"><span id="GAL_subtext">Buffer selected parcels by<br><INPUT TYPE="NUMBER" id="bufferfeetinput" MIN="-1" MAX="99999" STEP="5" VALUE="1000" SIZE="6">Feet</span></div>
-				<button id="parcelselectbutton" class="esri-button">Select Parcels</button>
-				<!--<button id="parceldeselectbutton" class="esri-button">Deselect Parcels</button>-->
-				<br>
-				<button id="parcelresultsbutton" class="esri-button">Generate Address List</button>
-				<button id="parcelclearbutton" class="esri-button">Reset Tool</button>
-			</div>
-		</div>	
-
-		<div class="cd-main-content do-not-print"></div>
-	
-	</div>
-
-	<!--slider for layerlist-->
-	<div id="layerpanel" class="cd-panel from-right do-not-print">
-		<header class="cd-panel-header shortcontainer">
-			<h1>Layers</h1>
-			<a href="#0" class="cd-panel-close">Close</a>
-		</header>
-
-		<div class="cd-panel-container shortcontainer">	
-			<div id="closebar1"></div>		<!-- binding? -->
-			<div class="cd-panel-content">
-				<button class="esri-button" id="reset_button">Reset</button>
-				<div id="accordion" style="border: 1px solid #bbb; border-radius: 20px; padding:0.65em; margin:0.25em;">
-					<ul id="ul_layers"></ul>
-				</div>
-			</div> <!-- cd-panel-content -->
-		</div> <!-- cd-panel-container -->
-	</div> <!-- cd-panel -->
-
-	<div id="termsModal" class="modal">
-		<div class="modal-content">
-			<label class="disclaimertext">
-				<p>Maps, tabular data, and applications presented are developed from public records. While efforts have been made to use the most current and accurate public record data, <b>no warranties</b> as to the accuracy of the data provided are being made by the City of Durham, Durham County, and the mapping and software companies involved. Users of this content should consult public information sources to verify the accuracy of the data provided.</p>                
-			</label>
-			<span class="approval">		
-				<input type="checkbox" id="agreeCheckbox"><label for="agreeCheckbox">I agree to the terms.</label></span>
-			<br><br>
-			<button id="agreeButton" class="esri-button">Submit</button>
-		</div>
-	</div>
-
-<!-- Add to your DOM once -->
-<div class="mdc-snackbar">
-  <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
-    <div class="mdc-snackbar__label" aria-atomic="false">
-      Layer failed to load. Try again later.
-    </div>
-    <div class="mdc-snackbar__actions" aria-atomic="true">
-      <button type="button" class="mdc-button mdc-snackbar__action">Dismiss</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Initialize once at app start
-  const snackbar = mdc.snackbar.MDCSnackbar.attachTo(document.querySelector('.mdc-snackbar'));
-
-  generic_nearmap_error_message = "Error loading NearMap Aerials"
-
-  // Trigger whenever something fails
-  function showToast(msg) {
-    snackbar.labelText = msg;
-    snackbar.timeoutMs = 8000;
-    snackbar.open();
-  } 
-</script>
-
-
+  <calcite-dialog id="help-modal" heading="Keyboard navigation" width-scale="m" kind="info" modal>
+    <h3>Map</h3>
+    <ul>
+      <li><kbd>Tab</kbd> moves focus into the map. A visible focus ring appears on the map frame.</li>
+      <li><kbd>Arrow keys</kbd> pan the map.</li>
+      <li><kbd>+</kbd> / <kbd>-</kbd> zoom in and out.</li>
+      <li><kbd>N</kbd> re-orients the map to north.</li>
+      <li><kbd>Shift</kbd> + <kbd>Arrow</kbd> rotates the view in 3D.</li>
+      <li><kbd>Tab</kbd> again moves focus to the next map widget (Search, Legend, Layers).</li>
+    </ul>
+    <h3>Data table</h3>
+    <ul>
+      <li>The <strong>data table</strong> shows the same features as the map and stays in sync with it.</li>
+      <li>In the table, <kbd>Arrow Up</kbd> / <kbd>Arrow Down</kbd> moves between rows; <kbd>Home</kbd> / <kbd>End</kbd> jumps to the first or last row; <kbd>Enter</kbd> selects the row and zooms the map.</li>
+      <li>Per-row actions (Zoom, Buffer, Find Adjoiners, Report, Tax Info, Permits) are real buttons — <kbd>Tab</kbd> into them, <kbd>Enter</kbd> or <kbd>Space</kbd> to activate.</li>
+      <li>Column headers are focusable; <kbd>Enter</kbd> or <kbd>Space</kbd> toggles sort.</li>
+      <li>Zoom, search, and row-activation results are announced via screen reader.</li>
+    </ul>
+    <h3>Query builder</h3>
+    <ul>
+      <li>Open the builder with the <strong>Query builder</strong> action in the header.</li>
+      <li>Pick a layer, then a field, then click operator buttons (<kbd>=</kbd>, <kbd>LIKE</kbd>, <kbd>AND</kbd>, …) to assemble a WHERE clause. <strong>Run</strong> executes the query; results appear in both the map and the data table.</li>
+    </ul>
+    <h3>Screen readers</h3>
+    <p>
+      Tested targets per Esri guidance: NVDA + Firefox, JAWS + Chrome, VoiceOver + Safari.
+      With NVDA, if arrow keys do not pan the map, disable <em>Browse Mode</em> (NVDA + Space)
+      while the map has focus.
+    </p>
+    <calcite-button slot="footer-end" id="help-close-btn">Close</calcite-button>
+  </calcite-dialog>
 
 </body>
-
-<style>
-#agreeCheckbox {
-    transform: scale(1.5);
-	margin-right:12px;
-    border: 2px solid #007bff;
-    background-color: #fff;
-    border-radius: 4px;
-}
-
-#agreeCheckbox:checked {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-</style>
-
-<script>
-	window.mdc.autoInit();
-	checkAgreement();
-</script>
-
 </html>

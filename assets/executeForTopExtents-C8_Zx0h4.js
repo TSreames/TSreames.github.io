@@ -1,0 +1,2 @@
+import{et as i,g9 as m,d5 as r}from"./index-PHof08fv.js";import{c as x}from"./queryTopFeatures-DllJgDoU.js";async function N(n,o,e){const s=i(n),a=await x(s,m.from(o),{...e}),t=a.data.extent;return!t||isNaN(t.xmin)||isNaN(t.ymin)||isNaN(t.xmax)||isNaN(t.ymax)?{count:a.data.count,extent:null}:{count:a.data.count,extent:r.fromJSON(t)}}export{N as executeForTopExtents};
+//# sourceMappingURL=executeForTopExtents-C8_Zx0h4.js.map

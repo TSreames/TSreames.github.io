@@ -1,0 +1,2 @@
+import{i1 as c,dL as u}from"./index-PHof08fv.js";const n=new c;function f(e,t){return n.accelerateGeometry(e,t,1)}function i(e,t,r){return n.execute(e,t,r,null)}function l(e,t,r,s){const o=n.executeMany(new u(e),new u([t]),r,null,s);return Array.from(o)}function p(){return n.supportsCurves()}export{f as accelerateGeometry,i as execute,l as executeMany,p as supportsCurves};
+//# sourceMappingURL=operatorIntersection-Chd2tWcY.js.map
